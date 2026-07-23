@@ -2,10 +2,10 @@ const getApiBaseUrl = () => {
   if (process.env.NEXT_PUBLIC_API_URL) {
     return `${process.env.NEXT_PUBLIC_API_URL}/api`;
   }
-  if (typeof window !== 'undefined' && window.location.hostname !== 'localhost') {
+  if (process.env.NODE_ENV === 'production') {
     return 'https://deardesserts.onrender.com/api';
   }
-  return typeof window !== 'undefined' ? '/api' : 'http://localhost:5000/api';
+  return 'http://localhost:5000/api';
 };
 
 export async function fetchApi(endpoint: string, options: RequestInit = {}) {
