@@ -4,10 +4,13 @@ let socket: Socket | null = null;
 
 export const getSocket = (): Socket => {
   if (!socket) {
-    const socketUrl = process.env.NEXT_PUBLIC_API_URL || 
-      (process.env.NODE_ENV === 'production'
-        ? 'https://deardesserts.onrender.com'
-        : 'http://localhost:5000');
+    let socketUrl = 'https://deardesserts.onrender.com';
+    if (typeof window !== 'undefined' && window.location.hostname === 'localhost') {
+      socketUrl = 'http://localhost:5000';
+    }
+    if (process.env.NEXT_PUBLIC_API_URL) {
+      socketUrl = process.env.NEXT_PUBLIC_API_URL;
+    }
     socket = io(socketUrl, {
       transports: ['websocket', 'polling'],
       autoConnect: true,
