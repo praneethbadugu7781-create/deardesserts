@@ -1,3 +1,4 @@
+// Cache-buster: 2026-07-23T21:23:00 - Force Vercel recompilation of api.ts
 const getApiBaseUrl = () => {
   if (process.env.NEXT_PUBLIC_API_URL) {
     return `${process.env.NEXT_PUBLIC_API_URL}/api`;
