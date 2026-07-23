@@ -5,7 +5,6 @@ import cors from 'cors';
 import helmet from 'helmet';
 import dotenv from 'dotenv';
 
-import { connectDB } from './db';
 import { initSocket } from './socket';
 import authRoutes from './routes/auth';
 import menuRoutes from './routes/menu';
@@ -27,9 +26,6 @@ app.use(helmet({ contentSecurityPolicy: false }));
 app.use(cors({ origin: '*', credentials: true }));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
-
-// Connect to Live MongoDB Atlas Cluster
-connectDB();
 
 // Initialize Socket.io
 const io = new SocketIOServer(server, {

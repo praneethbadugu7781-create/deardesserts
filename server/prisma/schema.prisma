@@ -1,6 +1,6 @@
 datasource db {
-  provider = "sqlite"
-  url      = env("DATABASE_URL")
+  provider = "mongodb"
+  url      = env("MONGODB_URI")
 }
 
 generator client {
@@ -8,7 +8,7 @@ generator client {
 }
 
 model Branch {
-  id        String   @id @default(uuid())
+  id String @id @default(auto()) @map("_id") @db.ObjectId
   name      String
   code      String   @unique
   address   String
@@ -23,12 +23,12 @@ model Branch {
 }
 
 model User {
-  id        String   @id @default(uuid())
+  id String @id @default(auto()) @map("_id") @db.ObjectId
   name      String
   email     String   @unique
   password  String
   role      String   @default("CASHIER") // ADMIN, CASHIER, KITCHEN_STAFF
-  branchId  String?
+  branchId String? @db.ObjectId
   phone     String?
   isActive  Boolean  @default(true)
   createdAt DateTime @default(now())
@@ -41,7 +41,7 @@ model User {
 }
 
 model Category {
-  id           String   @id @default(uuid())
+  id String @id @default(auto()) @map("_id") @db.ObjectId
   name         String   @unique
   slug         String   @unique
   description  String?
@@ -54,9 +54,9 @@ model Category {
 }
 
 model MenuItem {
-  id                 String   @id @default(uuid())
+  id String @id @default(auto()) @map("_id") @db.ObjectId
   name               String
-  categoryId         String
+  categoryId String @db.ObjectId
   price              Float
   taxPercent         Float    @default(5.0)
   description        String?
@@ -72,7 +72,7 @@ model MenuItem {
 }
 
 model Offer {
-  id            String    @id @default(uuid())
+  id String @id @default(auto()) @map("_id") @db.ObjectId
   title         String
   code          String    @unique
   description   String?
@@ -86,10 +86,10 @@ model Offer {
 }
 
 model Order {
-  id             String   @id @default(uuid())
+  id String @id @default(auto()) @map("_id") @db.ObjectId
   orderNumber    String   @unique // e.g. ORD-1001
-  branchId       String?
-  cashierId      String?
+  branchId String? @db.ObjectId
+  cashierId String? @db.ObjectId
   status         String   @default("NEW") // NEW, PREPARING, READY, COMPLETED, CANCELLED
   customerName   String?  @default("Guest")
   customerPhone  String?
@@ -111,9 +111,9 @@ model Order {
 }
 
 model OrderItem {
-  id         String @id @default(uuid())
-  orderId    String
-  menuItemId String
+  id String @id @default(auto()) @map("_id") @db.ObjectId
+  orderId String @db.ObjectId
+  menuItemId String @db.ObjectId
   itemPrice  Float
   quantity   Int
   totalPrice Float
@@ -124,10 +124,10 @@ model OrderItem {
 }
 
 model Token {
-  id          String    @id @default(uuid())
+  id String @id @default(auto()) @map("_id") @db.ObjectId
   tokenNumber String // e.g. T-125
   dailySeq    Int
-  orderId     String    @unique
+  orderId String @db.ObjectId    @unique
   status      String    @default("NEW")
   readyAt     DateTime?
   completedAt DateTime?
@@ -137,9 +137,9 @@ model Token {
 }
 
 model Bill {
-  id                 String    @id @default(uuid())
+  id String @id @default(auto()) @map("_id") @db.ObjectId
   billNumber         String    @unique // e.g. DD-1025
-  orderId            String    @unique
+  orderId String @db.ObjectId    @unique
   subtotal           Float
   gstAmount          Float
   discount           Float
@@ -156,11 +156,11 @@ model Bill {
 }
 
 model Payment {
-  id            String   @id @default(uuid())
-  orderId       String
+  id String @id @default(auto()) @map("_id") @db.ObjectId
+  orderId String @db.ObjectId
   method        String // CASH, UPI, CARD
   amount        Float
-  transactionId String?
+  transactionId String? @db.ObjectId
   status        String   @default("PAID") // PENDING, PAID, REFUNDED
   createdAt     DateTime @default(now())
 
@@ -168,8 +168,8 @@ model Payment {
 }
 
 model InventoryItem {
-  id            String   @id @default(uuid())
-  branchId      String?
+  id String @id @default(auto()) @map("_id") @db.ObjectId
+  branchId String? @db.ObjectId
   name          String
   category      String // INGREDIENT, PACKAGING
   unit          String // e.g. Litres, Kg, Bottles, Boxes, Pieces
@@ -183,9 +183,9 @@ model InventoryItem {
 }
 
 model InventoryUsage {
-  id           String   @id @default(uuid())
-  inventoryId  String
-  orderId      String?
+  id String @id @default(auto()) @map("_id") @db.ObjectId
+  inventoryId String @db.ObjectId
+  orderId String? @db.ObjectId
   quantityUsed Float
   reason       String // SALE, WASTAGE, RESTOCK, ADJUSTMENT
   createdAt    DateTime @default(now())
@@ -195,8 +195,8 @@ model InventoryUsage {
 }
 
 model StaffShift {
-  id        String   @id @default(uuid())
-  userId    String
+  id String @id @default(auto()) @map("_id") @db.ObjectId
+  userId String @db.ObjectId
   shiftName String // MORNING, EVENING, NIGHT
   startTime DateTime
   endTime   DateTime
@@ -206,8 +206,8 @@ model StaffShift {
 }
 
 model StaffAttendance {
-  id       String    @id @default(uuid())
-  userId   String
+  id String @id @default(auto()) @map("_id") @db.ObjectId
+  userId String @db.ObjectId
   date     DateTime  @default(now())
   clockIn  DateTime
   clockOut DateTime?
