@@ -28,7 +28,13 @@ export default function KitchenDisplayPage() {
   const fetchOrders = useCallback(async () => {
     try {
       const data = await fetchApi('/orders/tokens/live');
-      const combined = [...(data.preparing || []), ...(data.ready || [])];
+      const preparing = Array.isArray(data.preparing) ? data.preparing : [];
+      const ready = Array.isArray(data.ready) ? data.ready : [];
+      const newOrds = Array.isArray(data.new) ? data.new : [];
+      const combined = [...newOrds, ...preparing, ...ready].map((o: any) => ({
+        ...o,
+        items: Array.isArray(o.items) ? o.items : [],
+      }));
       setOrders(combined);
     } catch (err) {
       console.error('KDS fetch error:', err);
