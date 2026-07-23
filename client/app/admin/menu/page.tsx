@@ -111,20 +111,20 @@ export default function MenuManagementPage() {
   });
 
   return (
-    <div className="space-y-6">
+    <div className="min-h-screen bg-cream-100 p-4 md:p-6 space-y-6">
       {/* Header */}
-      <div className="bg-cocoa-900 text-cream-100 p-6 rounded-3xl shadow-xl border border-cocoa-700 flex flex-col md:flex-row md:items-center justify-between gap-4">
+      <div className="bg-white/80 backdrop-blur-xl border border-cream-300/80 p-6 rounded-3xl shadow-sm flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div>
-          <h1 className="text-2xl font-black tracking-tight flex items-center gap-2">
+          <h1 className="text-3xl font-display font-bold text-cocoa-900 tracking-tight flex items-center gap-2">
             <UtensilsCrossed className="w-6 h-6 text-gold-400" /> Menu & Offers Management
           </h1>
-          <p className="text-xs text-cream-300">Add/edit dessert menu items, update prices, mark stock availability & active offers</p>
+          <p className="text-sm text-gold-600 font-medium mt-1">Add/edit dessert menu items, update prices, mark stock availability & active offers</p>
         </div>
 
         <div className="flex items-center space-x-3">
           <button
             onClick={() => setShowAddModal(true)}
-            className="flex items-center space-x-2 bg-gold-500 hover:bg-gold-400 text-cocoa-950 font-extrabold px-4 py-2.5 rounded-xl text-xs shadow-md transition"
+            className="flex items-center space-x-2 bg-gradient-to-r from-cocoa-800 to-cocoa-950 text-gold-300 hover:from-cocoa-900 hover:to-black font-extrabold px-4 py-2.5 rounded-xl text-xs shadow-md transition"
           >
             <Plus className="w-4 h-4" />
             <span>Add Menu Item</span>
@@ -133,14 +133,14 @@ export default function MenuManagementPage() {
       </div>
 
       {/* Promotional Offers Banner */}
-      <div className="bg-cream-100 p-4 rounded-2xl border border-cream-300 space-y-2">
+      <div className="bg-white/80 backdrop-blur-xl p-4 rounded-2xl border border-cream-300/80 space-y-2 shadow-md">
         <h3 className="font-extrabold text-xs text-cocoa-900 flex items-center gap-1.5">
           <Tag className="w-4 h-4 text-caramel-500" /> Active Promotional Offers & Combo Discounts
         </h3>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
           {offers.map((off) => (
-            <div key={off.id} className="bg-white p-3 rounded-xl border border-cream-300 flex items-center justify-between">
+            <div key={off.id} className="bg-white/80 backdrop-blur-xl p-3 rounded-xl border border-cream-300/80 flex items-center justify-between">
               <div>
                 <span className="font-black text-xs text-gold-600 bg-gold-100 px-2 py-0.5 rounded">
                   {off.code}
@@ -164,7 +164,7 @@ export default function MenuManagementPage() {
           onClick={() => setSelectedCat('ALL')}
           className={`px-4 py-2 rounded-xl font-bold transition ${
             selectedCat === 'ALL'
-              ? 'bg-cocoa-800 text-gold-300 shadow-md'
+              ? 'bg-gradient-to-r from-cocoa-800 to-cocoa-950 text-gold-300 shadow-md'
               : 'bg-white text-cocoa-800 hover:bg-cream-200 border border-cream-300'
           }`}
         >
@@ -176,7 +176,7 @@ export default function MenuManagementPage() {
             onClick={() => setSelectedCat(c.id)}
             className={`px-4 py-2 rounded-xl font-bold transition ${
               selectedCat === c.id
-                ? 'bg-cocoa-800 text-gold-300 shadow-md'
+                ? 'bg-gradient-to-r from-cocoa-800 to-cocoa-950 text-gold-300 shadow-md'
                 : 'bg-white text-cocoa-800 hover:bg-cream-200 border border-cream-300'
             }`}
           >
@@ -188,7 +188,7 @@ export default function MenuManagementPage() {
       {/* Menu Cards Grid */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
         {filteredItems.map((item) => (
-          <div key={item.id} className="bg-white rounded-2xl p-4 border border-cream-300 shadow-sm space-y-3 flex flex-col justify-between">
+          <div key={item.id} className="bg-white/80 backdrop-blur-xl rounded-2xl p-4 border border-cream-300/80 shadow-md space-y-3 flex flex-col justify-between">
             <div>
               {item.imageUrl && (
                 <div className="h-32 w-full rounded-xl overflow-hidden mb-3 bg-cream-200 relative">
@@ -231,7 +231,7 @@ export default function MenuManagementPage() {
       {/* Add Item Modal */}
       {showAddModal && (
         <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4">
-          <div className="bg-white rounded-3xl max-w-md w-full p-6 shadow-2xl space-y-4 border border-gold-500/40">
+          <div className="bg-white/95 backdrop-blur-xl rounded-3xl max-w-md w-full p-6 shadow-2xl space-y-4 border border-cream-300/80">
             <div className="flex items-center justify-between border-b border-cream-200 pb-3">
               <h3 className="font-extrabold text-base text-cocoa-900">Add New Dessert Menu Item</h3>
               <button onClick={() => setShowAddModal(false)} className="text-cocoa-500 hover:text-cocoa-900">
@@ -257,7 +257,7 @@ export default function MenuManagementPage() {
                   <select
                     value={categoryId}
                     onChange={(e) => setCategoryId(e.target.value)}
-                    className="w-full mt-1 px-3 py-2 rounded-xl border border-cream-300 font-medium"
+                    className="w-full mt-1 px-4 py-2 rounded-xl border border-cream-300 bg-white focus:border-gold-500 focus:ring-1 focus:ring-gold-500 outline-none transition-all font-medium text-cocoa-900"
                   >
                     {categories.map((c) => (
                       <option key={c.id} value={c.id}>
@@ -272,7 +272,7 @@ export default function MenuManagementPage() {
                     type="number"
                     value={price}
                     onChange={(e) => setPrice(parseFloat(e.target.value) || 0)}
-                    className="w-full mt-1 px-3 py-2 rounded-xl border border-cream-300 font-medium"
+                    className="w-full mt-1 px-4 py-2 rounded-xl border border-cream-300 bg-white focus:border-gold-500 focus:ring-1 focus:ring-gold-500 outline-none transition-all font-medium text-cocoa-900"
                   />
                 </div>
               </div>
@@ -284,7 +284,7 @@ export default function MenuManagementPage() {
                   placeholder="Freshly baked dark chocolate waffle..."
                   value={description}
                   onChange={(e) => setDescription(e.target.value)}
-                  className="w-full mt-1 px-3 py-2 rounded-xl border border-cream-300 font-medium"
+                  className="w-full mt-1 px-4 py-2 rounded-xl border border-cream-300 bg-white focus:border-gold-500 focus:ring-1 focus:ring-gold-500 outline-none transition-all font-medium text-cocoa-900"
                 />
               </div>
 
@@ -295,14 +295,14 @@ export default function MenuManagementPage() {
                   placeholder="https://images.unsplash.com/..."
                   value={imageUrl}
                   onChange={(e) => setImageUrl(e.target.value)}
-                  className="w-full mt-1 px-3 py-2 rounded-xl border border-cream-300 font-medium"
+                  className="w-full mt-1 px-4 py-2 rounded-xl border border-cream-300 bg-white focus:border-gold-500 focus:ring-1 focus:ring-gold-500 outline-none transition-all font-medium text-cocoa-900"
                 />
               </div>
             </div>
 
             <button
               onClick={handleAddItem}
-              className="w-full py-3 rounded-xl bg-gold-500 text-cocoa-950 font-extrabold text-xs hover:bg-gold-400 transition"
+              className="w-full py-3 rounded-xl bg-gradient-to-r from-cocoa-800 to-cocoa-950 text-gold-300 font-extrabold text-xs hover:from-cocoa-900 hover:to-black shadow-md transition"
             >
               Create Menu Item
             </button>
