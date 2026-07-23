@@ -1,0 +1,217 @@
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+model Branch {
+  id        String   @id @default(uuid())
+  name      String
+  code      String   @unique
+  address   String
+  phone     String
+  isActive  Boolean  @default(true)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  users     User[]
+  orders    Order[]
+  inventory InventoryItem[]
+}
+
+model User {
+  id        String   @id @default(uuid())
+  name      String
+  email     String   @unique
+  password  String
+  role      String   @default("CASHIER") // ADMIN, CASHIER, KITCHEN_STAFF
+  branchId  String?
+  phone     String?
+  isActive  Boolean  @default(true)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  branch     Branch?           @relation(fields: [branchId], references: [id])
+  orders     Order[]           @relation("CashierOrders")
+  shifts     StaffShift[]
+  attendance StaffAttendance[]
+}
+
+model Category {
+  id           String   @id @default(uuid())
+  name         String   @unique
+  slug         String   @unique
+  description  String?
+  icon         String?
+  displayOrder Int      @default(0)
+  isActive     Boolean  @default(true)
+  createdAt    DateTime @default(now())
+
+  items MenuItem[]
+}
+
+model MenuItem {
+  id                 String   @id @default(uuid())
+  name               String
+  categoryId         String
+  price              Float
+  taxPercent         Float    @default(5.0)
+  description        String?
+  imageUrl           String?
+  isAvailable        Boolean  @default(true)
+  isCombo            Boolean  @default(false)
+  preparationMinutes Int      @default(5)
+  createdAt          DateTime @default(now())
+  updatedAt          DateTime @updatedAt
+
+  category   Category    @relation(fields: [categoryId], references: [id])
+  orderItems OrderItem[]
+}
+
+model Offer {
+  id            String    @id @default(uuid())
+  title         String
+  code          String    @unique
+  description   String?
+  discountType  String // PERCENTAGE, FIXED
+  discountValue Float
+  minOrderValue Float     @default(0)
+  isActive      Boolean   @default(true)
+  validFrom     DateTime?
+  validUntil    DateTime?
+  createdAt     DateTime  @default(now())
+}
+
+model Order {
+  id             String   @id @default(uuid())
+  orderNumber    String   @unique // e.g. ORD-1001
+  branchId       String?
+  cashierId      String?
+  status         String   @default("NEW") // NEW, PREPARING, READY, COMPLETED, CANCELLED
+  customerName   String?  @default("Guest")
+  customerPhone  String?
+  subtotal       Float
+  taxAmount      Float
+  discountAmount Float    @default(0)
+  netAmount      Float
+  notes          String?
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+
+  branch        Branch?          @relation(fields: [branchId], references: [id])
+  cashier       User?            @relation("CashierOrders", fields: [cashierId], references: [id])
+  items         OrderItem[]
+  token         Token?
+  bill          Bill?
+  payments      Payment[]
+  inventoryLogs InventoryUsage[]
+}
+
+model OrderItem {
+  id         String @id @default(uuid())
+  orderId    String
+  menuItemId String
+  itemPrice  Float
+  quantity   Int
+  totalPrice Float
+  notes      String?
+
+  order    Order    @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  menuItem MenuItem @relation(fields: [menuItemId], references: [id])
+}
+
+model Token {
+  id          String    @id @default(uuid())
+  tokenNumber String // e.g. T-125
+  dailySeq    Int
+  orderId     String    @unique
+  status      String    @default("NEW")
+  readyAt     DateTime?
+  completedAt DateTime?
+  createdAt   DateTime  @default(now())
+
+  order Order @relation(fields: [orderId], references: [id], onDelete: Cascade)
+}
+
+model Bill {
+  id                 String    @id @default(uuid())
+  billNumber         String    @unique // e.g. DD-1025
+  orderId            String    @unique
+  subtotal           Float
+  gstAmount          Float
+  discount           Float
+  totalAmount        Float
+  paymentMethod      String // CASH, UPI, CARD
+  isCancelled        Boolean   @default(false)
+  cancellationReason String?
+  isRefunded         Boolean   @default(false)
+  refundAmount       Float?
+  printedAt          DateTime?
+  createdAt          DateTime  @default(now())
+
+  order Order @relation(fields: [orderId], references: [id], onDelete: Cascade)
+}
+
+model Payment {
+  id            String   @id @default(uuid())
+  orderId       String
+  method        String // CASH, UPI, CARD
+  amount        Float
+  transactionId String?
+  status        String   @default("PAID") // PENDING, PAID, REFUNDED
+  createdAt     DateTime @default(now())
+
+  order Order @relation(fields: [orderId], references: [id], onDelete: Cascade)
+}
+
+model InventoryItem {
+  id            String   @id @default(uuid())
+  branchId      String?
+  name          String
+  category      String // INGREDIENT, PACKAGING
+  unit          String // e.g. Litres, Kg, Bottles, Boxes, Pieces
+  currentStock  Float
+  minStockAlert Float
+  unitCost      Float    @default(0)
+  updatedAt     DateTime @updatedAt
+
+  branch Branch?          @relation(fields: [branchId], references: [id])
+  usages InventoryUsage[]
+}
+
+model InventoryUsage {
+  id           String   @id @default(uuid())
+  inventoryId  String
+  orderId      String?
+  quantityUsed Float
+  reason       String // SALE, WASTAGE, RESTOCK, ADJUSTMENT
+  createdAt    DateTime @default(now())
+
+  inventory InventoryItem @relation(fields: [inventoryId], references: [id])
+  order     Order?        @relation(fields: [orderId], references: [id])
+}
+
+model StaffShift {
+  id        String   @id @default(uuid())
+  userId    String
+  shiftName String // MORNING, EVENING, NIGHT
+  startTime DateTime
+  endTime   DateTime
+  notes     String?
+
+  user User @relation(fields: [userId], references: [id])
+}
+
+model StaffAttendance {
+  id       String    @id @default(uuid())
+  userId   String
+  date     DateTime  @default(now())
+  clockIn  DateTime
+  clockOut DateTime?
+  status   String // PRESENT, LATE, ABSENT, HALF_DAY
+
+  user User @relation(fields: [userId], references: [id])
+}
