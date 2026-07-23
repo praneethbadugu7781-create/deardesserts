@@ -62,12 +62,12 @@ export default function Navbar() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-[4.5rem]">
           {/* Logo */}
-          <Link href="/" className="focus:outline-none flex items-center gap-3">
+          <Link href="/" className="focus:outline-none flex items-center gap-3 flex-shrink-0">
             <Logo size="md" theme={isKds || isTokens ? 'dark' : 'light'} />
           </Link>
 
           {/* Navigation Links */}
-          <nav className="hidden lg:flex items-center space-x-1 bg-cream-200/60 p-1.5 rounded-2xl border border-cream-300/80">
+          <nav className="hidden lg:flex items-center space-x-1 bg-cream-200/60 p-1.5 rounded-2xl border border-cream-300/80 overflow-x-auto max-w-[55vw] scrollbar-hide [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
             {accessibleItems.map((item) => {
               const Icon = item.icon;
               const isActive = pathname === item.path;

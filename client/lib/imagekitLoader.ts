@@ -12,8 +12,11 @@ export default function imagekitLoader({
     return src;
   }
 
-  // Use the ImageKit endpoint from the environment variable, or fallback to the provided one
-  const urlEndpoint = process.env.NEXT_PUBLIC_IMAGEKIT_URL || 'https://ik.imagekit.io/deardesserts';
+  // Use the ImageKit endpoint if set, otherwise load local public asset directly
+  const urlEndpoint = process.env.NEXT_PUBLIC_IMAGEKIT_URL;
+  if (!urlEndpoint) {
+    return src;
+  }
   
   // Format the path
   const path = src.startsWith('/') ? src.slice(1) : src;
