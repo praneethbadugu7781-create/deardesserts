@@ -92,9 +92,9 @@ export default function AdminDashboardPage() {
   ];
 
   return (
-    <div className="space-y-6">
+    <div className="min-h-screen bg-cream-100 space-y-6 p-4 md:p-6">
       {/* Executive Header */}
-      <div className="bg-cocoa-900 text-cream-100 p-6 rounded-3xl shadow-xl border border-gold-500/30 flex flex-col md:flex-row md:items-center justify-between gap-4 backdrop-blur">
+      <div className="bg-white/80 backdrop-blur-xl border border-cream-300/80 p-6 rounded-3xl shadow-sm flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div className="flex items-center space-x-4">
           <div className="w-14 h-14 rounded-full p-0.5 bg-gradient-to-br from-gold-300 to-caramel-500 shadow-xl overflow-hidden">
             <img src="/ddlogo.jpeg" alt="Logo" className="w-full h-full object-contain rounded-full bg-cream-100" />
@@ -113,74 +113,74 @@ export default function AdminDashboardPage() {
 
       {/* Revenue Metrics Row */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-        <div className="bg-white p-5 rounded-2xl border border-cream-300 shadow-sm hover:shadow-md transition">
+        <div className="bg-white/80 backdrop-blur-xl p-5 rounded-2xl border border-cream-300/80 shadow-md hover:shadow-lg transition">
           <div className="flex items-center justify-between text-cocoa-600 mb-2">
             <span className="text-xs font-bold">Today's Revenue</span>
             <div className="w-8 h-8 rounded-xl bg-gold-100 text-gold-600 flex items-center justify-center font-bold">
               <DollarSign className="w-4 h-4" />
             </div>
           </div>
-          <div className="text-2xl font-extrabold text-cocoa-900">₹{metrics?.revenue.today.toLocaleString() || '0'}</div>
+          <div className="text-3xl font-display font-bold text-cocoa-900">₹{metrics?.revenue.today.toLocaleString() || '0'}</div>
           <div className="flex items-center space-x-1 mt-1 text-[11px] font-bold text-green-600">
             <TrendingUp className="w-3.5 h-3.5" />
             <span>+{metrics?.revenue.dailyGrowthPercent || 0}% vs yesterday</span>
           </div>
         </div>
 
-        <div className="bg-white p-5 rounded-2xl border border-cream-300 shadow-sm hover:shadow-md transition">
+        <div className="bg-white/80 backdrop-blur-xl p-5 rounded-2xl border border-cream-300/80 shadow-md hover:shadow-lg transition">
           <div className="flex items-center justify-between text-cocoa-600 mb-2">
             <span className="text-xs font-bold">Weekly Revenue</span>
             <div className="w-8 h-8 rounded-xl bg-blue-100 text-blue-600 flex items-center justify-center font-bold">
               <BarChart2 className="w-4 h-4" />
             </div>
           </div>
-          <div className="text-2xl font-extrabold text-cocoa-900">₹{metrics?.revenue.weekly.toLocaleString() || '0'}</div>
+          <div className="text-3xl font-display font-bold text-cocoa-900">₹{metrics?.revenue.weekly.toLocaleString() || '0'}</div>
           <div className="text-[11px] font-semibold text-cocoa-500 mt-1">Last 7 days total</div>
         </div>
 
-        <div className="bg-white p-5 rounded-2xl border border-cream-300 shadow-sm hover:shadow-md transition">
+        <div className="bg-white/80 backdrop-blur-xl p-5 rounded-2xl border border-cream-300/80 shadow-md hover:shadow-lg transition">
           <div className="flex items-center justify-between text-cocoa-600 mb-2">
             <span className="text-xs font-bold">Monthly Revenue</span>
             <div className="w-8 h-8 rounded-xl bg-purple-100 text-purple-600 flex items-center justify-center font-bold">
               <Receipt className="w-4 h-4" />
             </div>
           </div>
-          <div className="text-2xl font-extrabold text-cocoa-900">₹{metrics?.revenue.monthly.toLocaleString() || '0'}</div>
+          <div className="text-3xl font-display font-bold text-cocoa-900">₹{metrics?.revenue.monthly.toLocaleString() || '0'}</div>
           <div className="text-[11px] font-semibold text-cocoa-500 mt-1">Current month total</div>
         </div>
 
-        <div className="bg-white p-5 rounded-2xl border border-cream-300 shadow-sm hover:shadow-md transition">
+        <div className="bg-white/80 backdrop-blur-xl p-5 rounded-2xl border border-cream-300/80 shadow-md hover:shadow-lg transition">
           <div className="flex items-center justify-between text-cocoa-600 mb-2">
             <span className="text-xs font-bold">Yearly Revenue</span>
             <div className="w-8 h-8 rounded-xl bg-amber-100 text-amber-600 flex items-center justify-center font-bold">
               <Award className="w-4 h-4" />
             </div>
           </div>
-          <div className="text-2xl font-extrabold text-cocoa-900">₹{metrics?.revenue.yearly.toLocaleString() || '0'}</div>
+          <div className="text-3xl font-display font-bold text-cocoa-900">₹{metrics?.revenue.yearly.toLocaleString() || '0'}</div>
           <div className="text-[11px] font-semibold text-cocoa-500 mt-1">FY 2026 total</div>
         </div>
       </div>
 
       {/* Sales Stats Row */}
       <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
-        <div className="bg-cream-100 p-4 rounded-2xl border border-cream-300">
+        <div className="bg-white/80 backdrop-blur-xl p-4 rounded-2xl border border-cream-300/80 shadow-md">
           <div className="text-xs font-bold text-cocoa-600">Total Orders</div>
-          <div className="text-xl font-black text-cocoa-900 mt-1">{metrics?.sales.totalOrders || 0}</div>
+          <div className="text-2xl font-display font-bold text-cocoa-900 mt-1">{metrics?.sales.totalOrders || 0}</div>
         </div>
 
-        <div className="bg-cream-100 p-4 rounded-2xl border border-cream-300">
+        <div className="bg-white/80 backdrop-blur-xl p-4 rounded-2xl border border-cream-300/80 shadow-md">
           <div className="text-xs font-bold text-cocoa-600">Total Bills Generated</div>
-          <div className="text-xl font-black text-cocoa-900 mt-1">{metrics?.sales.totalBills || 0}</div>
+          <div className="text-2xl font-display font-bold text-cocoa-900 mt-1">{metrics?.sales.totalBills || 0}</div>
         </div>
 
-        <div className="bg-cream-100 p-4 rounded-2xl border border-cream-300">
+        <div className="bg-white/80 backdrop-blur-xl p-4 rounded-2xl border border-cream-300/80 shadow-md">
           <div className="text-xs font-bold text-cocoa-600">Total Items Sold</div>
-          <div className="text-xl font-black text-cocoa-900 mt-1">{metrics?.sales.totalItemsSold || 0}</div>
+          <div className="text-2xl font-display font-bold text-cocoa-900 mt-1">{metrics?.sales.totalItemsSold || 0}</div>
         </div>
 
-        <div className="bg-cream-100 p-4 rounded-2xl border border-cream-300">
+        <div className="bg-white/80 backdrop-blur-xl p-4 rounded-2xl border border-cream-300/80 shadow-md">
           <div className="text-xs font-bold text-cocoa-600">Average Order Value</div>
-          <div className="text-xl font-black text-gold-600 mt-1">₹{metrics?.sales.averageOrderValue || 0}</div>
+          <div className="text-2xl font-display font-bold text-gold-600 mt-1">₹{metrics?.sales.averageOrderValue || 0}</div>
         </div>
       </div>
 
@@ -215,7 +215,7 @@ export default function AdminDashboardPage() {
         </div>
 
         {/* Right: Payment Collections Breakdown (1 col) */}
-        <div className="bg-white p-5 rounded-2xl border border-cream-300 shadow-sm space-y-4">
+        <div className="bg-white/80 backdrop-blur-xl p-5 rounded-2xl border border-cream-300/80 shadow-md space-y-4">
           <div className="flex items-center justify-between border-b border-cream-200 pb-3">
             <h3 className="font-extrabold text-sm text-cocoa-900 flex items-center gap-2">
               <PieIcon className="w-4 h-4 text-caramel-500" /> Payment Collections
@@ -265,7 +265,7 @@ export default function AdminDashboardPage() {
       </div>
 
       {/* Top Selling Products Preview */}
-      <div className="bg-white p-5 rounded-2xl border border-cream-300 shadow-sm space-y-3">
+      <div className="bg-white/80 backdrop-blur-xl p-5 rounded-2xl border border-cream-300/80 shadow-md space-y-3">
         <h3 className="font-extrabold text-sm text-cocoa-900 flex items-center gap-2">
           <Award className="w-4 h-4 text-gold-600" /> Top Selling Signature Desserts
         </h3>

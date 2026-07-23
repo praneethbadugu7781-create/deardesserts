@@ -201,13 +201,14 @@ export default function CustomerHomePage() {
             <div className="hidden md:block"><Logo size="2xl" variant="title-only" /></div>
           </Link>
 
-          <PremiumButton
-            onClick={() => setShowStaffModal(true)}
-            size="sm"
-            icon={<Lock className="h-3.5 w-3.5" />}
-          >
-            <span className="hidden sm:inline">Staff Portal</span>
-          </PremiumButton>
+          <Link href="/login">
+            <PremiumButton
+              size="sm"
+              icon={<Lock className="h-3.5 w-3.5" />}
+            >
+              <span className="hidden sm:inline">Staff Portal</span>
+            </PremiumButton>
+          </Link>
         </div>
       </header>
 
@@ -550,20 +551,6 @@ export default function CustomerHomePage() {
           </div>
         </div>
       </footer>
-
-      <StaffLoginModal
-        open={showStaffModal}
-        onClose={() => setShowStaffModal(false)}
-        loginEmail={loginEmail}
-        setLoginEmail={setLoginEmail}
-        loginPassword={loginPassword}
-        setLoginPassword={setLoginPassword}
-        selectedRolePreset={selectedRolePreset}
-        onRoleSelect={handleRolePresetSelect}
-        loginError={loginError}
-        isLoggingIn={isLoggingIn}
-        onSubmit={handleStaffLogin}
-      />
     </div>
   );
 }

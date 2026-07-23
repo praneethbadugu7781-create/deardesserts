@@ -103,20 +103,20 @@ export default function InventoryPage() {
   });
 
   return (
-    <div className="space-y-6">
+    <div className="min-h-screen bg-cream-100 p-4 md:p-6 space-y-6">
       {/* Header */}
-      <div className="bg-cocoa-900 text-cream-100 p-6 rounded-3xl shadow-xl border border-cocoa-700 flex flex-col md:flex-row md:items-center justify-between gap-4">
+      <div className="bg-white/80 backdrop-blur-xl border border-cream-300/80 p-6 rounded-3xl shadow-sm flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div>
-          <h1 className="text-2xl font-black tracking-tight flex items-center gap-2">
+          <h1 className="text-3xl font-display font-bold text-cocoa-900 tracking-tight flex items-center gap-2">
             <Boxes className="w-6 h-6 text-gold-400" /> Inventory & Stock Management
           </h1>
-          <p className="text-xs text-cream-300">Track raw dessert ingredients, packaging & low-stock alerts</p>
+          <p className="text-sm text-gold-600 font-medium mt-1">Track raw dessert ingredients, packaging & low-stock alerts</p>
         </div>
 
         <div className="flex items-center space-x-3">
           <button
             onClick={() => setShowAddModal(true)}
-            className="flex items-center space-x-2 bg-gold-500 hover:bg-gold-400 text-cocoa-950 font-extrabold px-4 py-2.5 rounded-xl text-xs shadow-md transition"
+            className="flex items-center space-x-2 bg-gradient-to-r from-cocoa-800 to-cocoa-950 text-gold-300 hover:from-cocoa-900 hover:to-black font-extrabold px-4 py-2.5 rounded-xl text-xs shadow-md transition"
           >
             <Plus className="w-4 h-4" />
             <span>Add Stock Item</span>
@@ -151,7 +151,7 @@ export default function InventoryPage() {
             onClick={() => setCategoryFilter(tab.id as any)}
             className={`px-4 py-2 rounded-xl font-bold transition ${
               categoryFilter === tab.id
-                ? 'bg-cocoa-800 text-gold-300 shadow-md'
+                ? 'bg-gradient-to-r from-cocoa-800 to-cocoa-950 text-gold-300 shadow-md'
                 : 'bg-white text-cocoa-700 hover:bg-cream-200 border border-cream-300'
             }`}
           >
@@ -167,7 +167,7 @@ export default function InventoryPage() {
           return (
             <div
               key={item.id}
-              className={`bg-white rounded-2xl p-4 border shadow-sm space-y-3 flex flex-col justify-between ${
+              className={`bg-white/80 backdrop-blur-xl rounded-2xl p-4 border shadow-md space-y-3 flex flex-col justify-between ${
                 isLow ? 'border-red-400 bg-red-50/10' : 'border-cream-300'
               }`}
             >
@@ -215,7 +215,7 @@ export default function InventoryPage() {
       {/* Restock Modal */}
       {showRestockModal && selectedItem && (
         <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4">
-          <div className="bg-white rounded-3xl max-w-md w-full p-6 shadow-2xl space-y-4 border border-gold-500/40">
+          <div className="bg-white/95 backdrop-blur-xl rounded-3xl max-w-md w-full p-6 shadow-2xl space-y-4 border border-cream-300/80">
             <div className="flex items-center justify-between border-b border-cream-200 pb-3">
               <h3 className="font-extrabold text-base text-cocoa-900">Restock {selectedItem.name}</h3>
               <button onClick={() => setShowRestockModal(false)} className="text-cocoa-500 hover:text-cocoa-900">
@@ -231,7 +231,7 @@ export default function InventoryPage() {
                   min="1"
                   value={restockQty}
                   onChange={(e) => setRestockQty(parseFloat(e.target.value) || 0)}
-                  className="w-full mt-1 px-3 py-2 rounded-xl border border-cream-300 font-bold text-sm"
+                  className="w-full mt-1 px-4 py-2 rounded-xl border border-cream-300 bg-white focus:border-gold-500 focus:ring-1 focus:ring-gold-500 outline-none transition-all font-medium text-cocoa-900"
                 />
               </div>
 
@@ -249,7 +249,7 @@ export default function InventoryPage() {
 
             <button
               onClick={handleRestockSubmit}
-              className="w-full py-3 rounded-xl bg-cocoa-900 text-gold-300 font-extrabold text-xs hover:bg-gold-500 hover:text-cocoa-950 transition"
+              className="w-full py-3 rounded-xl bg-gradient-to-r from-cocoa-800 to-cocoa-950 text-gold-300 font-extrabold text-xs hover:from-cocoa-900 hover:to-black shadow-md transition"
             >
               Confirm Restock
             </button>
@@ -260,7 +260,7 @@ export default function InventoryPage() {
       {/* Add New Item Modal */}
       {showAddModal && (
         <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4">
-          <div className="bg-white rounded-3xl max-w-md w-full p-6 shadow-2xl space-y-4 border border-gold-500/40">
+          <div className="bg-white/95 backdrop-blur-xl rounded-3xl max-w-md w-full p-6 shadow-2xl space-y-4 border border-cream-300/80">
             <div className="flex items-center justify-between border-b border-cream-200 pb-3">
               <h3 className="font-extrabold text-base text-cocoa-900">Add Inventory Item</h3>
               <button onClick={() => setShowAddModal(false)} className="text-cocoa-500 hover:text-cocoa-900">
@@ -276,7 +276,7 @@ export default function InventoryPage() {
                   placeholder="e.g. Vanilla Bean Pods"
                   value={newItemName}
                   onChange={(e) => setNewItemName(e.target.value)}
-                  className="w-full mt-1 px-3 py-2 rounded-xl border border-cream-300 font-medium"
+                  className="w-full mt-1 px-4 py-2 rounded-xl border border-cream-300 bg-white focus:border-gold-500 focus:ring-1 focus:ring-gold-500 outline-none transition-all font-medium text-cocoa-900"
                 />
               </div>
 
@@ -286,7 +286,7 @@ export default function InventoryPage() {
                   <select
                     value={newItemCategory}
                     onChange={(e) => setNewItemCategory(e.target.value as any)}
-                    className="w-full mt-1 px-3 py-2 rounded-xl border border-cream-300 font-medium"
+                    className="w-full mt-1 px-4 py-2 rounded-xl border border-cream-300 bg-white focus:border-gold-500 focus:ring-1 focus:ring-gold-500 outline-none transition-all font-medium text-cocoa-900"
                   >
                     <option value="INGREDIENT">Ingredient</option>
                     <option value="PACKAGING">Packaging</option>
@@ -299,7 +299,7 @@ export default function InventoryPage() {
                     placeholder="Litres, Kg, Pieces"
                     value={newItemUnit}
                     onChange={(e) => setNewItemUnit(e.target.value)}
-                    className="w-full mt-1 px-3 py-2 rounded-xl border border-cream-300 font-medium"
+                    className="w-full mt-1 px-4 py-2 rounded-xl border border-cream-300 bg-white focus:border-gold-500 focus:ring-1 focus:ring-gold-500 outline-none transition-all font-medium text-cocoa-900"
                   />
                 </div>
               </div>
@@ -311,7 +311,7 @@ export default function InventoryPage() {
                     type="number"
                     value={newItemStock}
                     onChange={(e) => setNewItemStock(parseFloat(e.target.value) || 0)}
-                    className="w-full mt-1 px-3 py-2 rounded-xl border border-cream-300 font-medium"
+                    className="w-full mt-1 px-4 py-2 rounded-xl border border-cream-300 bg-white focus:border-gold-500 focus:ring-1 focus:ring-gold-500 outline-none transition-all font-medium text-cocoa-900"
                   />
                 </div>
                 <div>
@@ -320,7 +320,7 @@ export default function InventoryPage() {
                     type="number"
                     value={newItemMinAlert}
                     onChange={(e) => setNewItemMinAlert(parseFloat(e.target.value) || 0)}
-                    className="w-full mt-1 px-3 py-2 rounded-xl border border-cream-300 font-medium"
+                    className="w-full mt-1 px-4 py-2 rounded-xl border border-cream-300 bg-white focus:border-gold-500 focus:ring-1 focus:ring-gold-500 outline-none transition-all font-medium text-cocoa-900"
                   />
                 </div>
                 <div>
@@ -329,7 +329,7 @@ export default function InventoryPage() {
                     type="number"
                     value={newItemCost}
                     onChange={(e) => setNewItemCost(parseFloat(e.target.value) || 0)}
-                    className="w-full mt-1 px-3 py-2 rounded-xl border border-cream-300 font-medium"
+                    className="w-full mt-1 px-4 py-2 rounded-xl border border-cream-300 bg-white focus:border-gold-500 focus:ring-1 focus:ring-gold-500 outline-none transition-all font-medium text-cocoa-900"
                   />
                 </div>
               </div>
@@ -337,7 +337,7 @@ export default function InventoryPage() {
 
             <button
               onClick={handleAddItemSubmit}
-              className="w-full py-3 rounded-xl bg-gold-500 text-cocoa-950 font-extrabold text-xs hover:bg-gold-400 transition"
+              className="w-full py-3 rounded-xl bg-gradient-to-r from-cocoa-800 to-cocoa-950 text-gold-300 font-extrabold text-xs hover:from-cocoa-900 hover:to-black shadow-md transition"
             >
               Save New Item
             </button>

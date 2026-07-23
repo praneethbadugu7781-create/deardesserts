@@ -76,38 +76,57 @@ export default function CustomerTokenDisplayPage() {
   };
 
   return (
-    <div className="min-h-screen -m-4 sm:-m-6 lg:-m-8 bg-cocoa-950 text-cream-100 p-6 flex flex-col justify-between">
+    <div className="min-h-screen -m-4 sm:-m-6 lg:-m-8 bg-cream-100 text-cocoa-900 p-6 flex flex-col justify-between">
+      {/* "Now Serving" Banner if any token is ready */}
+      {ready.length > 0 && (
+        <div className="bg-emerald-50 border-2 border-emerald-300 rounded-3xl p-4 mb-6 shadow-lg flex items-center justify-center space-x-4 animate-pulse">
+          <Sparkles className="w-8 h-8 text-emerald-600" />
+          <h2 className="text-3xl font-display font-bold text-emerald-800 tracking-wide">
+            NOW SERVING: <span className="text-gold-600">{ready.map(t => t.tokenNumber).join(', ')}</span>
+          </h2>
+          <Sparkles className="w-8 h-8 text-emerald-600" />
+        </div>
+      )}
+
       {/* Header Bar */}
-      <div className="flex items-center justify-between bg-cocoa-900/90 border border-gold-500/30 p-4 rounded-3xl shadow-2xl backdrop-blur">
+      <div className="flex items-center justify-between bg-white/80 border border-cream-300/80 p-4 rounded-3xl shadow-lg backdrop-blur-xl">
         <div className="flex items-center space-x-4">
-          <div className="w-14 h-14 rounded-full p-0.5 bg-gradient-to-br from-gold-300 to-caramel-500 shadow-xl overflow-hidden">
+          <div className="w-14 h-14 rounded-full p-0.5 bg-gradient-to-br from-gold-300 to-gold-500 shadow-md overflow-hidden">
             <img src="/ddlogo.jpeg" alt="Logo" className="w-full h-full object-contain rounded-full bg-cream-100" />
           </div>
-          <div>
-            <img src="/ddtitle.jpeg" alt="Dear Desserts" className="h-10 object-contain filter brightness-200 contrast-125 drop-shadow-[0_2px_8px_rgba(212,175,55,0.4)]" />
-            <p className="text-xs text-gold-400 font-bold tracking-widest uppercase mt-0.5">Live Order Token Monitor</p>
+          <div className="flex items-center space-x-3">
+            <div className="bg-cocoa-50 p-2 rounded-xl border border-cocoa-100">
+              <MonitorPlay className="w-6 h-6 text-cocoa-800" />
+            </div>
+            <div>
+              <h1 className="text-xl font-display font-bold text-cocoa-900">Live Token TV Display</h1>
+              <p className="text-[10px] font-accent text-cocoa-600 font-bold tracking-widest uppercase mt-0.5">Dear Desserts</p>
+            </div>
           </div>
         </div>
 
         <div className="flex items-center space-x-4">
           <div className="text-right">
-            <div className="text-xl font-mono font-extrabold text-gold-400">{currentTime}</div>
-            <div className="text-[10px] text-cream-400 font-bold">LIVE UPDATE</div>
+            <div className="text-xl font-mono font-extrabold text-cocoa-900">{currentTime}</div>
+            <div className="text-[10px] text-cocoa-500 font-accent font-bold uppercase tracking-wider">LIVE UPDATE</div>
           </div>
 
           <button
             onClick={() => setVoiceEnabled(!voiceEnabled)}
-            className={`p-3 rounded-2xl border transition ${
-              voiceEnabled ? 'bg-gold-500 text-cocoa-950 border-gold-400' : 'bg-cocoa-800 text-cream-400 border-cocoa-700'
+            className={`px-4 py-3 rounded-full border transition flex items-center space-x-2 font-accent text-xs font-bold tracking-wider ${
+              voiceEnabled 
+                ? 'bg-gradient-to-r from-cocoa-800 to-cocoa-950 text-gold-300 border-transparent shadow-md hover:shadow-lg hover:scale-105' 
+                : 'bg-cream-200 text-cocoa-500 border-cream-300 hover:bg-cream-300'
             }`}
             title="Toggle Voice Announcements"
           >
-            <Volume2 className="w-5 h-5" />
+            <Volume2 className="w-4 h-4" />
+            <span>{voiceEnabled ? 'VOICE ON' : 'VOICE OFF'}</span>
           </button>
 
           <button
             onClick={toggleFullscreen}
-            className="p-3 rounded-2xl bg-cocoa-800 text-cream-300 hover:text-white border border-cocoa-700 transition"
+            className="p-3 rounded-full bg-cream-200 text-cocoa-700 hover:bg-cream-300 hover:text-cocoa-900 border border-cream-300 transition shadow-sm hover:shadow-md hover:scale-105"
             title="Toggle TV Fullscreen"
           >
             <Maximize className="w-5 h-5" />
@@ -118,27 +137,33 @@ export default function CustomerTokenDisplayPage() {
       {/* Main Split Grid (PREPARING vs READY) */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-8 my-6 flex-1">
         {/* LEFT: PREPARING TOKENS */}
-        <div className="bg-cocoa-900/60 rounded-3xl border-2 border-amber-500/40 p-6 flex flex-col space-y-4 shadow-xl">
-          <div className="flex items-center space-x-3 border-b border-amber-500/30 pb-4">
-            <Clock className="w-8 h-8 text-amber-400 animate-spin" />
+        <div className="bg-white/80 rounded-3xl border border-cream-300/80 p-6 flex flex-col space-y-4 shadow-lg backdrop-blur-xl">
+          <div className="flex items-center space-x-3 border-b border-cream-200 pb-4">
+            <div className="bg-amber-100 p-2 rounded-xl">
+              <Clock className="w-8 h-8 text-amber-600 animate-spin" style={{ animationDuration: '3s' }} />
+            </div>
             <div>
-              <h2 className="text-2xl font-black text-amber-400 tracking-wide">PREPARING</h2>
-              <p className="text-xs text-cream-400 font-semibold">Your delicious dessert is being crafted</p>
+              <h2 className="text-2xl font-display font-bold text-amber-600 tracking-wide">🔥 NOW PREPARING</h2>
+              <p className="text-xs text-cocoa-600 font-sans">Your delicious dessert is being crafted</p>
             </div>
           </div>
 
-          <div className="grid grid-cols-2 sm:grid-cols-3 gap-4 flex-1 align-content-start overflow-y-auto">
+          <div className="grid grid-cols-2 sm:grid-cols-3 gap-4 flex-1 content-start overflow-y-auto">
             {preparing.length === 0 ? (
-              <div className="col-span-full py-16 text-center text-cream-500 font-bold text-lg">
+              <div className="col-span-full py-16 text-center text-cocoa-400 font-sans text-lg">
                 No orders preparing right now
               </div>
             ) : (
               preparing.map((t) => (
                 <div
                   key={t.id || t.tokenNumber}
-                  className="bg-amber-950/40 border border-amber-500/50 rounded-2xl p-4 text-center shadow-lg"
+                  className="bg-cream-50 border-2 border-amber-300 rounded-2xl p-4 text-center shadow-md relative overflow-hidden group"
                 >
-                  <span className="text-3xl sm:text-4xl font-black tracking-wider text-amber-300">
+                  <div className="absolute inset-0 bg-amber-400/10 animate-pulse"></div>
+                  <div className="absolute top-0 left-0 h-1 bg-amber-400/50 w-full">
+                    <div className="h-full bg-amber-500 w-1/2 animate-bounce"></div>
+                  </div>
+                  <span className="text-4xl sm:text-5xl font-display font-bold text-amber-700 relative z-10">
                     {t.tokenNumber}
                   </span>
                 </div>
@@ -148,27 +173,29 @@ export default function CustomerTokenDisplayPage() {
         </div>
 
         {/* RIGHT: READY FOR PICKUP TOKENS */}
-        <div className="bg-cocoa-900/60 rounded-3xl border-2 border-green-500/60 p-6 flex flex-col space-y-4 shadow-2xl">
-          <div className="flex items-center space-x-3 border-b border-green-500/30 pb-4">
-            <CheckCircle2 className="w-8 h-8 text-green-400 animate-pulse" />
+        <div className="bg-white/80 rounded-3xl border border-cream-300/80 p-6 flex flex-col space-y-4 shadow-lg backdrop-blur-xl">
+          <div className="flex items-center space-x-3 border-b border-cream-200 pb-4">
+            <div className="bg-emerald-100 p-2 rounded-xl shadow-inner">
+              <CheckCircle2 className="w-8 h-8 text-emerald-600 animate-pulse" />
+            </div>
             <div>
-              <h2 className="text-2xl font-black text-green-400 tracking-wide">READY FOR PICKUP</h2>
-              <p className="text-xs text-cream-400 font-semibold">Please collect your order at the counter</p>
+              <h2 className="text-2xl font-display font-bold text-emerald-600 tracking-wide">✅ READY FOR PICKUP</h2>
+              <p className="text-xs text-cocoa-600 font-sans">Please collect your order at the counter</p>
             </div>
           </div>
 
-          <div className="grid grid-cols-2 sm:grid-cols-3 gap-4 flex-1 align-content-start overflow-y-auto">
+          <div className="grid grid-cols-2 sm:grid-cols-3 gap-4 flex-1 content-start overflow-y-auto">
             {ready.length === 0 ? (
-              <div className="col-span-full py-16 text-center text-cream-500 font-bold text-lg">
+              <div className="col-span-full py-16 text-center text-cocoa-400 font-sans text-lg">
                 No orders waiting for pickup
               </div>
             ) : (
               ready.map((t) => (
                 <div
                   key={t.id || t.tokenNumber}
-                  className="bg-green-950/60 border-2 border-green-400 rounded-2xl p-4 text-center shadow-2xl animate-pulse-glow"
+                  className="bg-emerald-50 border-2 border-emerald-400 rounded-2xl p-4 text-center shadow-xl animate-pulse flex items-center justify-center transform transition-transform hover:scale-105"
                 >
-                  <span className="text-4xl sm:text-5xl font-black tracking-wider text-green-300">
+                  <span className="text-5xl sm:text-6xl font-display font-bold text-gold-500 drop-shadow-md">
                     {t.tokenNumber}
                   </span>
                 </div>
@@ -179,8 +206,8 @@ export default function CustomerTokenDisplayPage() {
       </div>
 
       {/* Footer Banner */}
-      <div className="bg-cocoa-900 border border-cocoa-700 py-3 px-6 rounded-2xl text-center text-xs text-cream-400 font-medium">
-        Thank you for choosing <span className="text-gold-400 font-bold">Dear Desserts</span>! Show your token number at the pickup counter.
+      <div className="bg-white/80 border border-cream-300/80 py-3 px-6 rounded-2xl text-center text-sm text-cocoa-600 font-sans shadow-md backdrop-blur-xl">
+        Thank you for choosing <span className="text-gold-600 font-display font-bold text-lg">Dear Desserts</span>! Show your token number at the pickup counter.
       </div>
     </div>
   );

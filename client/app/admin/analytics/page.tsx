@@ -31,14 +31,14 @@ export default function ItemSalesAnalyticsPage() {
   const colors = ['#D4AF37', '#C87D55', '#3B82F6', '#10B981', '#8B5CF6'];
 
   return (
-    <div className="space-y-6">
+    <div className="min-h-screen bg-cream-100 p-4 md:p-6 space-y-6">
       {/* Header & Filter Tabs */}
-      <div className="bg-cocoa-900 text-cream-100 p-6 rounded-3xl shadow-xl border border-cocoa-700 flex flex-col md:flex-row md:items-center justify-between gap-4">
+      <div className="bg-white/80 backdrop-blur-xl border border-cream-300/80 p-6 rounded-3xl shadow-sm flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div>
-          <h1 className="text-2xl font-black tracking-tight flex items-center gap-2">
+          <h1 className="text-3xl font-display font-bold text-cocoa-900 tracking-tight flex items-center gap-2">
             <BarChart3 className="w-6 h-6 text-gold-400" /> Item-Wise Sales Analytics
           </h1>
-          <p className="text-xs text-cream-300">Track best & least selling dessert products across timeframes</p>
+          <p className="text-sm text-gold-600 font-medium">Track best & least selling dessert products across timeframes</p>
         </div>
 
         {/* Timeframe Tabs */}
@@ -65,7 +65,7 @@ export default function ItemSalesAnalyticsPage() {
       </div>
 
       {/* Top 5 Products Bar Chart */}
-      <div className="bg-white p-5 rounded-2xl border border-cream-300 shadow-sm space-y-4">
+      <div className="bg-white/80 backdrop-blur-xl border border-cream-300/80 rounded-2xl p-5 shadow-md space-y-4">
         <div className="flex items-center justify-between border-b border-cream-200 pb-3">
           <h3 className="font-extrabold text-sm text-cocoa-900 flex items-center gap-2">
             <Award className="w-4 h-4 text-gold-600" /> Top 5 Selling Products (Quantity Volume)
@@ -92,7 +92,7 @@ export default function ItemSalesAnalyticsPage() {
       {/* Tables: Top Selling vs Least Selling */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         {/* Top Selling Table */}
-        <div className="bg-white p-5 rounded-2xl border border-cream-300 shadow-sm space-y-3">
+        <div className="bg-white/80 backdrop-blur-xl border border-cream-300/80 rounded-2xl p-5 shadow-md space-y-3">
           <h3 className="font-extrabold text-sm text-cocoa-900 flex items-center gap-2 border-b border-cream-200 pb-2">
             <TrendingUp className="w-4 h-4 text-green-600" /> Top Performing Desserts
           </h3>
@@ -116,7 +116,7 @@ export default function ItemSalesAnalyticsPage() {
         </div>
 
         {/* Least Selling Table */}
-        <div className="bg-white p-5 rounded-2xl border border-cream-300 shadow-sm space-y-3">
+        <div className="bg-white/80 backdrop-blur-xl border border-cream-300/80 rounded-2xl p-5 shadow-md space-y-3">
           <h3 className="font-extrabold text-sm text-cocoa-900 flex items-center gap-2 border-b border-cream-200 pb-2">
             <TrendingDown className="w-4 h-4 text-amber-600" /> Slow Moving Desserts
           </h3>

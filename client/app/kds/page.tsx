@@ -96,9 +96,9 @@ export default function KitchenDisplayPage() {
   };
 
   const statusConfig: Record<string, { bg: string; badge: string; text: string }> = {
-    NEW: { bg: 'border-blue-500 bg-blue-950/40', badge: 'bg-blue-500 text-white', text: '🆕 NEW ORDER' },
-    PREPARING: { bg: 'border-amber-500 bg-amber-950/30', badge: 'bg-amber-500 text-black', text: '🔥 PREPARING' },
-    READY: { bg: 'border-green-500 bg-green-950/30', badge: 'bg-green-500 text-black', text: '✅ READY' },
+    NEW: { bg: 'bg-blue-50/50', badge: 'bg-blue-100 text-blue-800 border border-blue-200', text: 'NEW ORDER' },
+    PREPARING: { bg: 'bg-amber-50/50', badge: 'bg-amber-100 text-amber-800 border border-amber-200', text: 'PREPARING' },
+    READY: { bg: 'bg-emerald-50/50', badge: 'bg-emerald-100 text-emerald-800 border border-emerald-200', text: 'READY' },
   };
 
   const newOrders = orders.filter((o) => o.status === 'NEW');
@@ -106,58 +106,58 @@ export default function KitchenDisplayPage() {
   const readyOrders = orders.filter((o) => o.status === 'READY');
 
   return (
-    <div className="min-h-screen -m-4 sm:-m-6 lg:-m-8 bg-cocoa-950 text-cream-100 p-4 sm:p-6">
+    <div className="min-h-screen -m-4 sm:-m-6 lg:-m-8 bg-cream-100 text-cocoa-900 p-4 sm:p-6 font-sans">
       {/* KDS Header */}
-      <div className="flex items-center justify-between mb-6 bg-cocoa-900/90 p-4 rounded-3xl border border-gold-500/30 shadow-2xl backdrop-blur">
+      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between mb-6 bg-white/80 p-5 rounded-3xl border border-cream-300/80 shadow-lg backdrop-blur-xl gap-4">
         <div className="flex items-center gap-4">
-          <div className="w-14 h-14 rounded-full p-0.5 bg-gradient-to-br from-gold-300 to-caramel-500 shadow-xl overflow-hidden">
-            <img src="/ddlogo.jpeg" alt="Logo" className="w-full h-full object-contain rounded-full bg-cream-100" />
+          <div className="w-14 h-14 rounded-full p-2.5 bg-gradient-to-br from-cocoa-800 to-cocoa-950 shadow-md flex items-center justify-center text-gold-300">
+            <ChefHat className="w-8 h-8" />
           </div>
           <div>
-            <img src="/ddtitle.jpeg" alt="Dear Desserts" className="h-9 object-contain filter brightness-200 contrast-125 drop-shadow-[0_2px_8px_rgba(212,175,55,0.4)]" />
-            <p className="text-xs text-gold-400 font-extrabold tracking-wider uppercase mt-0.5">Kitchen Display System • Live Prep Queue</p>
+            <h1 className="text-2xl font-display font-bold text-cocoa-900 tracking-tight">Kitchen Display System</h1>
+            <p className="text-xs font-accent text-gold-500 font-bold tracking-widest uppercase mt-0.5">Live Prep Queue</p>
           </div>
         </div>
         <div className="flex items-center gap-4">
           <div className="text-right">
-            <div className="text-3xl font-black text-gold-400">{orders.length}</div>
-            <div className="text-[10px] text-cream-400 font-semibold">ACTIVE ORDERS</div>
+            <div className="text-3xl font-display font-black text-cocoa-900">{orders.length}</div>
+            <div className="text-[10px] font-accent text-cocoa-500 font-bold tracking-widest uppercase">Active Orders</div>
           </div>
-          <button onClick={fetchOrders} className="p-3 rounded-xl bg-cocoa-800 hover:bg-cocoa-700 border border-cocoa-600 transition">
+          <button onClick={fetchOrders} className="p-3 rounded-xl bg-white hover:bg-cream-100 border border-cream-300 transition-colors shadow-sm text-cocoa-600">
             <RefreshCw className="w-5 h-5" />
           </button>
         </div>
       </div>
 
       {/* Status Summary Row */}
-      <div className="grid grid-cols-3 gap-3 mb-6">
-        <div className="bg-blue-900/30 border border-blue-700 rounded-xl p-3 text-center">
-          <div className="text-2xl font-black text-blue-400">{newOrders.length}</div>
-          <div className="text-xs font-bold text-blue-300">NEW</div>
+      <div className="grid grid-cols-3 gap-3 sm:gap-4 mb-8">
+        <div className="bg-blue-50 border border-blue-200 rounded-2xl p-4 text-center shadow-sm">
+          <div className="text-3xl font-display font-bold text-blue-900">{newOrders.length}</div>
+          <div className="text-[10px] font-accent font-bold text-blue-600 tracking-wider mt-1">NEW</div>
         </div>
-        <div className="bg-amber-900/30 border border-amber-700 rounded-xl p-3 text-center">
-          <div className="text-2xl font-black text-amber-400">{preparingOrders.length}</div>
-          <div className="text-xs font-bold text-amber-300">PREPARING</div>
+        <div className="bg-amber-50 border border-amber-200 rounded-2xl p-4 text-center shadow-sm">
+          <div className="text-3xl font-display font-bold text-amber-900">{preparingOrders.length}</div>
+          <div className="text-[10px] font-accent font-bold text-amber-600 tracking-wider mt-1">PREPARING</div>
         </div>
-        <div className="bg-green-900/30 border border-green-700 rounded-xl p-3 text-center">
-          <div className="text-2xl font-black text-green-400">{readyOrders.length}</div>
-          <div className="text-xs font-bold text-green-300">READY</div>
+        <div className="bg-emerald-50 border border-emerald-200 rounded-2xl p-4 text-center shadow-sm">
+          <div className="text-3xl font-display font-bold text-emerald-900">{readyOrders.length}</div>
+          <div className="text-[10px] font-accent font-bold text-emerald-600 tracking-wider mt-1">READY</div>
         </div>
       </div>
 
       {loading ? (
-        <div className="text-center py-20 text-cream-400">
-          <RefreshCw className="w-10 h-10 animate-spin mx-auto mb-4" />
-          <p className="text-xl font-bold">Loading Kitchen Orders...</p>
+        <div className="text-center py-20 text-cocoa-500">
+          <RefreshCw className="w-10 h-10 animate-spin mx-auto mb-4 text-gold-400" />
+          <p className="text-xl font-display font-medium">Loading Kitchen Orders...</p>
         </div>
       ) : orders.length === 0 ? (
-        <div className="text-center py-20 text-cream-400">
-          <ChefHat className="w-16 h-16 mx-auto mb-4 opacity-30" />
-          <p className="text-2xl font-bold">No Active Orders</p>
-          <p className="text-sm mt-2">Waiting for new orders from POS...</p>
+        <div className="text-center py-24 bg-white/60 backdrop-blur-xl border border-cream-300/60 rounded-3xl shadow-sm">
+          <ChefHat className="w-16 h-16 mx-auto mb-4 text-cream-400" />
+          <p className="text-2xl font-display font-bold text-cocoa-900">No Active Orders</p>
+          <p className="text-sm mt-2 text-cocoa-500">Waiting for new orders from POS...</p>
         </div>
       ) : (
-        <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
+        <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-5">
           {orders.map((order) => {
             const cfg = statusConfig[order.status] || statusConfig['NEW'];
             const elapsed = getElapsed(order.createdAt);
@@ -166,47 +166,50 @@ export default function KitchenDisplayPage() {
             return (
               <div
                 key={order.id}
-                className={`rounded-2xl border-2 p-5 transition-all ${cfg.bg} ${isUrgent ? 'animate-pulse border-red-500' : ''}`}
+                className={`rounded-2xl border bg-white/90 shadow-md p-5 transition-all backdrop-blur-xl ${cfg.bg} ${isUrgent ? 'animate-pulse ring-2 ring-red-400 ring-offset-2 ring-offset-cream-100 border-red-300' : 'border-cream-300'}`}
               >
                 {/* Token & Status */}
-                <div className="flex items-center justify-between mb-4">
-                  <span className="text-3xl font-black">{order.tokenNumber || '—'}</span>
-                  <span className={`text-xs font-black px-3 py-1.5 rounded-full ${cfg.badge}`}>{cfg.text}</span>
+                <div className="flex items-center justify-between mb-4 pb-4 border-b border-cream-200">
+                  <div className="flex items-baseline gap-2">
+                    <span className="text-sm font-medium text-cocoa-500">Token</span>
+                    <span className="text-4xl font-display font-bold text-cocoa-900">{order.tokenNumber || '—'}</span>
+                  </div>
+                  <span className={`text-xs font-bold px-3 py-1.5 rounded-full ${cfg.badge}`}>{cfg.text}</span>
                 </div>
 
                 {/* Timer */}
-                <div className="flex items-center gap-2 mb-4 text-sm">
-                  <Clock className={`w-4 h-4 ${isUrgent ? 'text-red-400' : 'text-cream-400'}`} />
-                  <span className={`font-bold ${isUrgent ? 'text-red-400' : 'text-cream-300'}`}>
+                <div className="flex items-center gap-2 mb-5 text-sm">
+                  <Clock className={`w-4 h-4 ${isUrgent ? 'text-red-500' : 'text-cocoa-400'}`} />
+                  <span className={`font-medium ${isUrgent ? 'text-red-600 font-bold' : 'text-cocoa-600'}`}>
                     {elapsed} min ago
                   </span>
-                  {isUrgent && <span className="text-[10px] text-red-400 font-bold animate-bounce">⚠ DELAYED</span>}
+                  {isUrgent && <span className="text-[10px] text-red-600 font-bold animate-bounce bg-red-100 px-2 py-0.5 rounded-full ml-auto">⚠ DELAYED</span>}
                 </div>
 
                 {/* Items */}
-                <div className="space-y-2 mb-5 bg-black/20 rounded-xl p-3">
+                <div className="space-y-3 mb-6 bg-cream-50/50 rounded-xl p-4 border border-cream-200/50">
                   {order.items.map((item, i) => (
-                    <div key={i} className="flex justify-between text-sm">
-                      <span className="text-cream-200 font-medium">{item.name}</span>
-                      <span className="text-xl font-black text-gold-400">×{item.quantity}</span>
+                    <div key={i} className="flex justify-between items-center text-sm border-b border-cream-200/50 last:border-0 pb-2 last:pb-0">
+                      <span className="text-cocoa-800 font-medium">{item.name}</span>
+                      <span className="text-lg font-bold text-gold-500 bg-gold-50 px-2 py-0.5 rounded-md">×{item.quantity}</span>
                     </div>
                   ))}
                 </div>
 
                 {/* Action Buttons */}
-                <div className="flex gap-2">
+                <div className="flex gap-2 mt-auto">
                   {order.status === 'NEW' && (
                     <button
                       onClick={() => updateStatus(order.id, 'PREPARING')}
-                      className="flex-1 py-3 bg-amber-500 hover:bg-amber-400 text-black font-bold rounded-xl text-sm flex items-center justify-center gap-2 transition shadow-lg"
+                      className="flex-1 py-3 bg-gradient-to-r from-amber-400 to-amber-500 hover:from-amber-500 hover:to-amber-600 text-amber-950 font-bold rounded-xl text-sm flex items-center justify-center gap-2 transition-all shadow-md hover:shadow-lg transform hover:-translate-y-0.5"
                     >
-                      <Play className="w-5 h-5" /> Start Preparing
+                      <Play className="w-4 h-4" fill="currentColor" /> Start Prep
                     </button>
                   )}
                   {order.status === 'PREPARING' && (
                     <button
                       onClick={() => updateStatus(order.id, 'READY')}
-                      className="flex-1 py-3 bg-green-500 hover:bg-green-400 text-black font-bold rounded-xl text-sm flex items-center justify-center gap-2 transition shadow-lg"
+                      className="flex-1 py-3 bg-gradient-to-r from-emerald-400 to-emerald-500 hover:from-emerald-500 hover:to-emerald-600 text-emerald-950 font-bold rounded-xl text-sm flex items-center justify-center gap-2 transition-all shadow-md hover:shadow-lg transform hover:-translate-y-0.5"
                     >
                       <CheckCircle2 className="w-5 h-5" /> Mark Ready
                     </button>
@@ -214,9 +217,9 @@ export default function KitchenDisplayPage() {
                   {order.status === 'READY' && (
                     <button
                       onClick={() => updateStatus(order.id, 'COMPLETED')}
-                      className="flex-1 py-3 bg-cream-200 hover:bg-cream-300 text-cocoa-900 font-bold rounded-xl text-sm flex items-center justify-center gap-2 transition shadow-lg"
+                      className="flex-1 py-3 bg-gradient-to-r from-cocoa-800 to-cocoa-900 hover:from-cocoa-900 hover:to-black text-gold-300 font-bold rounded-xl text-sm flex items-center justify-center gap-2 transition-all shadow-md hover:shadow-lg transform hover:-translate-y-0.5"
                     >
-                      <ArrowRight className="w-5 h-5" /> Complete & Clear
+                      <ArrowRight className="w-5 h-5" /> Complete
                     </button>
                   )}
                 </div>
