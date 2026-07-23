@@ -1,4 +1,12 @@
-const API_BASE_URL = typeof window !== 'undefined' ? '/api' : 'http://localhost:5000/api';
+const getApiBaseUrl = () => {
+  if (process.env.NEXT_PUBLIC_API_URL) {
+    return `${process.env.NEXT_PUBLIC_API_URL}/api`;
+  }
+  if (typeof window !== 'undefined' && window.location.hostname !== 'localhost') {
+    return 'https://deardesserts.onrender.com/api';
+  }
+  return typeof window !== 'undefined' ? '/api' : 'http://localhost:5000/api';
+};
 
 export async function fetchApi(endpoint: string, options: RequestInit = {}) {
   const token = typeof window !== 'undefined' ? localStorage.getItem('dd_token') : null;
@@ -12,7 +20,8 @@ export async function fetchApi(endpoint: string, options: RequestInit = {}) {
     headers['Authorization'] = `Bearer ${token}`;
   }
 
-  const response = await fetch(`${API_BASE_URL}${endpoint}`, {
+  const baseUrl = getApiBaseUrl();
+  const response = await fetch(`${baseUrl}${endpoint}`, {
     ...options,
     headers,
   });
