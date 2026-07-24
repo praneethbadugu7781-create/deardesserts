@@ -10,7 +10,6 @@ import PremiumButton from '../components/PremiumButton';
 import FadeInView from '../components/FadeInView';
 import MenuProductCard from '../components/MenuProductCard';
 import StaffLoginModal from '../components/StaffLoginModal';
-import DessertCraftStudio from '../components/DessertCraftStudio';
 import LiquidMetalButton from '../components/LiquidMetalButton';
 import {
   Search,
@@ -185,28 +184,27 @@ export default function CustomerHomePage() {
         }`}
       >
         <div className="mx-auto flex max-w-7xl items-center justify-between px-4 sm:px-6 lg:px-8 relative">
-          {/* Left Side: Emblem Logo + Nav Links (Menu, Craft Studio, Specials, Our Story) */}
+          {/* Left Side: Emblem Logo + Nav Links (Menu, Specials, Our Story) */}
           <div className="flex items-center gap-6">
             <Link href="/" className="flex-shrink-0">
               <Logo size="md" variant="icon-only" />
             </Link>
-            <nav className="hidden xl:flex items-center gap-5">
+            <nav className="hidden xl:flex items-center gap-6">
               <a href="#menu-section" className="nav-link-premium">Menu</a>
-              <a href="#craft-studio-section" className="nav-link-premium">Craft Studio</a>
               <a href="#specials-section" className="nav-link-premium">Specials</a>
               <a href="#story-section" className="nav-link-premium">Our Story</a>
             </nav>
           </div>
 
           {/* Center (Middle): Dear Desserts Title Image BIGGER */}
-          <Link href="/" className="hidden md:block absolute left-1/2 -translate-x-1/2">
-            <div className="h-16 w-60 lg:h-20 lg:w-80 relative flex items-center justify-center">
+          <Link href="/" className="absolute left-1/2 -translate-x-1/2 flex items-center justify-center">
+            <div className="h-10 w-40 sm:h-14 sm:w-56 md:h-18 md:w-72 lg:h-22 lg:w-96 relative flex items-center justify-center">
               <Image
                 src="/ddtitle.png"
                 alt="Dear Desserts Title"
                 fill
                 sizes="(max-width: 768px) 100vw, 50vw"
-                className="object-contain filter drop-shadow-md transition-transform duration-300 hover:scale-105"
+                className="object-contain filter drop-shadow-lg transition-transform duration-300 hover:scale-105"
                 priority
               />
             </div>
@@ -238,20 +236,13 @@ export default function CustomerHomePage() {
 
         {/* Mobile Navigation Drawer */}
         {mobileNavOpen && (
-          <div className="lg:hidden bg-cream-100/95 backdrop-blur-xl border-b border-cream-300 px-6 py-4 space-y-3 animate-fade-in">
+          <div className="xl:hidden bg-cream-100/95 backdrop-blur-xl border-b border-cream-300 px-6 py-4 space-y-3 animate-fade-in">
             <a
               href="#menu-section"
               onClick={() => setMobileNavOpen(false)}
               className="block font-accent text-xs font-bold uppercase tracking-wider text-cocoa-900 py-2 border-b border-cream-200"
             >
               📜 Explore Menu
-            </a>
-            <a
-              href="#craft-studio-section"
-              onClick={() => setMobileNavOpen(false)}
-              className="block font-accent text-xs font-bold uppercase tracking-wider text-gold-600 py-2 border-b border-cream-200"
-            >
-              ✨ Custom Dessert Studio
             </a>
             <a
               href="#specials-section"
@@ -459,15 +450,6 @@ export default function CustomerHomePage() {
               <p className="font-display text-2xl text-cocoa-600/60">No items match your search</p>
             </div>
           )}
-        </div>
-      </section>
-
-      {/* Interactive Craft Studio Section */}
-      <section className="relative py-16 lg:py-20">
-        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-          <FadeInView>
-            <DessertCraftStudio />
-          </FadeInView>
         </div>
       </section>
 
