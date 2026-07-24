@@ -19,7 +19,8 @@ import {
   RefreshCw,
   AlertTriangle,
   Receipt,
-  ShoppingCart
+  ShoppingCart,
+  UtensilsCrossed
 } from 'lucide-react';
 
 interface MenuItem {
@@ -74,6 +75,10 @@ export default function PosBillingPage() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [recentOrder, setRecentOrder] = useState<CreatedOrder | null>(null);
   const [showPrintModal, setShowPrintModal] = useState(false);
+
+  // Mobile POS view state: 'MENU' or 'CART'
+  const [mobileTab, setMobileTab] = useState<'MENU' | 'CART'>('MENU');
+  const [showMobileCartDrawer, setShowMobileCartDrawer] = useState(false);
 
   // Today's orders & drawer history
   const [showHistoryDrawer, setShowHistoryDrawer] = useState(false);
@@ -237,15 +242,43 @@ export default function PosBillingPage() {
             className="flex items-center space-x-2 bg-gradient-to-r from-cocoa-800 to-cocoa-950 hover:from-cocoa-900 hover:to-black text-gold-300 px-5 py-2.5 rounded-full text-sm font-bold shadow-md transition-all hover:scale-105"
           >
             <History className="w-4 h-4" />
-            <span>Today's Bills: <span className="text-gold-400 ml-1">{todayOrders.length}</span></span>
+            <span>Today&apos;s Bills: <span className="text-gold-400 ml-1">{todayOrders.length}</span></span>
           </button>
         </div>
       </div>
+      {/* Mobile Tab Switcher */}
+      <div className="lg:hidden grid grid-cols-2 gap-2 bg-cream-200/80 p-1.5 rounded-2xl border border-cream-300">
+        <button
+          onClick={() => setMobileTab('MENU')}
+          className={`flex items-center justify-center gap-2 py-3 rounded-xl font-accent text-xs font-bold uppercase tracking-wider transition-all ${
+            mobileTab === 'MENU'
+              ? 'bg-cocoa-900 text-gold-300 shadow-md font-extrabold'
+              : 'text-cocoa-700 hover:bg-cream-300'
+          }`}
+        >
+          <UtensilsCrossed className="w-4 h-4" /> 🍰 Menu Items
+        </button>
+        <button
+          onClick={() => setMobileTab('CART')}
+          className={`flex items-center justify-center gap-2 py-3 rounded-xl font-accent text-xs font-bold uppercase tracking-wider transition-all relative ${
+            mobileTab === 'CART'
+              ? 'bg-cocoa-900 text-gold-300 shadow-md font-extrabold'
+              : 'text-cocoa-700 hover:bg-cream-300'
+          }`}
+        >
+          <Receipt className="w-4 h-4" /> 🧾 Bill & Checkout
+          {cart.length > 0 && (
+            <span className="bg-gold-400 text-cocoa-950 text-[10px] font-black px-2 py-0.5 rounded-full ml-1">
+              {cart.reduce((sum, ci) => sum + ci.quantity, 0)}
+            </span>
+          )}
+        </button>
+      </div>
 
       {/* Main Grid: Menu Picker Left (7 cols) + Cart & Bill Summary Right (5 cols) */}
-      <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 pb-20 lg:pb-0">
         {/* LEFT COLUMN: Search, Categories & Menu Grid */}
-        <div className="lg:col-span-7 space-y-6">
+        <div className={`lg:col-span-7 space-y-6 ${mobileTab === 'MENU' ? 'block' : 'hidden lg:block'}`}>
           {/* Search Bar & Category Filters */}
           <div className="bg-white/80 backdrop-blur-xl p-5 rounded-3xl shadow-md border border-cream-300/80 space-y-4">
             <div className="relative">
@@ -336,7 +369,7 @@ export default function PosBillingPage() {
         </div>
 
         {/* RIGHT COLUMN: Cart Builder & Bill Checkout (5 cols) */}
-        <div className="lg:col-span-5 space-y-6">
+        <div className={`lg:col-span-5 space-y-6 ${mobileTab === 'CART' ? 'block' : 'hidden lg:block'}`}>
           <div className="bg-white/80 backdrop-blur-xl rounded-3xl shadow-xl border border-cream-300/80 p-5 md:p-6 space-y-5 sticky top-24">
             <div className="flex items-center justify-between border-b border-cream-200/80 pb-4">
               <h2 className="font-display font-bold text-xl text-cocoa-900 flex items-center gap-2">
@@ -601,7 +634,7 @@ export default function PosBillingPage() {
           <div className="bg-cream-50 w-full max-w-md h-full p-6 shadow-2xl space-y-6 overflow-y-auto transform transition-transform translate-x-0 animate-in slide-in-from-right duration-300 border-l border-cream-300">
             <div className="flex items-center justify-between border-b border-cream-200 pb-4 sticky top-0 bg-cream-50 z-10">
               <h3 className="font-display font-extrabold text-xl text-cocoa-900 flex items-center gap-2">
-                <History className="w-6 h-6 text-gold-500" /> Today's History
+                <History className="w-6 h-6 text-gold-500" /> Today&apos;s History
               </h3>
               <button onClick={() => setShowHistoryDrawer(false)} className="text-cocoa-500 hover:text-cocoa-900 bg-cream-200 hover:bg-cream-300 p-2 rounded-full transition-colors">
                 <X className="w-5 h-5" />
@@ -669,6 +702,36 @@ export default function PosBillingPage() {
               )}
             </div>
           </div>
+        </div>
+      )}
+      {/* Floating Bottom Cart Bar for Mobile */}
+      {cart.length > 0 && mobileTab === 'MENU' && (
+        <div className="lg:hidden fixed bottom-4 left-4 right-4 z-40">
+          <button
+            onClick={() => setMobileTab('CART')}
+            className="w-full bg-gradient-to-r from-cocoa-900 via-cocoa-950 to-black text-gold-300 p-4 rounded-3xl shadow-2xl border-2 border-gold-400/40 flex items-center justify-between transition-all active:scale-95"
+          >
+            <div className="flex items-center gap-3">
+              <div className="relative p-2.5 rounded-2xl bg-gold-500/20 text-gold-400">
+                <ShoppingCart className="w-6 h-6" />
+                <span className="absolute -top-1 -right-1 bg-gold-400 text-cocoa-950 font-black text-xs h-5 w-5 rounded-full flex items-center justify-center">
+                  {cart.reduce((sum, ci) => sum + ci.quantity, 0)}
+                </span>
+              </div>
+              <div className="text-left">
+                <div className="font-accent text-[10px] font-extrabold uppercase tracking-wider text-gold-400">
+                  {cart.length} {cart.length === 1 ? 'Item' : 'Items'} Selected
+                </div>
+                <div className="font-display text-lg font-black text-white">
+                  Total: ₹{netTotal}
+                </div>
+              </div>
+            </div>
+
+            <div className="flex items-center gap-2 px-4 py-2.5 rounded-2xl bg-gold-400 text-cocoa-950 font-accent text-xs font-black uppercase tracking-wider shadow-md">
+              View Bill <Receipt className="w-4 h-4" />
+            </div>
+          </button>
         </div>
       )}
     </div>
