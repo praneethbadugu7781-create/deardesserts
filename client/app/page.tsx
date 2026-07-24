@@ -184,28 +184,25 @@ export default function CustomerHomePage() {
         }`}
       >
         <div className="mx-auto flex max-w-7xl items-center justify-between px-4 sm:px-6 lg:px-8">
-          <div className="flex items-center gap-8">
-            <Link href="/" className="flex-shrink-0">
-              <div className="block md:hidden"><Logo size="sm" variant="icon-only" /></div>
-              <div className="hidden md:block"><Logo size="md" variant="icon-only" /></div>
-            </Link>
-            <nav className="hidden items-center gap-8 lg:flex">
-              <a href="#menu-section" className="nav-link-premium">Menu</a>
-              <a href="#craft-studio-section" className="nav-link-premium">Craft Studio</a>
-              <a href="#specials-section" className="nav-link-premium">Specials</a>
-              <a href="#story-section" className="nav-link-premium">Our Story</a>
-              <Link href="/tokens" className="nav-link-premium flex items-center gap-1.5">
-                <MonitorPlay className="h-3.5 w-3.5" />
-                Token TV
-              </Link>
-            </nav>
-          </div>
-
-          <Link href="/" className="absolute left-1/2 -translate-x-1/2">
-            <div className="block md:hidden mt-0.5"><Logo size="sm" variant="title-only" /></div>
-            <div className="hidden md:block"><Logo size="lg" variant="title-only" /></div>
+          {/* Brand Logo + Title on Left */}
+          <Link href="/" className="flex items-center gap-3 flex-shrink-0">
+            <div className="block sm:hidden"><Logo size="sm" variant="full" /></div>
+            <div className="hidden sm:block"><Logo size="md" variant="full" /></div>
           </Link>
 
+          {/* Nav Links in Center */}
+          <nav className="hidden lg:flex items-center gap-7">
+            <a href="#menu-section" className="nav-link-premium">Menu</a>
+            <a href="#craft-studio-section" className="nav-link-premium">Craft Studio</a>
+            <a href="#specials-section" className="nav-link-premium">Specials</a>
+            <a href="#story-section" className="nav-link-premium">Our Story</a>
+            <Link href="/tokens" className="nav-link-premium flex items-center gap-1.5">
+              <MonitorPlay className="h-3.5 w-3.5 text-gold-600" />
+              Token TV
+            </Link>
+          </nav>
+
+          {/* Right Actions */}
           <div className="flex items-center gap-3">
             <Link href="/login">
               <PremiumButton
