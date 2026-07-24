@@ -107,9 +107,9 @@ export default function Navbar() {
             })}
           </nav>
 
-          {/* User Profile */}
+          {/* User Profile / Login */}
           <div className="flex items-center space-x-3">
-            {user && (
+            {user ? (
               <div className="hidden sm:flex items-center space-x-3 border-l border-cream-300/80 pl-3">
                 <div className="text-right leading-tight">
                   <div className="text-xs font-sans font-bold text-cocoa-900">{user.name}</div>
@@ -123,6 +123,13 @@ export default function Navbar() {
                   <LogOut className="w-4 h-4" />
                 </button>
               </div>
+            ) : (
+              <Link
+                href="/login"
+                className="px-4 py-2 rounded-xl bg-cocoa-900 text-gold-300 font-accent text-xs font-bold uppercase tracking-wider hover:bg-cocoa-950 transition-colors shadow-sm"
+              >
+                Staff Login
+              </Link>
             )}
 
             {/* Mobile Menu Button */}

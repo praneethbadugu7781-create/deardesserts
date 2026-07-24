@@ -47,8 +47,9 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         })
         .finally(() => setLoading(false));
     } else {
-      // Demo auto-login default as Admin so app works seamlessly immediately
-      switchRoleDemo('ADMIN').finally(() => setLoading(false));
+      setUser(null);
+      setToken(null);
+      setLoading(false);
     }
   }, []);
 
@@ -69,6 +70,9 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     setToken(null);
     localStorage.removeItem('dd_token');
     localStorage.removeItem('dd_user');
+    if (typeof window !== 'undefined') {
+      window.location.href = '/';
+    }
   };
 
   const switchRoleDemo = async (role: Role) => {
