@@ -11,6 +11,7 @@ import FadeInView from '../components/FadeInView';
 import MenuProductCard from '../components/MenuProductCard';
 import StaffLoginModal from '../components/StaffLoginModal';
 import LiquidMetalButton from '../components/LiquidMetalButton';
+import IntroSplash from '../components/IntroSplash';
 import {
   Search,
   Sparkles,
@@ -155,6 +156,9 @@ export default function CustomerHomePage() {
 
   return (
     <div className="relative min-h-screen overflow-x-hidden bg-cream-100 text-cocoa-800">
+      {/* Intro Animation Splash */}
+      <IntroSplash />
+
       {/* Announcement bar */}
       {showAnnouncement && (
         <div className="relative z-50 bg-gradient-to-r from-cocoa-800 via-caramel-600 to-cocoa-800 py-2.5 text-center text-[11px] font-accent font-bold uppercase tracking-[0.12em] text-cream-100">
