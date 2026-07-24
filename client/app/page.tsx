@@ -161,17 +161,17 @@ export default function CustomerHomePage() {
 
       {/* Announcement bar */}
       {showAnnouncement && (
-        <div className="relative z-50 bg-gradient-to-r from-cocoa-800 via-caramel-600 to-cocoa-800 py-2.5 text-center text-[11px] font-accent font-bold uppercase tracking-[0.12em] text-cream-100">
-          <span className="inline-flex items-center gap-2">
-            <Sparkles className="h-3.5 w-3.5 text-gold-400 animate-pulse-soft" />
-            Crafted fresh daily — explore our signature dessert collection
-            <a href="#menu-section" className="ml-1 underline decoration-gold-400 underline-offset-2 hover:text-gold-300 transition-colors">
+        <div className="relative z-50 bg-gradient-to-r from-cocoa-800 via-caramel-600 to-cocoa-800 py-2.5 px-8 text-center text-[10px] sm:text-[11px] font-accent font-bold uppercase tracking-[0.1em] text-cream-100 overflow-hidden">
+          <div className="max-w-4xl mx-auto flex items-center justify-center gap-1.5 sm:gap-2 leading-tight">
+            <Sparkles className="h-3.5 w-3.5 text-gold-400 shrink-0 animate-pulse-soft" />
+            <span className="truncate">Crafted fresh daily — explore our signature dessert collection</span>
+            <a href="#menu-section" className="shrink-0 underline decoration-gold-400 underline-offset-2 hover:text-gold-300 transition-colors ml-1">
               View Menu
             </a>
-          </span>
+          </div>
           <button
             onClick={() => setShowAnnouncement(false)}
-            className="absolute right-4 top-1/2 -translate-y-1/2 rounded-full p-1 text-white/70 transition hover:bg-white/10 hover:text-white"
+            className="absolute right-2 top-1/2 -translate-y-1/2 rounded-full p-1 text-white/70 transition hover:bg-white/10 hover:text-white"
             aria-label="Dismiss announcement"
           >
             <X className="h-3.5 w-3.5" />
@@ -181,28 +181,38 @@ export default function CustomerHomePage() {
 
       {/* Sticky header */}
       <header
-        className={`sticky top-0 z-40 transition-all duration-500 min-h-[5.5rem] flex items-center ${
+        className={`sticky top-0 z-40 transition-all duration-500 min-h-[4.5rem] md:min-h-[5.5rem] flex items-center ${
           scrolled
-            ? 'glass-panel border-b border-cream-300/80 shadow-[0_8px_32px_rgba(44,24,16,0.06)] py-3'
-            : 'bg-cream-100 py-4'
+            ? 'glass-panel border-b border-cream-300/80 shadow-[0_8px_32px_rgba(44,24,16,0.06)] py-2 md:py-3'
+            : 'bg-cream-100 py-3 md:py-4'
         }`}
       >
-        <div className="mx-auto flex w-full max-w-7xl items-center justify-between px-4 sm:px-6 lg:px-8 relative">
-          {/* Left Side: Emblem Logo + Nav Links (Menu, Specials, Our Story) */}
-          <div className="flex items-center gap-6">
+        <div className="mx-auto flex w-full max-w-7xl items-center justify-between px-3 sm:px-6 lg:px-8 relative">
+          {/* Left Side: Emblem Logo + Mobile Brand Title */}
+          <div className="flex items-center gap-2 sm:gap-4">
             <Link href="/" className="flex-shrink-0">
               <Logo size="md" variant="icon-only" />
             </Link>
-            <nav className="hidden xl:flex items-center gap-6">
+
+            {/* Mobile Title logo inline (shown on < md screens so it NEVER overflows) */}
+            <Link href="/" className="md:hidden flex items-center">
+              <img
+                src="/ddtitle.png"
+                alt="Dear Desserts"
+                className="h-8 sm:h-10 w-auto object-contain filter drop-shadow-sm"
+              />
+            </Link>
+
+            <nav className="hidden xl:flex items-center gap-6 ml-4">
               <a href="#menu-section" className="nav-link-premium">Menu</a>
               <a href="#specials-section" className="nav-link-premium">Specials</a>
               <a href="#story-section" className="nav-link-premium">Our Story</a>
             </nav>
           </div>
 
-          {/* Center (Middle): Dear Desserts Title Image MASSIVE & CLEAR */}
-          <Link href="/" className="absolute left-1/2 -translate-x-1/2 flex items-center justify-center">
-            <div className="h-16 w-56 sm:h-20 sm:w-72 md:h-24 md:w-[26rem] lg:h-28 lg:w-[32rem] relative flex items-center justify-center">
+          {/* Desktop Center (Middle): Dear Desserts Title Image MASSIVE & CLEAR */}
+          <Link href="/" className="hidden md:flex absolute left-1/2 -translate-x-1/2 items-center justify-center">
+            <div className="h-20 w-72 md:h-24 md:w-[26rem] lg:h-28 lg:w-[32rem] relative flex items-center justify-center">
               <Image
                 src="/ddtitle.png"
                 alt="Dear Desserts Title"
@@ -214,18 +224,28 @@ export default function CustomerHomePage() {
             </div>
           </Link>
 
-          {/* Right Side: Token TV + Liquid Metal Staff Button */}
-          <div className="flex items-center gap-4">
+          {/* Right Side: Token TV + Staff Button + Hamburger */}
+          <div className="flex items-center gap-2 sm:gap-3">
             <Link
               href="/tokens"
-              className="hidden sm:flex items-center gap-2 px-3.5 py-2 rounded-2xl border border-gold-500/30 bg-gold-50/60 text-cocoa-900 hover:bg-gold-100/80 font-accent text-[11px] font-bold uppercase tracking-wider transition-all duration-300 shadow-sm hover:scale-[1.02]"
+              className="hidden lg:flex items-center gap-2 px-3.5 py-2 rounded-2xl border border-gold-500/30 bg-gold-50/60 text-cocoa-900 hover:bg-gold-100/80 font-accent text-[11px] font-bold uppercase tracking-wider transition-all duration-300 shadow-sm hover:scale-[1.02]"
             >
               <MonitorPlay className="h-4 w-4 text-gold-600 animate-pulse" />
               <span>Token TV</span>
             </Link>
 
-            <Link href="/login">
+            {/* Desktop Liquid Metal Button */}
+            <Link href="/login" className="hidden sm:block">
               <LiquidMetalButton label="Staff Portal" />
+            </Link>
+
+            {/* Mobile Staff Pill Button (for narrow screens < 640px) */}
+            <Link
+              href="/login"
+              className="sm:hidden flex items-center gap-1.5 px-3 py-2 rounded-xl bg-cocoa-900 text-gold-300 font-accent text-[10px] font-bold uppercase tracking-wider shadow-sm hover:bg-cocoa-950 transition"
+            >
+              <Lock className="w-3 h-3 text-gold-400" />
+              <span>Staff</span>
             </Link>
 
             <button
