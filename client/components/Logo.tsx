@@ -21,11 +21,11 @@ export default function Logo({
   };
 
   const titleHeightMap = {
-    sm: 'h-7 w-32',
-    md: 'h-10 w-44',
-    lg: 'h-13 w-56',
-    xl: 'h-18 w-72',
-    '2xl': 'h-24 w-96',
+    sm: 'h-10 w-44',
+    md: 'h-14 w-60',
+    lg: 'h-20 w-80',
+    xl: 'h-26 w-[26rem]',
+    '2xl': 'h-32 w-[32rem]',
   };
 
   return (

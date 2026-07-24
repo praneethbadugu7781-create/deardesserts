@@ -177,13 +177,13 @@ export default function CustomerHomePage() {
 
       {/* Sticky header */}
       <header
-        className={`sticky top-0 z-40 transition-all duration-500 ${
+        className={`sticky top-0 z-40 transition-all duration-500 min-h-[5.5rem] flex items-center ${
           scrolled
-            ? 'glass-panel border-b border-cream-300/80 shadow-[0_8px_32px_rgba(44,24,16,0.06)] py-2'
-            : 'bg-cream-100 py-3'
+            ? 'glass-panel border-b border-cream-300/80 shadow-[0_8px_32px_rgba(44,24,16,0.06)] py-3'
+            : 'bg-cream-100 py-4'
         }`}
       >
-        <div className="mx-auto flex max-w-7xl items-center justify-between px-4 sm:px-6 lg:px-8 relative">
+        <div className="mx-auto flex w-full max-w-7xl items-center justify-between px-4 sm:px-6 lg:px-8 relative">
           {/* Left Side: Emblem Logo + Nav Links (Menu, Specials, Our Story) */}
           <div className="flex items-center gap-6">
             <Link href="/" className="flex-shrink-0">
@@ -196,15 +196,15 @@ export default function CustomerHomePage() {
             </nav>
           </div>
 
-          {/* Center (Middle): Dear Desserts Title Image BIGGER */}
+          {/* Center (Middle): Dear Desserts Title Image MASSIVE & CLEAR */}
           <Link href="/" className="absolute left-1/2 -translate-x-1/2 flex items-center justify-center">
-            <div className="h-10 w-40 sm:h-14 sm:w-56 md:h-18 md:w-72 lg:h-22 lg:w-96 relative flex items-center justify-center">
+            <div className="h-16 w-56 sm:h-20 sm:w-72 md:h-24 md:w-[26rem] lg:h-28 lg:w-[32rem] relative flex items-center justify-center">
               <Image
                 src="/ddtitle.png"
                 alt="Dear Desserts Title"
                 fill
                 sizes="(max-width: 768px) 100vw, 50vw"
-                className="object-contain filter drop-shadow-lg transition-transform duration-300 hover:scale-105"
+                className="object-contain filter drop-shadow-xl scale-125 sm:scale-135 md:scale-150 transition-transform duration-300 hover:scale-[1.6]"
                 priority
               />
             </div>
