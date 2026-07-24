@@ -11,6 +11,7 @@ import FadeInView from '../components/FadeInView';
 import MenuProductCard from '../components/MenuProductCard';
 import StaffLoginModal from '../components/StaffLoginModal';
 import DessertCraftStudio from '../components/DessertCraftStudio';
+import LiquidMetalButton from '../components/LiquidMetalButton';
 import {
   Search,
   Sparkles,
@@ -183,38 +184,46 @@ export default function CustomerHomePage() {
             : 'bg-cream-100 py-3'
         }`}
       >
-        <div className="mx-auto flex max-w-7xl items-center justify-between px-4 sm:px-6 lg:px-8">
-          {/* Brand Logo + Title on Left */}
-          <Link href="/" className="flex items-center gap-3 flex-shrink-0">
-            <div className="block sm:hidden"><Logo size="sm" variant="full" /></div>
-            <div className="hidden sm:block"><Logo size="md" variant="full" /></div>
+        <div className="mx-auto flex max-w-7xl items-center justify-between px-4 sm:px-6 lg:px-8 relative">
+          {/* Left Side: Emblem Logo + Nav Buttons */}
+          <div className="flex items-center gap-6">
+            <Link href="/" className="flex-shrink-0">
+              <Logo size="md" variant="icon-only" />
+            </Link>
+            <nav className="hidden xl:flex items-center gap-6">
+              <a href="#menu-section" className="nav-link-premium">Menu</a>
+              <a href="#craft-studio-section" className="nav-link-premium">Craft Studio</a>
+              <a href="#specials-section" className="nav-link-premium">Specials</a>
+              <a href="#story-section" className="nav-link-premium">Our Story</a>
+              <Link href="/tokens" className="nav-link-premium flex items-center gap-1.5">
+                <MonitorPlay className="h-3.5 w-3.5 text-gold-600" />
+                Token TV
+              </Link>
+            </nav>
+          </div>
+
+          {/* Center (Middle): Dear Desserts Title Image BIGGER */}
+          <Link href="/" className="hidden sm:block absolute left-1/2 -translate-x-1/2">
+            <div className="h-12 w-48 md:h-14 md:w-64 relative flex items-center justify-center">
+              <Image
+                src="/ddtitle.png"
+                alt="Dear Desserts Title"
+                fill
+                sizes="(max-width: 768px) 100vw, 50vw"
+                className="object-contain filter drop-shadow-md transition-transform duration-300 hover:scale-105"
+                priority
+              />
+            </div>
           </Link>
 
-          {/* Nav Links in Center */}
-          <nav className="hidden lg:flex items-center gap-7">
-            <a href="#menu-section" className="nav-link-premium">Menu</a>
-            <a href="#craft-studio-section" className="nav-link-premium">Craft Studio</a>
-            <a href="#specials-section" className="nav-link-premium">Specials</a>
-            <a href="#story-section" className="nav-link-premium">Our Story</a>
-            <Link href="/tokens" className="nav-link-premium flex items-center gap-1.5">
-              <MonitorPlay className="h-3.5 w-3.5 text-gold-600" />
-              Token TV
-            </Link>
-          </nav>
-
-          {/* Right Actions */}
+          {/* Right Side: Shader Liquid Metal Staff Button & Mobile Toggle */}
           <div className="flex items-center gap-3">
             <Link href="/login">
-              <PremiumButton
-                size="sm"
-                icon={<Lock className="h-3.5 w-3.5" />}
-              >
-                <span className="hidden sm:inline">Staff Portal</span>
-              </PremiumButton>
+              <LiquidMetalButton label="Staff Portal" />
             </Link>
             <button
               onClick={() => setMobileNavOpen(!mobileNavOpen)}
-              className="lg:hidden p-2 rounded-xl bg-cream-200 text-cocoa-900 border border-cream-300 hover:bg-cream-300 transition"
+              className="xl:hidden p-2 rounded-xl bg-cream-200 text-cocoa-900 border border-cream-300 hover:bg-cream-300 transition"
               aria-label="Toggle navigation menu"
             >
               {mobileNavOpen ? <X className="h-5 w-5" /> : <MenuIcon className="h-5 w-5" />}
