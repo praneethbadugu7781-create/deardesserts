@@ -10,6 +10,7 @@ import PremiumButton from '../components/PremiumButton';
 import FadeInView from '../components/FadeInView';
 import MenuProductCard from '../components/MenuProductCard';
 import StaffLoginModal from '../components/StaffLoginModal';
+import DessertCraftStudio from '../components/DessertCraftStudio';
 import {
   Search,
   Sparkles,
@@ -28,6 +29,7 @@ import {
   Clock,
   ChevronDown,
   X,
+  Menu as MenuIcon,
 } from 'lucide-react';
 
 interface MenuItem {
@@ -67,6 +69,8 @@ export default function CustomerHomePage() {
   const [searchQuery, setSearchQuery] = useState<string>('');
   const [showAnnouncement, setShowAnnouncement] = useState<boolean>(true);
   const [scrolled, setScrolled] = useState(false);
+
+  const [mobileNavOpen, setMobileNavOpen] = useState<boolean>(false);
 
   const [showStaffModal, setShowStaffModal] = useState<boolean>(false);
   const [loginEmail, setLoginEmail] = useState<string>('admin@deardesserts.com');
@@ -176,7 +180,7 @@ export default function CustomerHomePage() {
         className={`sticky top-0 z-40 transition-all duration-500 ${
           scrolled
             ? 'glass-panel border-b border-cream-300/80 shadow-[0_8px_32px_rgba(44,24,16,0.06)] py-2'
-            : 'bg-cream-100 py-4'
+            : 'bg-cream-100 py-3'
         }`}
       >
         <div className="mx-auto flex max-w-7xl items-center justify-between px-4 sm:px-6 lg:px-8">
@@ -187,6 +191,7 @@ export default function CustomerHomePage() {
             </Link>
             <nav className="hidden items-center gap-8 lg:flex">
               <a href="#menu-section" className="nav-link-premium">Menu</a>
+              <a href="#craft-studio-section" className="nav-link-premium">Craft Studio</a>
               <a href="#specials-section" className="nav-link-premium">Specials</a>
               <a href="#story-section" className="nav-link-premium">Our Story</a>
               <Link href="/tokens" className="nav-link-premium flex items-center gap-1.5">
@@ -197,19 +202,70 @@ export default function CustomerHomePage() {
           </div>
 
           <Link href="/" className="absolute left-1/2 -translate-x-1/2">
-            <div className="block md:hidden mt-1"><Logo size="md" variant="title-only" /></div>
-            <div className="hidden md:block"><Logo size="2xl" variant="title-only" /></div>
+            <div className="block md:hidden mt-0.5"><Logo size="sm" variant="title-only" /></div>
+            <div className="hidden md:block"><Logo size="lg" variant="title-only" /></div>
           </Link>
 
-          <Link href="/login">
-            <PremiumButton
-              size="sm"
-              icon={<Lock className="h-3.5 w-3.5" />}
+          <div className="flex items-center gap-3">
+            <Link href="/login">
+              <PremiumButton
+                size="sm"
+                icon={<Lock className="h-3.5 w-3.5" />}
+              >
+                <span className="hidden sm:inline">Staff Portal</span>
+              </PremiumButton>
+            </Link>
+            <button
+              onClick={() => setMobileNavOpen(!mobileNavOpen)}
+              className="lg:hidden p-2 rounded-xl bg-cream-200 text-cocoa-900 border border-cream-300 hover:bg-cream-300 transition"
+              aria-label="Toggle navigation menu"
             >
-              <span className="hidden sm:inline">Staff Portal</span>
-            </PremiumButton>
-          </Link>
+              {mobileNavOpen ? <X className="h-5 w-5" /> : <MenuIcon className="h-5 w-5" />}
+            </button>
+          </div>
         </div>
+
+        {/* Mobile Navigation Drawer */}
+        {mobileNavOpen && (
+          <div className="lg:hidden bg-cream-100/95 backdrop-blur-xl border-b border-cream-300 px-6 py-4 space-y-3 animate-fade-in">
+            <a
+              href="#menu-section"
+              onClick={() => setMobileNavOpen(false)}
+              className="block font-accent text-xs font-bold uppercase tracking-wider text-cocoa-900 py-2 border-b border-cream-200"
+            >
+              📜 Explore Menu
+            </a>
+            <a
+              href="#craft-studio-section"
+              onClick={() => setMobileNavOpen(false)}
+              className="block font-accent text-xs font-bold uppercase tracking-wider text-gold-600 py-2 border-b border-cream-200"
+            >
+              ✨ Custom Dessert Studio
+            </a>
+            <a
+              href="#specials-section"
+              onClick={() => setMobileNavOpen(false)}
+              className="block font-accent text-xs font-bold uppercase tracking-wider text-cocoa-900 py-2 border-b border-cream-200"
+            >
+              🔥 Today's Specials
+            </a>
+            <Link
+              href="/tokens"
+              onClick={() => setMobileNavOpen(false)}
+              className="flex items-center justify-between font-accent text-xs font-bold uppercase tracking-wider text-cocoa-900 py-2 border-b border-cream-200"
+            >
+              <span className="flex items-center gap-2"><MonitorPlay className="h-4 w-4 text-gold-600" /> Token TV</span>
+              <span className="text-[10px] bg-gold-100 text-gold-700 px-2 py-0.5 rounded-full">Live</span>
+            </Link>
+            <Link
+              href="/login"
+              onClick={() => setMobileNavOpen(false)}
+              className="block text-center w-full py-2.5 rounded-xl bg-cocoa-900 text-gold-300 font-accent text-xs font-bold uppercase tracking-wider mt-2"
+            >
+              🔐 Staff Login
+            </Link>
+          </div>
+        )}
       </header>
 
       {/* Hero */}
@@ -392,6 +448,15 @@ export default function CustomerHomePage() {
               <p className="font-display text-2xl text-cocoa-600/60">No items match your search</p>
             </div>
           )}
+        </div>
+      </section>
+
+      {/* Interactive Craft Studio Section */}
+      <section className="relative py-16 lg:py-20">
+        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+          <FadeInView>
+            <DessertCraftStudio />
+          </FadeInView>
         </div>
       </section>
 
