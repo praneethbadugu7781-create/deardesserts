@@ -73,16 +73,20 @@ export default function Navbar() {
   };
 
   return (
-    <header className="bg-white/80 backdrop-blur-xl border-b border-cream-300/60 sticky top-0 z-50 shadow-[0_4px_24px_rgba(44,24,16,0.04)] transition-all duration-500 text-cocoa-900">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex items-center justify-between h-[4.5rem]">
-          {/* Logo */}
-          <Link href={getLogoLink()} className="focus:outline-none flex items-center gap-3 flex-shrink-0">
-            <Logo size="md" theme="light" />
+    <>
+      {/* Desktop Left Sidebar */}
+      <aside className="hidden lg:flex fixed left-0 top-0 h-screen w-64 bg-white/90 backdrop-blur-2xl border-r border-cream-300/80 shadow-[4px_0_24px_rgba(44,24,16,0.04)] flex-col justify-between p-5 z-50 text-cocoa-900 overflow-y-auto">
+        <div className="space-y-6">
+          {/* Logo & Title */}
+          <Link href={getLogoLink()} className="flex flex-col items-center justify-center pt-2 pb-4 border-b border-cream-300/70 group">
+            <Logo size="md" variant="full" theme="light" />
           </Link>
 
           {/* Navigation Links */}
-          <nav className="hidden lg:flex items-center space-x-1 bg-cream-200/60 p-1.5 rounded-2xl border border-cream-300/80 overflow-x-auto max-w-[55vw] scrollbar-hide [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
+          <nav className="space-y-1.5">
+            <div className="px-3 pb-2 text-[10px] font-accent font-bold uppercase tracking-widest text-cocoa-500">
+              Navigation Menu
+            </div>
             {accessibleItems.map((item) => {
               const Icon = item.icon;
               const isActive = pathname === item.path;
@@ -90,94 +94,99 @@ export default function Navbar() {
                 <Link
                   key={item.path}
                   href={item.path}
-                  className={`flex items-center space-x-1.5 px-3 py-2 rounded-xl font-accent text-[11px] font-bold uppercase tracking-wider transition-all duration-300 ${
+                  className={`flex items-center space-x-3 px-4 py-3 rounded-2xl font-accent text-xs font-bold uppercase tracking-wider transition-all duration-300 ${
                     isActive
-                      ? 'bg-cocoa-900 text-gold-300 shadow-md scale-[1.02]'
-                      : 'text-cocoa-600 hover:bg-cream-200 hover:text-cocoa-900'
+                      ? 'bg-cocoa-900 text-gold-300 shadow-lg scale-[1.02]'
+                      : 'text-cocoa-700 hover:bg-cream-200/80 hover:text-cocoa-950'
                   }`}
                 >
                   <Icon className={`w-4 h-4 transition-colors ${isActive ? 'text-gold-400' : 'text-cocoa-500'}`} />
-                  <span className="whitespace-nowrap">{item.label}</span>
+                  <span className="truncate">{item.label}</span>
                 </Link>
               );
             })}
           </nav>
+        </div>
 
-          {/* User Profile */}
-          <div className="hidden md:flex items-center space-x-4">
-            {user && (
-              <div className="flex items-center space-x-3 border-l border-cream-300/80 pl-4">
-                <div className="text-right">
-                  <div className="text-sm font-sans font-bold text-cocoa-900">{user.name}</div>
-                  <div className="text-[10px] text-cocoa-600 font-accent font-bold uppercase tracking-wider">{user.role}</div>
-                </div>
-                <button
-                  onClick={logout}
-                  title="Logout"
-                  className="p-2 rounded-xl bg-cream-200 hover:bg-red-50 text-cocoa-600 hover:text-red-600 border border-cream-300 transition-colors duration-300"
-                >
-                  <LogOut className="w-4 h-4" />
-                </button>
-              </div>
-            )}
+        {/* User Profile Footer */}
+        {user && (
+          <div className="pt-4 border-t border-cream-300/80 flex items-center justify-between">
+            <div className="truncate pr-2">
+              <div className="text-xs font-sans font-bold text-cocoa-900 truncate">{user.name}</div>
+              <div className="text-[10px] text-cocoa-600 font-accent font-bold uppercase tracking-wider">{user.role}</div>
+            </div>
+            <button
+              onClick={logout}
+              title="Logout"
+              className="p-2.5 rounded-xl bg-cream-200 hover:bg-red-50 text-cocoa-600 hover:text-red-600 border border-cream-300 transition-colors duration-300 shrink-0"
+            >
+              <LogOut className="w-4 h-4" />
+            </button>
           </div>
+        )}
+      </aside>
 
-          {/* Mobile Menu Button */}
-          <div className="flex lg:hidden items-center">
+      {/* Mobile Top Header */}
+      <header className="lg:hidden bg-white/90 backdrop-blur-xl border-b border-cream-300/80 sticky top-0 z-50 shadow-sm text-cocoa-900">
+        <div className="px-4 h-16 flex items-center justify-between">
+          <Link href={getLogoLink()}>
+            <Logo size="sm" theme="light" />
+          </Link>
+          <div className="flex items-center gap-2">
             <button
               onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-              className="p-2 rounded-xl bg-cream-200 hover:bg-cream-300 border border-cream-300 text-cocoa-900 transition-colors"
+              className="p-2 rounded-xl bg-cream-200 text-cocoa-900 border border-cream-300"
             >
               {mobileMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
             </button>
           </div>
         </div>
-      </div>
 
-      {/* Mobile Drawer */}
-      {mobileMenuOpen && (
-        <div className="lg:hidden bg-cream-100 border-b border-cream-300/80 px-4 pt-2 pb-6 space-y-3">
-          <div className="grid grid-cols-2 gap-2 pt-2">
-            {accessibleItems.map((item) => {
-              const Icon = item.icon;
-              const isActive = pathname === item.path;
-              return (
-                <Link
-                  key={item.path}
-                  href={item.path}
-                  onClick={() => setMobileMenuOpen(false)}
-                  className={`flex items-center space-x-2 px-3 py-2.5 rounded-xl text-xs font-accent font-bold uppercase tracking-wider transition-all duration-300 ${
-                    isActive
-                      ? 'bg-cocoa-900 text-gold-300 shadow-md'
-                      : 'bg-white/80 border border-cream-300/60 text-cocoa-600 hover:bg-cream-200'
-                  }`}
-                >
-                  <Icon className={`w-4 h-4 ${isActive ? 'text-gold-400' : 'text-cocoa-500'}`} />
-                  <span>{item.label}</span>
-                </Link>
-              );
-            })}
-          </div>
-          {user && (
-            <div className="mt-4 pt-4 border-t border-cream-300/80 flex items-center justify-between">
-              <div>
-                <div className="text-sm font-sans font-bold text-cocoa-900">{user.name}</div>
-                <div className="text-[10px] text-cocoa-600 font-accent font-bold uppercase tracking-wider">{user.role}</div>
-              </div>
-              <button
-                onClick={() => {
-                  logout();
-                  setMobileMenuOpen(false);
-                }}
-                className="flex items-center space-x-2 px-4 py-2 rounded-xl bg-cream-200 hover:bg-red-50 text-cocoa-600 hover:text-red-600 border border-cream-300 transition-colors duration-300"
-              >
-                <LogOut className="w-4 h-4" />
-                <span className="text-xs font-bold uppercase tracking-wider">Logout</span>
-              </button>
+        {/* Mobile Drawer */}
+        {mobileMenuOpen && (
+          <div className="bg-cream-100 border-b border-cream-300/80 px-4 pt-2 pb-6 space-y-3 animate-fade-in">
+            <div className="grid grid-cols-1 gap-2 pt-2">
+              {accessibleItems.map((item) => {
+                const Icon = item.icon;
+                const isActive = pathname === item.path;
+                return (
+                  <Link
+                    key={item.path}
+                    href={item.path}
+                    onClick={() => setMobileMenuOpen(false)}
+                    className={`flex items-center space-x-3 px-4 py-3 rounded-xl text-xs font-accent font-bold uppercase tracking-wider transition-all ${
+                      isActive
+                        ? 'bg-cocoa-900 text-gold-300 shadow-md'
+                        : 'bg-white/80 border border-cream-300/60 text-cocoa-700'
+                    }`}
+                  >
+                    <Icon className={`w-4 h-4 ${isActive ? 'text-gold-400' : 'text-cocoa-500'}`} />
+                    <span>{item.label}</span>
+                  </Link>
+                );
+              })}
             </div>
-          )}
-        </div>
-      )}
-    </header>
+            {user && (
+              <div className="mt-4 pt-4 border-t border-cream-300/80 flex items-center justify-between">
+                <div>
+                  <div className="text-sm font-sans font-bold text-cocoa-900">{user.name}</div>
+                  <div className="text-[10px] text-cocoa-600 font-accent font-bold uppercase tracking-wider">{user.role}</div>
+                </div>
+                <button
+                  onClick={() => {
+                    logout();
+                    setMobileMenuOpen(false);
+                  }}
+                  className="flex items-center space-x-2 px-4 py-2 rounded-xl bg-cream-200 text-cocoa-700 hover:text-red-600 border border-cream-300"
+                >
+                  <LogOut className="w-4 h-4" />
+                  <span className="text-xs font-bold uppercase tracking-wider">Logout</span>
+                </button>
+              </div>
+            )}
+          </div>
+        )}
+      </header>
+    </>
   );
 }
