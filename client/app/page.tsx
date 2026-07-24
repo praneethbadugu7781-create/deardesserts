@@ -511,6 +511,71 @@ export default function CustomerHomePage() {
         </div>
       </section>
 
+      {/* Location Section */}
+      <section className="relative overflow-hidden py-16 bg-cream-200/60 border-t border-cream-300/80">
+        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+          <FadeInView>
+            <div className="mb-10 text-center">
+              <span className="font-accent text-xs font-bold uppercase tracking-widest text-caramel-600">
+                📍 Location & Hours
+              </span>
+              <h2 className="mt-2 font-display text-3xl font-bold tracking-tight text-cocoa-900 sm:text-4xl">
+                Visit Us at Bhavanipuram
+              </h2>
+              <p className="mt-2 text-sm text-cocoa-600">
+                Swathi Theatre Road, Opposite Sri Balaji Sweets, Bhavanipuram, Vijayawada
+              </p>
+            </div>
+          </FadeInView>
+
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 items-center">
+            <div className="bg-white/90 rounded-3xl p-6 border border-cream-300 shadow-md space-y-4">
+              <div className="flex items-center gap-3">
+                <div className="p-3 rounded-2xl bg-gold-100 text-gold-700">
+                  <MapPin className="h-6 w-6 text-gold-600" />
+                </div>
+                <div>
+                  <h3 className="font-display text-lg font-bold text-cocoa-900">Dear Desserts Outlet</h3>
+                  <p className="text-xs text-cocoa-600">Bhavanipuram, Vijayawada</p>
+                </div>
+              </div>
+
+              <p className="text-xs leading-relaxed text-cocoa-600">
+                Swathi Theatre Road, Opp. Sri Balaji Sweets, Bhavanipuram, Vijayawada, Andhra Pradesh 520012
+              </p>
+
+              <div className="pt-2 border-t border-cream-200 flex items-center justify-between text-xs text-cocoa-700 font-semibold">
+                <span>⏰ Mon - Sun</span>
+                <span>11:00 AM - 11:30 PM</span>
+              </div>
+
+              <a
+                href="https://maps.app.goo.gl/RmuEvt2cNEy637Vk6"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="w-full inline-flex items-center justify-center gap-2 py-3 rounded-xl bg-cocoa-900 text-gold-300 font-accent text-xs font-bold uppercase tracking-wider hover:bg-cocoa-950 transition-all shadow-md"
+              >
+                <MapPin className="h-4 w-4 text-gold-400" />
+                Get Driving Directions
+              </a>
+            </div>
+
+            <div className="lg:col-span-2 rounded-3xl overflow-hidden border-2 border-cream-300 shadow-xl h-80 relative">
+              <iframe
+                title="Dear Desserts Google Maps Location"
+                src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3824.950404089735!2d80.5956404!3d16.5286013!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3a35efe07103ecf5%3A0x21dd6ef0860f8992!2sDear%20Desserts!5e0!3m2!1sen!2sin!4v1700000000000!5m2!1sen!2sin"
+                width="100%"
+                height="100%"
+                style={{ border: 0 }}
+                allowFullScreen
+                loading="lazy"
+                referrerPolicy="no-referrer-when-downgrade"
+              />
+            </div>
+          </div>
+        </div>
+      </section>
+
       {/* Footer */}
       <footer className="relative border-t-4 border-gold-500/40 bg-cocoa-950 pt-16 text-cream-100">
         <div className="mx-auto grid max-w-7xl grid-cols-1 gap-10 border-b border-cocoa-800 px-4 pb-12 sm:px-6 md:grid-cols-2 lg:grid-cols-4 lg:px-8">
@@ -563,8 +628,16 @@ export default function CustomerHomePage() {
               <div className="flex gap-2">
                 <MapPin className="mt-0.5 h-4 w-4 flex-shrink-0 text-caramel-500" />
                 <div>
-                  <div className="font-semibold text-white">Flagship #DD-01</div>
-                  <div>74 Park Street, Central District</div>
+                  <div className="font-semibold text-white">Dear Desserts</div>
+                  <div>Swathi Theatre Road, Opp. Sri Balaji Sweets, Bhavanipuram, Vijayawada</div>
+                  <a
+                    href="https://maps.app.goo.gl/RmuEvt2cNEy637Vk6"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="inline-flex items-center gap-1 mt-1 text-xs font-bold text-gold-400 hover:text-gold-300 underline"
+                  >
+                    Open in Google Maps ↗
+                  </a>
                 </div>
               </div>
               <div className="flex gap-2">
