@@ -30,30 +30,54 @@ export default function Navbar() {
   // If on customer home page ('/'), header is handled in page.tsx
   if (pathname === '/') return null;
 
-  const staffNavItems = [
-    { label: 'Home', path: '/', icon: Home, roles: ['ADMIN', 'CASHIER', 'KITCHEN_STAFF', 'CUSTOMER'] },
-    { label: 'POS Billing', path: '/pos', icon: ShoppingCart, roles: ['ADMIN', 'CASHIER'] },
-    { label: 'Kitchen (KDS)', path: '/kds', icon: ChefHat, roles: ['ADMIN', 'KITCHEN_STAFF'] },
-    { label: 'Token Display', path: '/tokens', icon: MonitorPlay, roles: ['ADMIN', 'CASHIER', 'KITCHEN_STAFF'] },
-    { label: 'Dashboard', path: '/admin/dashboard', icon: LayoutDashboard, roles: ['ADMIN'] },
-    { label: 'Item Sales', path: '/admin/analytics', icon: BarChart3, roles: ['ADMIN'] },
-    { label: 'Peak Rush', path: '/admin/peak-hours', icon: Flame, roles: ['ADMIN'] },
-    { label: 'Inventory', path: '/admin/inventory', icon: Boxes, roles: ['ADMIN'] },
-    { label: 'Menu & Offers', path: '/admin/menu', icon: UtensilsCrossed, roles: ['ADMIN'] },
-    { label: 'Staff', path: '/admin/staff', icon: Users, roles: ['ADMIN'] },
-    { label: 'Reports', path: '/admin/reports', icon: FileSpreadsheet, roles: ['ADMIN'] },
-  ];
+  const getNavItemsForRole = () => {
+    if (!user) return [];
 
-  const accessibleItems = staffNavItems.filter(
-    (item) => !user || item.roles.includes(user.role) || user.role === 'ADMIN'
-  );
+    if (user.role === 'ADMIN') {
+      return [
+        { label: 'Dashboard', path: '/admin/dashboard', icon: LayoutDashboard },
+        { label: 'Item Sales', path: '/admin/analytics', icon: BarChart3 },
+        { label: 'Peak Rush', path: '/admin/peak-hours', icon: Flame },
+        { label: 'Inventory', path: '/admin/inventory', icon: Boxes },
+        { label: 'Menu & Offers', path: '/admin/menu', icon: UtensilsCrossed },
+        { label: 'Staff', path: '/admin/staff', icon: Users },
+        { label: 'Reports', path: '/admin/reports', icon: FileSpreadsheet },
+      ];
+    }
+
+    if (user.role === 'CASHIER') {
+      return [
+        { label: 'POS Billing', path: '/pos', icon: ShoppingCart },
+        { label: 'Token Display', path: '/tokens', icon: MonitorPlay },
+      ];
+    }
+
+    if (user.role === 'KITCHEN_STAFF') {
+      return [
+        { label: 'Kitchen (KDS)', path: '/kds', icon: ChefHat },
+        { label: 'Token Display', path: '/tokens', icon: MonitorPlay },
+      ];
+    }
+
+    return [];
+  };
+
+  const accessibleItems = getNavItemsForRole();
+
+  const getLogoLink = () => {
+    if (!user) return '/';
+    if (user.role === 'ADMIN') return '/admin/dashboard';
+    if (user.role === 'CASHIER') return '/pos';
+    if (user.role === 'KITCHEN_STAFF') return '/kds';
+    return '/';
+  };
 
   return (
     <header className="bg-white/80 backdrop-blur-xl border-b border-cream-300/60 sticky top-0 z-50 shadow-[0_4px_24px_rgba(44,24,16,0.04)] transition-all duration-500 text-cocoa-900">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-[4.5rem]">
           {/* Logo */}
-          <Link href="/" className="focus:outline-none flex items-center gap-3 flex-shrink-0">
+          <Link href={getLogoLink()} className="focus:outline-none flex items-center gap-3 flex-shrink-0">
             <Logo size="md" theme="light" />
           </Link>
 
