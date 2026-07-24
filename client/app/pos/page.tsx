@@ -530,113 +530,120 @@ export default function PosBillingPage() {
 
       {/* Bill & Token Receipt Print Modal */}
       {showPrintModal && recentOrder && (
-        <div className="fixed inset-0 z-50 bg-cocoa-900/60 backdrop-blur-md flex items-center justify-center p-4">
-          <div className="bg-white rounded-3xl max-w-md w-full p-6 md:p-8 shadow-2xl space-y-6 border border-gold-500/30 transform transition-all scale-100 animate-in zoom-in-95 duration-200">
-            <div className="flex items-center justify-between border-b border-cream-200 pb-4">
+        <div className="fixed inset-0 z-50 bg-cocoa-900/60 backdrop-blur-md flex items-center justify-center p-3 sm:p-6 overflow-y-auto">
+          <div className="bg-white rounded-3xl max-w-md w-full max-h-[90vh] flex flex-col my-auto shadow-2xl border border-gold-500/30 overflow-hidden transform transition-all scale-100 animate-in zoom-in-95 duration-200">
+            {/* Modal Sticky Header */}
+            <div className="flex items-center justify-between p-4 sm:p-5 border-b border-cream-200 bg-white shrink-0">
               <h3 className="font-display font-extrabold text-xl text-cocoa-900 flex items-center gap-2">
                 <CheckCircle2 className="w-6 h-6 text-green-600" /> Order Completed
               </h3>
-              <button onClick={() => setShowPrintModal(false)} className="text-cocoa-400 hover:text-cocoa-900 bg-cream-100 hover:bg-cream-200 p-2 rounded-full transition-colors">
+              <button
+                onClick={() => setShowPrintModal(false)}
+                className="text-cocoa-400 hover:text-cocoa-900 bg-cream-100 hover:bg-cream-200 p-2 rounded-full transition-colors"
+              >
                 <X className="w-5 h-5" />
               </button>
             </div>
 
-            {/* Printable Thermal Receipt Card */}
-            <div id="thermal-receipt" className="bg-white p-5 rounded-xl border border-cream-300 font-mono text-sm space-y-3 shadow-inner relative overflow-hidden text-cocoa-900">
-              {/* Receipt top edge */}
-              <div className="absolute top-0 left-0 right-0 h-2 bg-[url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIxMCIgaGVpZ2h0PSIxMCI+PHBvbHlnb24gcG9pbnRzPSIwLDEwIDUsMCAxMCwxMCIgZmlsbD0iI2ZmZmZmZiIvPjwvc3ZnPg==')] transform rotate-180 -mt-2"></div>
-              
-              <div className="text-center flex flex-col items-center pt-2 space-y-1">
-                {/* ONLY Original Emblem Logo */}
-                <img src="/ddlogo.png" alt="Dear Desserts Logo" className="w-20 h-20 object-contain mx-auto mb-1 drop-shadow-sm" />
+            {/* Modal Scrollable Receipt Content */}
+            <div className="p-4 sm:p-5 overflow-y-auto space-y-4 max-h-[calc(90vh-130px)]">
+              {/* Printable Thermal Receipt Card */}
+              <div id="thermal-receipt" className="bg-white p-4 sm:p-5 rounded-xl border border-cream-300 font-mono text-sm space-y-3 shadow-inner relative overflow-hidden text-cocoa-900">
+                {/* Receipt top edge */}
+                <div className="absolute top-0 left-0 right-0 h-2 bg-[url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIxMCIgaGVpZ2h0PSIxMCI+PHBvbHlnb24gcG9pbnRzPSIwLDEwIDUsMCAxMCwxMCIgZmlsbD0iI2ZmZmZmZiIvPjwvc3ZnPg==')] transform rotate-180 -mt-2"></div>
                 
-                <h2 className="font-display font-black text-xl tracking-wider text-cocoa-950 uppercase">DEAR DESSERTS</h2>
-                <p className="text-[10px] font-accent font-extrabold uppercase tracking-[0.2em] text-caramel-600">Love At First Bite</p>
-                <p className="text-[11px] text-cocoa-700 font-semibold mt-1 max-w-[18rem] leading-tight">
-                  Swathi Theatre Road, Opp. Sri Balaji Sweets, Bhavanipuram, Vijayawada - 520012
-                </p>
-                <p className="text-[10px] text-cocoa-600 font-medium">Ph: +91 98765 43210 • GSTIN: 37AAACD1234F1Z9</p>
-                
-                <div className="w-full my-3 border-b-2 border-dashed border-cream-300" />
-                
-                {/* Token Box */}
-                <div className="text-2xl font-black text-cocoa-950 bg-gold-100/80 py-2.5 px-8 rounded-2xl inline-block border-2 border-dashed border-gold-400 shadow-sm my-1">
-                  TOKEN: {recentOrder.token?.tokenNumber}
-                </div>
-                
-                <div className="flex justify-between w-full text-xs text-cocoa-700 mt-3 font-bold">
-                  <div>BILL: {recentOrder.bill?.billNumber}</div>
-                  <div>{new Date(recentOrder.createdAt).toLocaleDateString('en-IN', { day: '2-digit', month: 'short' })}, {new Date(recentOrder.createdAt).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}</div>
-                </div>
-                <div className="flex justify-between w-full text-[10px] text-cocoa-500 font-medium">
-                  <div>Customer: {recentOrder.customerName}</div>
-                  <div>Pay Mode: {recentOrder.bill?.paymentMethod}</div>
-                </div>
-              </div>
-
-              <div className="my-3 border-b-2 border-dashed border-cream-300" />
-
-              {/* Itemized Table Header */}
-              <div className="flex justify-between text-[11px] font-extrabold text-cocoa-900 border-b border-cream-300 pb-1">
-                <span>QTY & ITEM</span>
-                <span>TOTAL</span>
-              </div>
-
-              {/* Itemized Rows */}
-              <div className="space-y-2 font-medium pt-1">
-                {recentOrder.items.map((it, idx) => (
-                  <div key={idx} className="flex justify-between text-xs items-start">
-                    <span className="flex gap-2 text-cocoa-900 font-semibold max-w-[15rem] leading-tight">
-                      <span className="font-extrabold text-cocoa-950">{it.quantity}x</span> {it.menuItem.name}
-                    </span>
-                    <span className="font-extrabold text-cocoa-950">₹{it.totalPrice}</span>
+                <div className="text-center flex flex-col items-center pt-2 space-y-1">
+                  {/* ONLY Original Emblem Logo */}
+                  <img src="/ddlogo.png" alt="Dear Desserts Logo" className="w-18 h-18 sm:w-20 sm:h-20 object-contain mx-auto mb-1 drop-shadow-sm" />
+                  
+                  <h2 className="font-display font-black text-xl tracking-wider text-cocoa-950 uppercase">DEAR DESSERTS</h2>
+                  <p className="text-[10px] font-accent font-extrabold uppercase tracking-[0.2em] text-caramel-600">Love At First Bite</p>
+                  <p className="text-[11px] text-cocoa-700 font-semibold mt-1 max-w-[18rem] leading-tight">
+                    Swathi Theatre Road, Opp. Sri Balaji Sweets, Bhavanipuram, Vijayawada - 520012
+                  </p>
+                  <p className="text-[10px] text-cocoa-600 font-medium">Ph: +91 98765 43210 • GSTIN: 37AAACD1234F1Z9</p>
+                  
+                  <div className="w-full my-3 border-b-2 border-dashed border-cream-300" />
+                  
+                  {/* Token Box */}
+                  <div className="text-2xl font-black text-cocoa-950 bg-gold-100/80 py-2 px-7 sm:px-8 rounded-2xl inline-block border-2 border-dashed border-gold-400 shadow-sm my-1">
+                    TOKEN: {recentOrder.token?.tokenNumber}
                   </div>
-                ))}
-              </div>
-
-              <div className="my-3 border-b-2 border-dashed border-cream-300" />
-
-              <div className="space-y-1.5 text-right text-xs">
-                <div className="flex justify-between text-cocoa-600 font-medium">
-                  <span>Subtotal:</span>
-                  <span>₹{recentOrder.subtotal}</span>
-                </div>
-                <div className="flex justify-between text-cocoa-600 font-medium">
-                  <span>GST (5%):</span>
-                  <span>₹{recentOrder.taxAmount}</span>
-                </div>
-                {recentOrder.discountAmount > 0 && (
-                  <div className="flex justify-between text-red-600 font-bold">
-                    <span>Discount:</span>
-                    <span>-₹{recentOrder.discountAmount}</span>
+                  
+                  <div className="flex justify-between w-full text-xs text-cocoa-700 mt-3 font-bold">
+                    <div>BILL: {recentOrder.bill?.billNumber}</div>
+                    <div>{new Date(recentOrder.createdAt).toLocaleDateString('en-IN', { day: '2-digit', month: 'short' })}, {new Date(recentOrder.createdAt).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}</div>
                   </div>
-                )}
-                <div className="flex justify-between text-base font-black text-cocoa-900 border-t-2 border-cream-300 pt-2 mt-2">
-                  <span>TOTAL PAID ({recentOrder.bill?.paymentMethod}):</span>
-                  <span>₹{recentOrder.netAmount}</span>
+                  <div className="flex justify-between w-full text-[10px] text-cocoa-500 font-medium">
+                    <div>Customer: {recentOrder.customerName}</div>
+                    <div>Pay Mode: {recentOrder.bill?.paymentMethod}</div>
+                  </div>
                 </div>
-              </div>
 
-              <div className="text-center pt-5 pb-2 text-[10px] text-cocoa-500 font-medium space-y-1">
-                <p>Thank you for visiting Dear Desserts! 🍰</p>
-                <p>Please wait for your Token number on the Display</p>
+                <div className="my-3 border-b-2 border-dashed border-cream-300" />
+
+                {/* Itemized Table Header */}
+                <div className="flex justify-between text-[11px] font-extrabold text-cocoa-900 border-b border-cream-300 pb-1">
+                  <span>QTY & ITEM</span>
+                  <span>TOTAL</span>
+                </div>
+
+                {/* Itemized Rows */}
+                <div className="space-y-2 font-medium pt-1">
+                  {recentOrder.items.map((it, idx) => (
+                    <div key={idx} className="flex justify-between text-xs items-start">
+                      <span className="flex gap-2 text-cocoa-900 font-semibold max-w-[15rem] leading-tight">
+                        <span className="font-extrabold text-cocoa-950">{it.quantity}x</span> {it.menuItem.name}
+                      </span>
+                      <span className="font-extrabold text-cocoa-950">₹{it.totalPrice}</span>
+                    </div>
+                  ))}
+                </div>
+
+                <div className="my-3 border-b-2 border-dashed border-cream-300" />
+
+                <div className="space-y-1.5 text-right text-xs">
+                  <div className="flex justify-between text-cocoa-600 font-medium">
+                    <span>Subtotal:</span>
+                    <span>₹{recentOrder.subtotal}</span>
+                  </div>
+                  <div className="flex justify-between text-cocoa-600 font-medium">
+                    <span>GST (5%):</span>
+                    <span>₹{recentOrder.taxAmount}</span>
+                  </div>
+                  {recentOrder.discountAmount > 0 && (
+                    <div className="flex justify-between text-red-600 font-bold">
+                      <span>Discount:</span>
+                      <span>-₹{recentOrder.discountAmount}</span>
+                    </div>
+                  )}
+                  <div className="flex justify-between text-base font-black text-cocoa-900 border-t-2 border-cream-300 pt-2 mt-2">
+                    <span>TOTAL PAID ({recentOrder.bill?.paymentMethod}):</span>
+                    <span>₹{recentOrder.netAmount}</span>
+                  </div>
+                </div>
+
+                <div className="text-center pt-5 pb-2 text-[10px] text-cocoa-500 font-medium space-y-1">
+                  <p>Thank you for visiting Dear Desserts! 🍰</p>
+                  <p>Please wait for your Token number on the Display</p>
+                </div>
+                
+                {/* Receipt zig-zag edge bottom */}
+                <div className="absolute bottom-0 left-0 right-0 h-2 bg-[url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIxMCIgaGVpZ2h0PSIxMCI+PHBvbHlnb24gcG9pbnRzPSIwLDEwIDUsMCAxMCwxMCIgZmlsbD0iI2ZmZmZmZiIvPjwvc3ZnPg==')] -mb-2"></div>
               </div>
-              
-              {/* Receipt zig-zag edge bottom */}
-              <div className="absolute bottom-0 left-0 right-0 h-2 bg-[url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIxMCIgaGVpZ2h0PSIxMCI+PHBvbHlnb24gcG9pbnRzPSIwLDEwIDUsMCAxMCwxMCIgZmlsbD0iI2ZmZmZmZiIvPjwvc3ZnPg==')] -mb-2"></div>
             </div>
 
-            {/* Print Buttons */}
-            <div className="flex items-center space-x-3 pt-2">
+            {/* Modal Sticky Bottom Actions */}
+            <div className="p-4 sm:p-5 border-t border-cream-200 bg-white shrink-0 flex items-center space-x-3">
               <button
                 onClick={handlePrintThermal}
-                className="flex-1 py-3.5 bg-cocoa-900 hover:bg-gold-600 text-gold-300 hover:text-cocoa-950 font-bold rounded-2xl text-sm flex items-center justify-center gap-2 transition-all shadow-md hover:shadow-lg"
+                className="flex-1 py-3 bg-cocoa-900 hover:bg-gold-600 text-gold-300 hover:text-cocoa-950 font-bold rounded-2xl text-sm flex items-center justify-center gap-2 transition-all shadow-md hover:shadow-lg"
               >
                 <Printer className="w-4 h-4" /> Print Receipt
               </button>
               <button
                 onClick={() => setShowPrintModal(false)}
-                className="px-6 py-3.5 bg-cream-200 hover:bg-cream-300 text-cocoa-900 font-bold rounded-2xl text-sm transition-colors shadow-sm"
+                className="px-6 py-3 bg-cream-200 hover:bg-cream-300 text-cocoa-900 font-bold rounded-2xl text-sm transition-colors shadow-sm"
               >
                 Done
               </button>
