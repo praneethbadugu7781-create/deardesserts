@@ -185,26 +185,22 @@ export default function CustomerHomePage() {
         }`}
       >
         <div className="mx-auto flex max-w-7xl items-center justify-between px-4 sm:px-6 lg:px-8 relative">
-          {/* Left Side: Emblem Logo + Nav Buttons */}
+          {/* Left Side: Emblem Logo + Nav Links (Menu, Craft Studio, Specials, Our Story) */}
           <div className="flex items-center gap-6">
             <Link href="/" className="flex-shrink-0">
               <Logo size="md" variant="icon-only" />
             </Link>
-            <nav className="hidden xl:flex items-center gap-6">
+            <nav className="hidden xl:flex items-center gap-5">
               <a href="#menu-section" className="nav-link-premium">Menu</a>
               <a href="#craft-studio-section" className="nav-link-premium">Craft Studio</a>
               <a href="#specials-section" className="nav-link-premium">Specials</a>
               <a href="#story-section" className="nav-link-premium">Our Story</a>
-              <Link href="/tokens" className="nav-link-premium flex items-center gap-1.5">
-                <MonitorPlay className="h-3.5 w-3.5 text-gold-600" />
-                Token TV
-              </Link>
             </nav>
           </div>
 
           {/* Center (Middle): Dear Desserts Title Image BIGGER */}
-          <Link href="/" className="hidden sm:block absolute left-1/2 -translate-x-1/2">
-            <div className="h-12 w-48 md:h-14 md:w-64 relative flex items-center justify-center">
+          <Link href="/" className="hidden md:block absolute left-1/2 -translate-x-1/2">
+            <div className="h-16 w-60 lg:h-20 lg:w-80 relative flex items-center justify-center">
               <Image
                 src="/ddtitle.png"
                 alt="Dear Desserts Title"
@@ -216,11 +212,20 @@ export default function CustomerHomePage() {
             </div>
           </Link>
 
-          {/* Right Side: Shader Liquid Metal Staff Button & Mobile Toggle */}
-          <div className="flex items-center gap-3">
+          {/* Right Side: Token TV + Liquid Metal Staff Button */}
+          <div className="flex items-center gap-4">
+            <Link
+              href="/tokens"
+              className="hidden sm:flex items-center gap-2 px-3.5 py-2 rounded-2xl border border-gold-500/30 bg-gold-50/60 text-cocoa-900 hover:bg-gold-100/80 font-accent text-[11px] font-bold uppercase tracking-wider transition-all duration-300 shadow-sm hover:scale-[1.02]"
+            >
+              <MonitorPlay className="h-4 w-4 text-gold-600 animate-pulse" />
+              <span>Token TV</span>
+            </Link>
+
             <Link href="/login">
               <LiquidMetalButton label="Staff Portal" />
             </Link>
+
             <button
               onClick={() => setMobileNavOpen(!mobileNavOpen)}
               className="xl:hidden p-2 rounded-xl bg-cream-200 text-cocoa-900 border border-cream-300 hover:bg-cream-300 transition"
