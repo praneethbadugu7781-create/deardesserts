@@ -1,5 +1,6 @@
 'use client';
 
+// Force rebuild: 2026-07-23T22:54:50
 import React, { useState, useEffect } from 'react';
 import { fetchApi } from '../../../lib/api';
 import { Users, UserPlus, Clock, ShieldCheck, CheckCircle2, X } from 'lucide-react';
@@ -80,27 +81,27 @@ export default function StaffManagementPage() {
   };
 
   return (
-    <div className="space-y-6">
+    <div className="min-h-screen bg-cream-100 p-4 md:p-6 space-y-6">
       {/* Header */}
-      <div className="bg-cocoa-900 text-cream-100 p-6 rounded-3xl shadow-xl border border-cocoa-700 flex flex-col md:flex-row md:items-center justify-between gap-4">
+      <div className="bg-white/80 backdrop-blur-xl border border-cream-300/80 p-6 rounded-3xl shadow-sm flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div>
-          <h1 className="text-2xl font-black tracking-tight flex items-center gap-2">
+          <h1 className="text-3xl font-display font-bold text-cocoa-900 tracking-tight flex items-center gap-2">
             <Users className="w-6 h-6 text-gold-400" /> Staff Management & Shift Roster
           </h1>
-          <p className="text-xs text-cream-300">Manage outlet cashiers, kitchen staff, role access & clock-in attendance</p>
+          <p className="text-sm text-gold-600 font-medium mt-1">Manage outlet cashiers, kitchen staff, role access & clock-in attendance</p>
         </div>
 
         <div className="flex items-center space-x-3">
           <button
             onClick={handleClockIn}
-            className="flex items-center space-x-2 bg-cocoa-800 hover:bg-cocoa-700 text-gold-300 border border-gold-500/40 px-3.5 py-2.5 rounded-xl text-xs font-bold transition"
+            className="flex items-center space-x-2 bg-white hover:bg-cream-100 text-cocoa-900 border border-cream-300 px-4 py-2.5 rounded-xl text-xs font-bold shadow-sm transition"
           >
-            <Clock className="w-4 h-4" />
+            <Clock className="w-4 h-4 text-gold-500" />
             <span>Clock In / Out</span>
           </button>
           <button
             onClick={() => setShowAddModal(true)}
-            className="flex items-center space-x-2 bg-gold-500 hover:bg-gold-400 text-cocoa-950 font-extrabold px-4 py-2.5 rounded-xl text-xs shadow-md transition"
+            className="flex items-center space-x-2 bg-gradient-to-r from-cocoa-800 to-cocoa-950 text-gold-300 hover:from-cocoa-900 hover:to-black font-extrabold px-4 py-2.5 rounded-xl text-xs shadow-md transition"
           >
             <UserPlus className="w-4 h-4" />
             <span>Add Staff Member</span>
@@ -111,28 +112,28 @@ export default function StaffManagementPage() {
       {/* Staff Roster Grid */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
         {staffList.map((user) => (
-          <div key={user.id} className="bg-white p-4 rounded-2xl border border-cream-300 shadow-sm space-y-2">
+          <div key={user.id} className="bg-white/80 backdrop-blur-xl p-5 rounded-2xl border border-cream-300/80 shadow-md space-y-3">
             <div className="flex items-center justify-between">
               <span className="font-extrabold text-sm text-cocoa-900">{user.name}</span>
               <span
                 className={`text-[10px] font-black px-2.5 py-0.5 rounded-full ${
                   user.role === 'ADMIN'
-                    ? 'bg-purple-100 text-purple-900'
+                    ? 'bg-purple-100 text-purple-900 border border-purple-200'
                     : user.role === 'CASHIER'
-                    ? 'bg-blue-100 text-blue-900'
-                    : 'bg-green-100 text-green-900'
+                    ? 'bg-blue-100 text-blue-900 border border-blue-200'
+                    : 'bg-green-100 text-green-900 border border-green-200'
                 }`}
               >
                 {user.role}
               </span>
             </div>
 
-            <div className="text-xs text-cocoa-600 space-y-0.5">
+            <div className="text-xs text-cocoa-600 space-y-1">
               <div>Email: <span className="font-semibold text-cocoa-800">{user.email}</span></div>
               <div>Phone: <span className="font-semibold text-cocoa-800">{user.phone || 'N/A'}</span></div>
             </div>
 
-            <div className="pt-2 border-t border-cream-200 flex items-center justify-between text-[11px]">
+            <div className="pt-3 border-t border-cream-200 flex items-center justify-between text-[11px]">
               <span className="text-cocoa-500 font-semibold">{user.branch?.name || 'Dear Desserts HQ'}</span>
               <span className="flex items-center gap-1 font-bold text-green-600">
                 <CheckCircle2 className="w-3.5 h-3.5" /> Active Account
@@ -143,31 +144,31 @@ export default function StaffManagementPage() {
       </div>
 
       {/* Attendance Log Table */}
-      <div className="bg-white p-5 rounded-2xl border border-cream-300 shadow-sm space-y-3">
-        <h3 className="font-extrabold text-sm text-cocoa-900 flex items-center gap-2 border-b border-cream-200 pb-2">
-          <Clock className="w-4 h-4 text-gold-600" /> Recent Staff Attendance Clock-Ins
+      <div className="bg-white/80 backdrop-blur-xl p-6 rounded-3xl border border-cream-300/80 shadow-md space-y-4">
+        <h3 className="font-display text-lg font-bold text-cocoa-900 flex items-center gap-2 border-b border-cream-200 pb-3">
+          <Clock className="w-5 h-5 text-gold-600" /> Recent Staff Attendance Clock-Ins
         </h3>
 
-        <div className="overflow-x-auto">
+        <div className="overflow-x-auto rounded-2xl border border-cream-300/80">
           <table className="w-full text-left text-xs">
             <thead>
-              <tr className="border-b border-cream-200 text-cocoa-600 font-bold bg-cream-100">
-                <th className="py-2.5 px-3">Employee</th>
-                <th className="py-2.5 px-3">Role</th>
-                <th className="py-2.5 px-3">Clock In</th>
-                <th className="py-2.5 px-3">Clock Out</th>
-                <th className="py-2.5 px-3">Status</th>
+              <tr className="border-b border-cream-300 text-cocoa-900 font-accent uppercase text-[10px] tracking-wider bg-cream-100">
+                <th className="py-3 px-4">Employee</th>
+                <th className="py-3 px-4">Role</th>
+                <th className="py-3 px-4">Clock In</th>
+                <th className="py-3 px-4">Clock Out</th>
+                <th className="py-3 px-4">Status</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-cream-200 text-cocoa-900">
+            <tbody className="divide-y divide-cream-200 text-cocoa-900 font-medium">
               {attendance.map((att) => (
-                <tr key={att.id}>
-                  <td className="py-2.5 px-3 font-bold">{att.user.name}</td>
-                  <td className="py-2.5 px-3 font-semibold text-cocoa-600">{att.user.role}</td>
-                  <td className="py-2.5 px-3">{new Date(att.clockIn).toLocaleTimeString()}</td>
-                  <td className="py-2.5 px-3">{att.clockOut ? new Date(att.clockOut).toLocaleTimeString() : 'Shift Active'}</td>
-                  <td className="py-2.5 px-3">
-                    <span className="bg-green-100 text-green-800 text-[10px] font-bold px-2 py-0.5 rounded-full">
+                <tr key={att.id} className="hover:bg-cream-50/50 transition">
+                  <td className="py-3 px-4 font-bold">{att.user.name}</td>
+                  <td className="py-3 px-4 font-semibold text-cocoa-600">{att.user.role}</td>
+                  <td className="py-3 px-4">{new Date(att.clockIn).toLocaleTimeString()}</td>
+                  <td className="py-3 px-4">{att.clockOut ? new Date(att.clockOut).toLocaleTimeString() : 'Shift Active'}</td>
+                  <td className="py-3 px-4">
+                    <span className="bg-green-100 text-green-800 text-[10px] font-bold px-2.5 py-0.5 rounded-full border border-green-200">
                       {att.status}
                     </span>
                   </td>
@@ -180,55 +181,55 @@ export default function StaffManagementPage() {
 
       {/* Add Staff Modal */}
       {showAddModal && (
-        <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4">
-          <div className="bg-white rounded-3xl max-w-md w-full p-6 shadow-2xl space-y-4 border border-gold-500/40">
+        <div className="fixed inset-0 z-50 bg-cocoa-900/60 backdrop-blur-sm flex items-center justify-center p-4">
+          <div className="bg-white rounded-3xl max-w-md w-full p-6 shadow-2xl space-y-4 border border-cream-300/80">
             <div className="flex items-center justify-between border-b border-cream-200 pb-3">
-              <h3 className="font-extrabold text-base text-cocoa-900">Add New Staff Member</h3>
+              <h3 className="font-display text-lg font-bold text-cocoa-900">Add New Staff Member</h3>
               <button onClick={() => setShowAddModal(false)} className="text-cocoa-500 hover:text-cocoa-900">
                 <X className="w-5 h-5" />
               </button>
             </div>
 
-            <div className="space-y-3 text-xs">
+            <div className="space-y-4 text-xs">
               <div>
-                <label className="font-bold text-cocoa-700">Full Name</label>
+                <label className="font-bold text-cocoa-700 block mb-1">Full Name</label>
                 <input
                   type="text"
                   placeholder="e.g. Rahul Sharma"
                   value={name}
                   onChange={(e) => setName(e.target.value)}
-                  className="w-full mt-1 px-3 py-2 rounded-xl border border-cream-300 font-medium"
+                  className="w-full px-4 py-2.5 rounded-xl border border-cream-300 bg-white focus:border-gold-500 focus:ring-1 focus:ring-gold-500 outline-none transition font-medium text-cocoa-900"
                 />
               </div>
 
               <div>
-                <label className="font-bold text-cocoa-700">Email Address</label>
+                <label className="font-bold text-cocoa-700 block mb-1">Email Address</label>
                 <input
                   type="email"
                   placeholder="rahul@deardesserts.com"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
-                  className="w-full mt-1 px-3 py-2 rounded-xl border border-cream-300 font-medium"
+                  className="w-full px-4 py-2.5 rounded-xl border border-cream-300 bg-white focus:border-gold-500 focus:ring-1 focus:ring-gold-500 outline-none transition font-medium text-cocoa-900"
                 />
               </div>
 
-              <div className="grid grid-cols-2 gap-2">
+              <div className="grid grid-cols-2 gap-3">
                 <div>
-                  <label className="font-bold text-cocoa-700">Password</label>
+                  <label className="font-bold text-cocoa-700 block mb-1">Password</label>
                   <input
                     type="password"
                     placeholder="••••••••"
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
-                    className="w-full mt-1 px-3 py-2 rounded-xl border border-cream-300 font-medium"
+                    className="w-full px-4 py-2.5 rounded-xl border border-cream-300 bg-white focus:border-gold-500 focus:ring-1 focus:ring-gold-500 outline-none transition font-medium text-cocoa-900"
                   />
                 </div>
                 <div>
-                  <label className="font-bold text-cocoa-700">Role</label>
+                  <label className="font-bold text-cocoa-700 block mb-1">Role</label>
                   <select
                     value={role}
                     onChange={(e) => setRole(e.target.value as any)}
-                    className="w-full mt-1 px-3 py-2 rounded-xl border border-cream-300 font-medium"
+                    className="w-full px-4 py-2.5 rounded-xl border border-cream-300 bg-white focus:border-gold-500 focus:ring-1 focus:ring-gold-500 outline-none transition font-medium text-cocoa-900"
                   >
                     <option value="CASHIER">Cashier (POS)</option>
                     <option value="KITCHEN_STAFF">Kitchen Staff (KDS)</option>
@@ -238,20 +239,20 @@ export default function StaffManagementPage() {
               </div>
 
               <div>
-                <label className="font-bold text-cocoa-700">Phone Number</label>
+                <label className="font-bold text-cocoa-700 block mb-1">Phone Number</label>
                 <input
                   type="text"
                   placeholder="+91 98765 43210"
                   value={phone}
                   onChange={(e) => setPhone(e.target.value)}
-                  className="w-full mt-1 px-3 py-2 rounded-xl border border-cream-300 font-medium"
+                  className="w-full px-4 py-2.5 rounded-xl border border-cream-300 bg-white focus:border-gold-500 focus:ring-1 focus:ring-gold-500 outline-none transition font-medium text-cocoa-900"
                 />
               </div>
             </div>
 
             <button
               onClick={handleAddStaff}
-              className="w-full py-3 rounded-xl bg-gold-500 text-cocoa-950 font-extrabold text-xs hover:bg-gold-400 transition"
+              className="w-full py-3 mt-2 rounded-xl bg-gradient-to-r from-cocoa-800 to-cocoa-950 text-gold-300 font-extrabold text-xs hover:from-cocoa-900 hover:to-black shadow-md transition"
             >
               Save Employee Account
             </button>
