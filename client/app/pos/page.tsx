@@ -542,37 +542,54 @@ export default function PosBillingPage() {
             </div>
 
             {/* Printable Thermal Receipt Card */}
-            <div id="thermal-receipt" className="bg-white p-5 rounded-xl border border-cream-300 font-mono text-sm space-y-3 shadow-inner relative overflow-hidden">
-              {/* Receipt zig-zag edge top */}
+            <div id="thermal-receipt" className="bg-white p-5 rounded-xl border border-cream-300 font-mono text-sm space-y-3 shadow-inner relative overflow-hidden text-cocoa-900">
+              {/* Receipt top edge */}
               <div className="absolute top-0 left-0 right-0 h-2 bg-[url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIxMCIgaGVpZ2h0PSIxMCI+PHBvbHlnb24gcG9pbnRzPSIwLDEwIDUsMCAxMCwxMCIgZmlsbD0iI2ZmZmZmZiIvPjwvc3ZnPg==')] transform rotate-180 -mt-2"></div>
               
-              <div className="text-center space-y-1.5 flex flex-col items-center pt-2">
-                <img src="/ddlogo.jpeg" alt="Logo" className="w-14 h-14 rounded-full object-contain mx-auto mb-2 border-2 border-cream-300 p-0.5" />
-                <img src="/ddtitle.jpeg" alt="Dear Desserts" className="h-8 object-contain mx-auto mb-2" />
-                <p className="text-xs text-cocoa-600 font-semibold">QSR Outlet #DD-01 • Park Street Flagship</p>
-                <p className="text-[10px] text-cocoa-500">GSTIN: 19AAACD1234F1Z9</p>
+              <div className="text-center flex flex-col items-center pt-2 space-y-1">
+                {/* ONLY Original Emblem Logo */}
+                <img src="/ddlogo.png" alt="Dear Desserts Logo" className="w-20 h-20 object-contain mx-auto mb-1 drop-shadow-sm" />
+                
+                <h2 className="font-display font-black text-xl tracking-wider text-cocoa-950 uppercase">DEAR DESSERTS</h2>
+                <p className="text-[10px] font-accent font-extrabold uppercase tracking-[0.2em] text-caramel-600">Love At First Bite</p>
+                <p className="text-[11px] text-cocoa-700 font-semibold mt-1 max-w-[18rem] leading-tight">
+                  Swathi Theatre Road, Opp. Sri Balaji Sweets, Bhavanipuram, Vijayawada - 520012
+                </p>
+                <p className="text-[10px] text-cocoa-600 font-medium">Ph: +91 98765 43210 • GSTIN: 37AAACD1234F1Z9</p>
                 
                 <div className="w-full my-3 border-b-2 border-dashed border-cream-300" />
                 
-                <div className="text-xl font-black text-cocoa-900 bg-gold-100 py-2 px-6 rounded-2xl inline-block border border-gold-300 shadow-sm">
+                {/* Token Box */}
+                <div className="text-2xl font-black text-cocoa-950 bg-gold-100/80 py-2.5 px-8 rounded-2xl inline-block border-2 border-dashed border-gold-400 shadow-sm my-1">
                   TOKEN: {recentOrder.token?.tokenNumber}
                 </div>
                 
-                <div className="flex justify-between w-full text-xs text-cocoa-600 mt-4 font-semibold">
-                  <div>BILL NO: {recentOrder.bill?.billNumber}</div>
-                  <div>{new Date(recentOrder.createdAt).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}</div>
+                <div className="flex justify-between w-full text-xs text-cocoa-700 mt-3 font-bold">
+                  <div>BILL: {recentOrder.bill?.billNumber}</div>
+                  <div>{new Date(recentOrder.createdAt).toLocaleDateString('en-IN', { day: '2-digit', month: 'short' })}, {new Date(recentOrder.createdAt).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}</div>
+                </div>
+                <div className="flex justify-between w-full text-[10px] text-cocoa-500 font-medium">
+                  <div>Customer: {recentOrder.customerName}</div>
+                  <div>Pay Mode: {recentOrder.bill?.paymentMethod}</div>
                 </div>
               </div>
 
               <div className="my-3 border-b-2 border-dashed border-cream-300" />
 
-              <div className="space-y-2 font-medium">
+              {/* Itemized Table Header */}
+              <div className="flex justify-between text-[11px] font-extrabold text-cocoa-900 border-b border-cream-300 pb-1">
+                <span>QTY & ITEM</span>
+                <span>TOTAL</span>
+              </div>
+
+              {/* Itemized Rows */}
+              <div className="space-y-2 font-medium pt-1">
                 {recentOrder.items.map((it, idx) => (
-                  <div key={idx} className="flex justify-between text-xs">
-                    <span className="flex gap-2 text-cocoa-800">
-                      <span className="font-bold">{it.quantity}x</span> {it.menuItem.name}
+                  <div key={idx} className="flex justify-between text-xs items-start">
+                    <span className="flex gap-2 text-cocoa-900 font-semibold max-w-[15rem] leading-tight">
+                      <span className="font-extrabold text-cocoa-950">{it.quantity}x</span> {it.menuItem.name}
                     </span>
-                    <span className="font-bold text-cocoa-900">₹{it.totalPrice}</span>
+                    <span className="font-extrabold text-cocoa-950">₹{it.totalPrice}</span>
                   </div>
                 ))}
               </div>
