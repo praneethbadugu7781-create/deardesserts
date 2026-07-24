@@ -41,17 +41,17 @@ export default function IntroSplash() {
         stage === 'FADE_OUT' ? 'opacity-0 pointer-events-none' : 'opacity-100'
       }`}
     >
-      {/* Hardware-accelerated container */}
-      <div className="relative z-10 flex items-center justify-center gap-3 sm:gap-6 px-4 transform-gpu will-change-transform">
+      {/* Hardware-accelerated container with responsive sizing for 320px-375px mobile screens */}
+      <div className="relative z-10 flex items-center justify-center gap-1.5 sm:gap-4 md:gap-6 px-2 sm:px-4 transform-gpu will-change-transform max-w-full">
         
         {/* Left Word: dear */}
         <span
-          className={`font-sans text-5xl sm:text-7xl md:text-8xl lg:text-9xl font-black tracking-tighter text-cocoa-900 transition-transform duration-500 ease-out transform-gpu will-change-transform ${
+          className={`font-sans text-2xl sm:text-6xl md:text-8xl lg:text-9xl font-black tracking-tighter text-cocoa-900 transition-transform duration-500 ease-out transform-gpu will-change-transform ${
             stage === 'IDLE'
-              ? 'opacity-0 translate-x-12'
+              ? 'opacity-0 translate-x-6 sm:translate-x-12'
               : !isSplit
               ? 'opacity-100 translate-x-0'
-              : '-translate-x-3 sm:-translate-x-6 md:-translate-x-10 lg:-translate-x-14 opacity-100'
+              : '-translate-x-1 sm:-translate-x-4 md:-translate-x-8 lg:-translate-x-14 opacity-100'
           }`}
         >
           dear
@@ -61,25 +61,25 @@ export default function IntroSplash() {
         <div
           className={`transition-all duration-500 ease-out transform-gpu will-change-transform flex items-center justify-center shrink-0 ${
             showLogo
-              ? 'scale-100 opacity-100 w-20 sm:w-32 md:w-40 lg:w-48'
+              ? 'scale-100 opacity-100 w-12 sm:w-28 md:w-40 lg:w-48'
               : 'scale-0 opacity-0 w-0 overflow-hidden'
           }`}
         >
           <img
             src="/ddlogo.png"
             alt="Dear Desserts Original Logo"
-            className="w-20 sm:w-32 md:w-40 lg:w-48 h-auto object-contain"
+            className="w-12 sm:w-28 md:w-40 lg:w-48 h-auto object-contain drop-shadow-sm"
           />
         </div>
 
         {/* Right Word: desserts */}
         <span
-          className={`font-sans text-5xl sm:text-7xl md:text-8xl lg:text-9xl font-black tracking-tighter text-caramel-600 transition-transform duration-500 ease-out transform-gpu will-change-transform ${
+          className={`font-sans text-2xl sm:text-6xl md:text-8xl lg:text-9xl font-black tracking-tighter text-caramel-600 transition-transform duration-500 ease-out transform-gpu will-change-transform ${
             stage === 'IDLE'
-              ? 'opacity-0 -translate-x-12'
+              ? 'opacity-0 -translate-x-6 sm:-translate-x-12'
               : !isSplit
               ? 'opacity-100 translate-x-0'
-              : 'translate-x-3 sm:translate-x-6 md:translate-x-10 lg:translate-x-14 opacity-100'
+              : 'translate-x-1 sm:translate-x-4 md:translate-x-8 lg:translate-x-14 opacity-100'
           }`}
         >
           desserts
