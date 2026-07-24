@@ -314,9 +314,9 @@ export default function CustomerHomePage() {
             <FadeInView delay={400}>
               <div className="grid grid-cols-3 gap-3 pt-4">
                 {[
-                  { value: `${items.length || '13'}+`, label: 'Signature Items' },
+                  { value: `${items.length}`, label: 'Signature Items' },
                   { value: '100%', label: 'Fresh Daily' },
-                  { value: '4.9★', label: 'Guest Rating' },
+                  { value: '5★', label: 'Artisanal Quality' },
                 ].map((stat) => (
                   <div key={stat.label} className="stat-pill">
                     <div className="font-display text-2xl font-semibold text-cocoa-900">{stat.value}</div>
@@ -446,8 +446,18 @@ export default function CustomerHomePage() {
           </div>
 
           {filteredItems.length === 0 && (
-            <div className="py-20 text-center">
-              <p className="font-display text-2xl text-cocoa-600/60">No items match your search</p>
+            <div className="py-20 text-center space-y-4">
+              <p className="font-display text-2xl font-bold text-cocoa-800">No Menu Items Added Yet</p>
+              <p className="text-sm text-cocoa-600 max-w-md mx-auto leading-relaxed">
+                Your database is ready for real items! Log in via the Staff Portal as Admin to add your custom menu items and categories.
+              </p>
+              <Link
+                href="/login"
+                className="inline-flex items-center gap-2 px-6 py-3 rounded-2xl bg-cocoa-900 text-gold-300 font-accent text-xs font-bold uppercase tracking-wider hover:bg-cocoa-950 transition-colors shadow-md"
+              >
+                <Lock className="h-3.5 w-3.5 text-gold-400" />
+                Go to Staff Portal
+              </Link>
             </div>
           )}
         </div>
