@@ -59,7 +59,7 @@ export default function StaffManagementPage() {
     {
       id: '3',
       name: 'Store Manager',
-      email: 'admin@deardesserts.com',
+      email: 'deardesserts.in@gmail.com',
       role: 'ADMIN',
       isActive: true,
       branch: { name: 'Dear Desserts - Bhavanipuram' },
@@ -78,13 +78,24 @@ export default function StaffManagementPage() {
       ]);
 
       const storedStaff = typeof window !== 'undefined' ? localStorage.getItem('dd_custom_staff') : null;
+      let finalStaff: StaffUser[] = DEFAULT_STAFF;
+      
       if (staffRes && Array.isArray(staffRes) && staffRes.length > 0) {
-        setStaffList(staffRes);
+        finalStaff = staffRes.map((s: StaffUser) =>
+          s.email === 'admin@deardesserts.com' ? { ...s, email: 'deardesserts.in@gmail.com' } : s
+        );
       } else if (storedStaff) {
-        setStaffList(JSON.parse(storedStaff));
-      } else {
-        setStaffList(DEFAULT_STAFF);
+        try {
+          const parsed = JSON.parse(storedStaff);
+          finalStaff = parsed.map((s: StaffUser) =>
+            s.email === 'admin@deardesserts.com' ? { ...s, email: 'deardesserts.in@gmail.com' } : s
+          );
+        } catch (e) {
+          finalStaff = DEFAULT_STAFF;
+        }
       }
+
+      setStaffList(finalStaff);
 
       setAttendance(attRes || []);
     } catch (err) {
