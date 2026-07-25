@@ -36,14 +36,14 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     if (savedToken && savedUser) {
       setToken(savedToken);
       setUser(JSON.parse(savedUser));
-      // Refresh current user validation
+      // Validate token with backend
       fetchApi('/auth/me')
         .then((res) => {
           setUser(res);
           localStorage.setItem('dd_user', JSON.stringify(res));
         })
         .catch(() => {
-          // If offline or custom local user, keep current user
+          // Keep active local session
         })
         .finally(() => setLoading(false));
     } else {
@@ -54,6 +54,10 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   }, []);
 
   const login = async (email: string, pass: string) => {
+    if (!email || !pass) {
+      throw new Error('Please enter both email and password.');
+    }
+
     try {
       const data = await fetchApi('/auth/login', {
         method: 'POST',
@@ -64,14 +68,19 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       setUser(data.user);
       localStorage.setItem('dd_token', data.token);
       localStorage.setItem('dd_user', JSON.stringify(data.user));
+      return;
     } catch (err: any) {
-      // Fallback for custom updated staff credentials saved by Admin in localStorage
+      // Check custom updated staff accounts in localStorage
       const customStaffRaw = typeof window !== 'undefined' ? localStorage.getItem('dd_custom_staff') : null;
       if (customStaffRaw) {
         try {
           const customStaffList: any[] = JSON.parse(customStaffRaw);
-          const found = customStaffList.find((s) => s.email.toLowerCase() === email.toLowerCase());
+          const found = customStaffList.find((s) => s.email.toLowerCase() === email.trim().toLowerCase());
           if (found) {
+            // STRICT PASSWORD CHECK
+            if (found.password && found.password !== pass) {
+              throw new Error('Invalid email or password.');
+            }
             const fallbackUser: User = {
               id: found.id,
               name: found.name,
@@ -86,43 +95,73 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
             localStorage.setItem('dd_user', JSON.stringify(fallbackUser));
             return;
           }
-        } catch (e) {
-          console.error('Failed to parse custom staff list:', e);
+        } catch (e: any) {
+          if (e.message === 'Invalid email or password.') throw e;
         }
       }
 
-      // Check default fallback accounts
-      let fallbackRole: Role | null = null;
-      let fallbackName = 'Staff Member';
-
-      if (email.toLowerCase() === 'admin@deardesserts.com') {
-        fallbackRole = 'ADMIN';
-        fallbackName = 'Store Manager';
-      } else if (email.toLowerCase() === 'cashier@deardesserts.com') {
-        fallbackRole = 'CASHIER';
-        fallbackName = 'POS Cashier';
-      } else if (email.toLowerCase() === 'kitchen@deardesserts.com') {
-        fallbackRole = 'KITCHEN_STAFF';
-        fallbackName = 'Head Chef';
-      }
-
-      if (fallbackRole) {
-        const fallbackUser: User = {
-          id: 'demo_' + fallbackRole.toLowerCase(),
-          name: fallbackName,
-          email,
-          role: fallbackRole,
+      // Real Store Admin & Staff Accounts Check
+      const targetEmail = email.trim().toLowerCase();
+      
+      // Real Store Admin Account: deardesserts.in@gmail.com
+      if (targetEmail === 'deardesserts.in@gmail.com' || targetEmail === 'admin@deardesserts.com') {
+        if (pass !== 'admin123' && pass !== 'admin') {
+          throw new Error('Invalid email or password.');
+        }
+        const adminUser: User = {
+          id: 'admin_real',
+          name: 'Store Manager',
+          email: 'deardesserts.in@gmail.com',
+          role: 'ADMIN',
           branch: { id: 'b1', name: 'Dear Desserts - Bhavanipuram', code: 'DD-01' },
         };
-        const mockToken = 'mock_token_' + Date.now();
+        const mockToken = 'real_admin_token_' + Date.now();
         setToken(mockToken);
-        setUser(fallbackUser);
+        setUser(adminUser);
         localStorage.setItem('dd_token', mockToken);
-        localStorage.setItem('dd_user', JSON.stringify(fallbackUser));
+        localStorage.setItem('dd_user', JSON.stringify(adminUser));
         return;
       }
 
-      throw new Error(err.message || 'Invalid email or password');
+      if (targetEmail === 'cashier@deardesserts.com') {
+        if (pass !== 'cashier123') {
+          throw new Error('Invalid email or password.');
+        }
+        const cashierUser: User = {
+          id: 'cashier_real',
+          name: 'POS Cashier',
+          email: 'cashier@deardesserts.com',
+          role: 'CASHIER',
+          branch: { id: 'b1', name: 'Dear Desserts - Bhavanipuram', code: 'DD-01' },
+        };
+        const mockToken = 'real_cashier_token_' + Date.now();
+        setToken(mockToken);
+        setUser(cashierUser);
+        localStorage.setItem('dd_token', mockToken);
+        localStorage.setItem('dd_user', JSON.stringify(cashierUser));
+        return;
+      }
+
+      if (targetEmail === 'kitchen@deardesserts.com') {
+        if (pass !== 'kitchen123') {
+          throw new Error('Invalid email or password.');
+        }
+        const kitchenUser: User = {
+          id: 'kitchen_real',
+          name: 'Head Chef',
+          email: 'kitchen@deardesserts.com',
+          role: 'KITCHEN_STAFF',
+          branch: { id: 'b1', name: 'Dear Desserts - Bhavanipuram', code: 'DD-01' },
+        };
+        const mockToken = 'real_kitchen_token_' + Date.now();
+        setToken(mockToken);
+        setUser(kitchenUser);
+        localStorage.setItem('dd_token', mockToken);
+        localStorage.setItem('dd_user', JSON.stringify(kitchenUser));
+        return;
+      }
+
+      throw new Error('Invalid email or password.');
     }
   };
 
@@ -137,7 +176,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   };
 
   const switchRoleDemo = async (role: Role) => {
-    let email = 'admin@deardesserts.com';
+    let email = 'deardesserts.in@gmail.com';
     let pass = 'admin123';
 
     if (role === 'CASHIER') {

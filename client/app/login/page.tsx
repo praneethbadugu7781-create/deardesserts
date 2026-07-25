@@ -9,16 +9,16 @@ import Link from 'next/link';
 type Role = 'ADMIN' | 'CASHIER' | 'KITCHEN_STAFF';
 
 const ROLES = [
-  { id: 'ADMIN', label: 'Admin', icon: LayoutDashboard, defaultEmail: 'admin@deardesserts.com', defaultPass: 'admin123' },
-  { id: 'CASHIER', label: 'Cashier POS', icon: ShoppingCart, defaultEmail: 'cashier@deardesserts.com', defaultPass: 'cashier123' },
-  { id: 'KITCHEN_STAFF', label: 'Kitchen KDS', icon: ChefHat, defaultEmail: 'kitchen@deardesserts.com', defaultPass: 'kitchen123' },
+  { id: 'ADMIN', label: 'Admin', icon: LayoutDashboard, defaultEmail: 'deardesserts.in@gmail.com' },
+  { id: 'CASHIER', label: 'Cashier POS', icon: ShoppingCart, defaultEmail: 'cashier@deardesserts.com' },
+  { id: 'KITCHEN_STAFF', label: 'Kitchen KDS', icon: ChefHat, defaultEmail: 'kitchen@deardesserts.com' },
 ] as const;
 
 export default function LoginPage() {
   const router = useRouter();
   const { login } = useAuth();
-  const [role, setRole] = useState<Role>('CASHIER');
-  const [email, setEmail] = useState('');
+  const [role, setRole] = useState<Role>('ADMIN');
+  const [email, setEmail] = useState('deardesserts.in@gmail.com');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
   const [isLoading, setIsLoading] = useState(false);
@@ -30,9 +30,8 @@ export default function LoginPage() {
   const updateCredentialsForRole = (selectedRole: Role) => {
     const defaultRoleConfig = ROLES.find(r => r.id === selectedRole);
     let targetEmail = defaultRoleConfig?.defaultEmail || '';
-    let targetPass = defaultRoleConfig?.defaultPass || '';
 
-    // Check if Admin edited credentials in Staff Management (localStorage)
+    // Check custom staff email configured by Admin in Staff Management
     const customStaffRaw = typeof window !== 'undefined' ? localStorage.getItem('dd_custom_staff') : null;
     if (customStaffRaw) {
       try {
@@ -40,7 +39,6 @@ export default function LoginPage() {
         const customAccount = staffList.find(s => s.role === selectedRole);
         if (customAccount) {
           targetEmail = customAccount.email || targetEmail;
-          // Keep password blank if custom password set, so user types updated password, or set default
         }
       } catch (e) {
         console.error('Failed to parse custom staff:', e);
@@ -48,7 +46,7 @@ export default function LoginPage() {
     }
 
     setEmail(targetEmail);
-    setPassword(targetPass);
+    setPassword(''); // Do NOT auto-fill password so user must enter correct password!
     setError('');
   };
 
@@ -65,7 +63,7 @@ export default function LoginPage() {
       else if (role === 'KITCHEN_STAFF') router.push('/kds');
       
     } catch (err: any) {
-      setError(err.message || 'Invalid credentials');
+      setError(err.message || 'Invalid email or password.');
     } finally {
       setIsLoading(false);
     }
@@ -114,9 +112,9 @@ export default function LoginPage() {
 
         <form onSubmit={handleSubmit} className="space-y-6">
           {error && (
-            <div className="bg-red-50 text-red-700 p-4 rounded-xl text-sm border border-red-200 flex items-center gap-2 font-medium">
-              <Shield className="w-4 h-4 shrink-0" />
-              {error}
+            <div className="bg-red-50 text-red-700 p-4 rounded-xl text-sm border border-red-200 flex items-center gap-2 font-bold shadow-sm animate-in fade-in duration-200">
+              <Shield className="w-5 h-5 text-red-600 shrink-0" />
+              <span>{error}</span>
             </div>
           )}
           
@@ -127,7 +125,7 @@ export default function LoginPage() {
                 type="email"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                placeholder="Enter login email address"
+                placeholder="deardesserts.in@gmail.com"
                 className="w-full px-4 py-3 rounded-xl border border-cream-300 bg-cream-100 text-cocoa-900 focus:outline-none focus:ring-2 focus:ring-gold-500/50 focus:border-gold-500 transition-all font-medium"
                 required
               />
@@ -139,7 +137,7 @@ export default function LoginPage() {
                 type="password"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
-                placeholder="Enter password"
+                placeholder="Enter your password"
                 className="w-full px-4 py-3 rounded-xl border border-cream-300 bg-cream-100 text-cocoa-900 focus:outline-none focus:ring-2 focus:ring-gold-500/50 focus:border-gold-500 transition-all font-medium"
                 required
               />
