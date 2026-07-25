@@ -606,8 +606,8 @@ export default function PosBillingPage() {
                 <div className="absolute top-0 left-0 right-0 h-2 bg-[url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIxMCIgaGVpZ2h0PSIxMCI+PHBvbHlnb24gcG9pbnRzPSIwLDEwIDUsMCAxMCwxMCIgZmlsbD0iI2ZmZmZmZiIvPjwvc3ZnPg==')] transform rotate-180 -mt-2"></div>
                 
                 <div className="text-center flex flex-col items-center pt-2 space-y-1">
-                  {/* ONLY Original Emblem Logo SVG */}
-                  <img src="/ddlogo.svg" alt="Dear Desserts Logo" className="w-18 h-18 sm:w-20 sm:h-20 object-contain mx-auto mb-1 drop-shadow-sm" />
+                  {/* ONLY Original Emblem Logo */}
+                  <img src="/ddlogo.png" alt="Dear Desserts Logo" className="w-18 h-18 sm:w-20 sm:h-20 object-contain mx-auto mb-1 drop-shadow-sm" />
                   
                   <h2 className="font-display font-black text-xl tracking-wider text-cocoa-950 uppercase">DEAR DESSERTS</h2>
                   <p className="text-[10px] font-accent font-extrabold uppercase tracking-[0.2em] text-caramel-600">Love At First Bite</p>

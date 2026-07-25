@@ -66,7 +66,7 @@ export default function IntroSplash() {
           }`}
         >
           <img
-            src="/ddlogo.svg"
+            src="/ddlogo.png"
             alt="Dear Desserts Original Logo"
             className="w-12 sm:w-28 md:w-40 lg:w-48 h-auto object-contain drop-shadow-sm"
           />

@@ -33,7 +33,7 @@ export default function Logo({
       {variant !== 'title-only' && (
         <div className={`${logoSizeMap[size]} relative flex items-center justify-center transition-all duration-500 group-hover:scale-105 flex-shrink-0`}>
           <Image
-            src="/ddlogo.svg"
+            src="/ddlogo.png"
             alt="Dear Desserts Emblem"
             fill
             sizes="(max-width: 768px) 100vw, 50vw"

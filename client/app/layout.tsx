@@ -8,6 +8,11 @@ export const metadata = {
   title: 'Dear Desserts | Love At First Bite',
   description:
     'Artisanal Belgian waffles, decadent cakes, gourmet thickshakes & signature combos — crafted fresh at Dear Desserts flagship outlet.',
+  icons: {
+    icon: '/ddlogo.png',
+    shortcut: '/ddlogo.png',
+    apple: '/ddlogo.png',
+  },
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
