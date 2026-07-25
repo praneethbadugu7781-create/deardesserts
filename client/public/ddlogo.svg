@@ -1,0 +1,119 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 500 500" width="100%" height="100%">
+  <defs>
+    <!-- Outer Glow Filter -->
+    <filter id="goldGlow" x="-20%" y="-20%" width="140%" height="140%">
+      <feGaussianBlur stdDeviation="8" result="blur" />
+      <feComposite in="SourceGraphic" in2="blur" operator="over" />
+    </filter>
+
+    <!-- Metallic Gold Gradients -->
+    <linearGradient id="goldGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#E5C158" />
+      <stop offset="30%" stop-color="#C9A227" />
+      <stop offset="70%" stop-color="#F3E5AB" />
+      <stop offset="100%" stop-color="#997515" />
+    </linearGradient>
+
+    <!-- Deep Cocoa Gradient -->
+    <radialGradient id="cocoaBg" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" stop-color="#3A1F13" />
+      <stop offset="85%" stop-color="#1E100A" />
+      <stop offset="100%" stop-color="#120805" />
+    </radialGradient>
+
+    <!-- Inner Plate Cream Gradient -->
+    <radialGradient id="creamPlate" cx="50%" cy="40%" r="60%">
+      <stop offset="0%" stop-color="#FFFFFF" />
+      <stop offset="70%" stop-color="#FBF7F0" />
+      <stop offset="100%" stop-color="#E8DCB8" />
+    </radialGradient>
+
+    <!-- Text Path Circle -->
+    <path id="textCircleTop" d="M 95, 250 A 155,155 0 1,1 405, 250" />
+    <path id="textCircleBottom" d="M 405, 250 A 155,155 0 0,1 95, 250" />
+  </defs>
+
+  <!-- Scalloped Outer Ring Base -->
+  <circle cx="250" cy="250" r="240" fill="url(#goldGradient)" />
+  <circle cx="250" cy="250" r="232" fill="#1E100A" />
+  
+  <!-- Outer Dotted Stamp Ring -->
+  <circle cx="250" cy="250" r="222" fill="none" stroke="url(#goldGradient)" stroke-width="3" stroke-dasharray="8 6" />
+
+  <!-- Main Cocoa Ring -->
+  <circle cx="250" cy="250" r="210" fill="url(#cocoaBg)" stroke="#C9A227" stroke-width="4" />
+  
+  <!-- Inner Concentric Gold Rings -->
+  <circle cx="250" cy="250" r="162" fill="none" stroke="url(#goldGradient)" stroke-width="2.5" />
+  <circle cx="250" cy="250" r="154" fill="url(#creamPlate)" stroke="#C9A227" stroke-width="3" />
+
+  <!-- Curved Circular Text: DEAR DESSERTS -->
+  <text font-family="'Cormorant Garamond', 'Georgia', serif" font-weight="900" font-size="34" fill="#FBF7F0" letter-spacing="6">
+    <textPath href="#textCircleTop" startOffset="50%" text-anchor="middle">
+      DEAR DESSERTS
+    </textPath>
+  </text>
+
+  <!-- Curved Circular Text: CAKES • WAFFLES • SHAKES -->
+  <text font-family="'Plus Jakarta Sans', 'Syne', sans-serif" font-weight="800" font-size="16" fill="#C9A227" letter-spacing="4">
+    <textPath href="#textCircleBottom" startOffset="50%" text-anchor="middle">
+      • CAKES • WAFFLES • SHAKES •
+    </textPath>
+  </text>
+
+  <!-- Left & Right Decorative Stars -->
+  <polygon points="82,242 86,252 96,252 88,258 91,268 82,262 73,268 76,258 68,252 78,252" fill="#C9A227" />
+  <polygon points="418,242 422,252 432,252 424,258 427,268 418,262 409,268 412,258 404,252 414,252" fill="#C9A227" />
+
+  <!-- Center Graphic: Premium Waffle & Strawberry Desserts Illustration -->
+  <g transform="translate(140, 140) scale(0.88)">
+    <!-- Waffle Base Plate Shadow -->
+    <ellipse cx="125" cy="205" rx="100" ry="25" fill="rgba(30,16,10,0.18)" />
+    
+    <!-- Fine Ceramic Plate -->
+    <ellipse cx="125" cy="200" rx="95" ry="22" fill="#FFFFFF" stroke="#E5C158" stroke-width="3" />
+    <ellipse cx="125" cy="199" rx="80" ry="17" fill="#F7F1E5" />
+
+    <!-- Isometric Waffle Block Bottom Layer -->
+    <path d="M 50,150 L 125,185 L 200,150 L 125,115 Z" fill="#D48C46" stroke="#8C4A1B" stroke-width="4" stroke-linejoin="round" />
+    <path d="M 50,150 L 50,170 L 125,205 L 125,185 Z" fill="#A66226" stroke="#8C4A1B" stroke-width="4" stroke-linejoin="round" />
+    <path d="M 200,150 L 200,170 L 125,205 L 125,185 Z" fill="#783E12" stroke="#8C4A1B" stroke-width="4" stroke-linejoin="round" />
+
+    <!-- Waffle Grid Pockets -->
+    <!-- Grid Row 1 -->
+    <polygon points="70,145 92,155 110,147 88,137" fill="#8C4A1B" />
+    <polygon points="98,158 120,168 138,160 116,150" fill="#8C4A1B" />
+    <polygon points="126,171 148,181 166,173 144,163" fill="#8C4A1B" />
+
+    <!-- Grid Row 2 -->
+    <polygon points="92,135 114,145 132,137 110,127" fill="#8C4A1B" />
+    <polygon points="120,148 142,158 160,150 138,140" fill="#8C4A1B" />
+    <polygon points="148,161 170,171 188,163 166,153" fill="#8C4A1B" />
+
+    <!-- Warm Melted Belgian Chocolate Drizzle -->
+    <path d="M 75,140 Q 110,165 140,145 T 185,160 Q 150,180 120,170 Z" fill="#3D1C06" opacity="0.9" />
+
+    <!-- Whipped Cream Dollop Top -->
+    <path d="M 105,120 Q 125,85 145,120 Q 165,100 150,135 Q 125,145 100,135 Q 85,110 105,120 Z" fill="#FFFFFF" stroke="#F5EBDC" stroke-width="2" />
+    <path d="M 120,105 Q 130,80 140,110 Z" fill="#FFF9F0" />
+
+    <!-- Ripe Red Strawberry & Mint Leaf Garnish -->
+    <path d="M 120,90 Q 135,70 145,95 Q 130,115 120,90 Z" fill="#D92B2B" stroke="#990000" stroke-width="2" />
+    <!-- Seeds -->
+    <circle cx="128" cy="92" r="1.5" fill="#FFE57F" />
+    <circle cx="135" cy="98" r="1.5" fill="#FFE57F" />
+    <circle cx="132" cy="86" r="1.5" fill="#FFE57F" />
+
+    <!-- Mint Leaves -->
+    <path d="M 142,78 Q 160,70 152,86 Q 140,84 142,78 Z" fill="#2E7D32" />
+    <path d="M 122,78 Q 110,65 118,80 Z" fill="#4CAF50" />
+  </g>
+
+  <!-- Established Ribbon Tag at Bottom Center -->
+  <g transform="translate(170, 395)">
+    <rect x="0" y="0" width="160" height="32" rx="16" fill="#1E100A" stroke="#C9A227" stroke-width="2" />
+    <text x="80" y="21" font-family="'Plus Jakarta Sans', sans-serif" font-weight="900" font-size="12" fill="#E5C158" text-anchor="middle" letter-spacing="3">
+      EST. 2026
+    </text>
+  </g>
+</svg>
