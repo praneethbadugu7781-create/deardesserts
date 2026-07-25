@@ -61,6 +61,38 @@ router.post('/', authenticateJWT, requireRole(['ADMIN']), async (req: AuthReques
   }
 });
 
+// PUT /api/staff/:id - Update employee credentials & info (ADMIN)
+router.put('/:id', authenticateJWT, requireRole(['ADMIN']), async (req: AuthRequest, res: Response) => {
+  try {
+    const { id } = req.params;
+    const { name, email, password, role, phone, isActive } = req.body;
+
+    const updateData: any = {};
+    if (name) updateData.name = name;
+    if (email) updateData.email = email;
+    if (role) updateData.role = role as Role;
+    if (phone !== undefined) updateData.phone = phone;
+    if (isActive !== undefined) updateData.isActive = isActive;
+
+    if (password && password.trim() !== '') {
+      updateData.password = await bcrypt.hash(password, 10);
+    }
+
+    const updatedUser = await prisma.user.update({
+      where: { id },
+      data: updateData,
+      select: { id: true, name: true, email: true, role: true, phone: true, isActive: true },
+    });
+
+    res.json(updatedUser);
+  } catch (error: any) {
+    if (error.code === 'P2002') {
+      return res.status(400).json({ error: 'Email is already in use by another staff member' });
+    }
+    res.status(500).json({ error: 'Failed to update staff member credentials' });
+  }
+});
+
 // GET /api/staff/attendance - Get attendance records
 router.get('/attendance', authenticateJWT, requireRole(['ADMIN']), async (_req, res: Response) => {
   try {
