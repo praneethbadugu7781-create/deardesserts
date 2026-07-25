@@ -9,28 +9,48 @@ import Link from 'next/link';
 type Role = 'ADMIN' | 'CASHIER' | 'KITCHEN_STAFF';
 
 const ROLES = [
-  { id: 'ADMIN', label: 'Admin', icon: LayoutDashboard, email: 'admin@deardesserts.com', pass: 'admin123' },
-  { id: 'CASHIER', label: 'Cashier POS', icon: ShoppingCart, email: 'cashier@deardesserts.com', pass: 'cashier123' },
-  { id: 'KITCHEN_STAFF', label: 'Kitchen KDS', icon: ChefHat, email: 'kitchen@deardesserts.com', pass: 'kitchen123' },
+  { id: 'ADMIN', label: 'Admin', icon: LayoutDashboard, defaultEmail: 'admin@deardesserts.com', defaultPass: 'admin123' },
+  { id: 'CASHIER', label: 'Cashier POS', icon: ShoppingCart, defaultEmail: 'cashier@deardesserts.com', defaultPass: 'cashier123' },
+  { id: 'KITCHEN_STAFF', label: 'Kitchen KDS', icon: ChefHat, defaultEmail: 'kitchen@deardesserts.com', defaultPass: 'kitchen123' },
 ] as const;
 
 export default function LoginPage() {
   const router = useRouter();
   const { login } = useAuth();
-  const [role, setRole] = useState<Role>('ADMIN');
+  const [role, setRole] = useState<Role>('CASHIER');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
   const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
-    const selectedRole = ROLES.find(r => r.id === role);
-    if (selectedRole) {
-      setEmail(selectedRole.email);
-      setPassword(selectedRole.pass);
-      setError('');
-    }
+    updateCredentialsForRole(role);
   }, [role]);
+
+  const updateCredentialsForRole = (selectedRole: Role) => {
+    const defaultRoleConfig = ROLES.find(r => r.id === selectedRole);
+    let targetEmail = defaultRoleConfig?.defaultEmail || '';
+    let targetPass = defaultRoleConfig?.defaultPass || '';
+
+    // Check if Admin edited credentials in Staff Management (localStorage)
+    const customStaffRaw = typeof window !== 'undefined' ? localStorage.getItem('dd_custom_staff') : null;
+    if (customStaffRaw) {
+      try {
+        const staffList: any[] = JSON.parse(customStaffRaw);
+        const customAccount = staffList.find(s => s.role === selectedRole);
+        if (customAccount) {
+          targetEmail = customAccount.email || targetEmail;
+          // Keep password blank if custom password set, so user types updated password, or set default
+        }
+      } catch (e) {
+        console.error('Failed to parse custom staff:', e);
+      }
+    }
+
+    setEmail(targetEmail);
+    setPassword(targetPass);
+    setError('');
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -60,9 +80,9 @@ export default function LoginPage() {
       <div className="w-full max-w-2xl bg-white/80 backdrop-blur-xl rounded-3xl border border-cream-300/80 shadow-2xl p-8 md:p-12 relative z-10">
         
         {/* Logos */}
-        <div className="flex flex-col items-center justify-center mb-10 space-y-4">
+        <div className="flex flex-col items-center justify-center mb-10 space-y-3">
           <img src="/ddlogo.png" alt="Dear Desserts Logo" className="h-20 w-auto object-contain drop-shadow-md" />
-          <img src="/ddtitle.png" alt="Dear Desserts" className="h-12 w-auto object-contain opacity-90" />
+          <img src="/ddtitle.png" alt="Dear Desserts" className="h-10 w-auto object-contain opacity-90" />
           <div className="flex items-center gap-2 text-cocoa-600 mt-2">
             <Shield className="w-4 h-4 text-gold-500" />
             <h1 className="font-display text-xl tracking-wide font-medium">Staff Authentication</h1>
@@ -107,6 +127,7 @@ export default function LoginPage() {
                 type="email"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
+                placeholder="Enter login email address"
                 className="w-full px-4 py-3 rounded-xl border border-cream-300 bg-cream-100 text-cocoa-900 focus:outline-none focus:ring-2 focus:ring-gold-500/50 focus:border-gold-500 transition-all font-medium"
                 required
               />
@@ -118,6 +139,7 @@ export default function LoginPage() {
                 type="password"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
+                placeholder="Enter password"
                 className="w-full px-4 py-3 rounded-xl border border-cream-300 bg-cream-100 text-cocoa-900 focus:outline-none focus:ring-2 focus:ring-gold-500/50 focus:border-gold-500 transition-all font-medium"
                 required
               />
