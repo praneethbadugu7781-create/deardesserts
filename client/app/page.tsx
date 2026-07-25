@@ -224,7 +224,7 @@ export default function CustomerHomePage() {
             </div>
           </Link>
 
-          {/* Right Side: Token TV + Staff Button + Hamburger */}
+          {/* Right Side: Token TV + Staff Portal + Hamburger Button */}
           <div className="flex items-center gap-2 sm:gap-3">
             <Link
               href="/tokens"
@@ -234,61 +234,57 @@ export default function CustomerHomePage() {
               <span>Token TV</span>
             </Link>
 
-            {/* Desktop Liquid Metal Button */}
+            {/* Desktop Staff Portal Button */}
             <Link href="/login" className="hidden sm:block">
               <LiquidMetalButton label="Staff Portal" />
             </Link>
 
-            {/* Mobile Staff Pill Button (for narrow screens < 640px) */}
-            <Link
-              href="/login"
-              className="sm:hidden flex items-center gap-1.5 px-3 py-2 rounded-xl bg-cocoa-900 text-gold-300 font-accent text-[10px] font-bold uppercase tracking-wider shadow-sm hover:bg-cocoa-950 transition"
-            >
-              <Lock className="w-3 h-3 text-gold-400" />
-              <span>Staff</span>
-            </Link>
-
+            {/* Hamburger Button (XL and smaller) */}
             <button
               onClick={() => setMobileNavOpen(!mobileNavOpen)}
-              className="xl:hidden p-2 rounded-xl bg-cream-200 text-cocoa-900 border border-cream-300 hover:bg-cream-300 transition"
+              className="xl:hidden p-2.5 rounded-xl bg-cream-200 text-cocoa-900 border border-cream-300 hover:bg-cream-300 transition-all active:scale-95 shadow-sm"
               aria-label="Toggle navigation menu"
             >
-              {mobileNavOpen ? <X className="h-5 w-5" /> : <MenuIcon className="h-5 w-5" />}
+              {mobileNavOpen ? <X className="h-6 w-6 text-cocoa-950" /> : <MenuIcon className="h-6 w-6 text-cocoa-950" />}
             </button>
           </div>
         </div>
 
-        {/* Mobile Navigation Drawer */}
+        {/* Mobile Navigation Drawer (Absolute Dropdown below Header) */}
         {mobileNavOpen && (
-          <div className="xl:hidden bg-cream-100/95 backdrop-blur-xl border-b border-cream-300 px-6 py-4 space-y-3 animate-fade-in">
+          <div className="absolute top-full left-0 right-0 w-full bg-cream-100/98 backdrop-blur-2xl border-b-2 border-cream-300/80 shadow-2xl p-5 space-y-3.5 z-50 animate-in slide-in-from-top-2 duration-200">
             <a
               href="#menu-section"
               onClick={() => setMobileNavOpen(false)}
-              className="block font-accent text-xs font-bold uppercase tracking-wider text-cocoa-900 py-2 border-b border-cream-200"
+              className="flex items-center justify-between font-accent text-xs font-bold uppercase tracking-wider text-cocoa-900 py-3 px-4 rounded-xl bg-white/70 border border-cream-300/60 hover:bg-white transition"
             >
-              📜 Explore Menu
+              <span>📜 Explore Menu</span>
+              <ArrowRight className="w-4 h-4 text-cocoa-400" />
             </a>
             <a
               href="#specials-section"
               onClick={() => setMobileNavOpen(false)}
-              className="block font-accent text-xs font-bold uppercase tracking-wider text-cocoa-900 py-2 border-b border-cream-200"
+              className="flex items-center justify-between font-accent text-xs font-bold uppercase tracking-wider text-cocoa-900 py-3 px-4 rounded-xl bg-white/70 border border-cream-300/60 hover:bg-white transition"
             >
-              🔥 Today's Specials
+              <span>🔥 Today's Specials</span>
+              <ArrowRight className="w-4 h-4 text-cocoa-400" />
             </a>
             <Link
               href="/tokens"
               onClick={() => setMobileNavOpen(false)}
-              className="flex items-center justify-between font-accent text-xs font-bold uppercase tracking-wider text-cocoa-900 py-2 border-b border-cream-200"
+              className="flex items-center justify-between font-accent text-xs font-bold uppercase tracking-wider text-cocoa-900 py-3 px-4 rounded-xl bg-white/70 border border-cream-300/60 hover:bg-white transition"
             >
               <span className="flex items-center gap-2"><MonitorPlay className="h-4 w-4 text-gold-600" /> Token TV</span>
-              <span className="text-[10px] bg-gold-100 text-gold-700 px-2 py-0.5 rounded-full">Live</span>
+              <span className="text-[10px] bg-gold-200 text-cocoa-950 font-black px-2.5 py-0.5 rounded-full border border-gold-400">Live</span>
             </Link>
+
             <Link
               href="/login"
               onClick={() => setMobileNavOpen(false)}
-              className="block text-center w-full py-2.5 rounded-xl bg-cocoa-900 text-gold-300 font-accent text-xs font-bold uppercase tracking-wider mt-2"
+              className="flex items-center justify-center gap-2 w-full py-3.5 rounded-xl bg-cocoa-900 hover:bg-cocoa-950 text-gold-300 font-accent text-xs font-extrabold uppercase tracking-widest mt-3 shadow-lg border border-gold-500/30 transition-all active:scale-95"
             >
-              🔐 Staff Login
+              <Lock className="w-4 h-4 text-gold-400" />
+              <span>Staff Login</span>
             </Link>
           </div>
         )}
