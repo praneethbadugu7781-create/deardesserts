@@ -60,6 +60,8 @@ interface CreatedOrder {
   items: { menuItem: { name: string }; quantity: number; itemPrice: number; totalPrice: number }[];
 }
 
+import { printViaWebBluetooth, printViaRawBT, ReceiptOrderData } from '../../lib/escpos';
+
 export default function PosBillingPage() {
   const [categories, setCategories] = useState<Category[]>([]);
   const [menuItems, setMenuItems] = useState<MenuItem[]>([]);
@@ -197,9 +199,60 @@ export default function PosBillingPage() {
     }
   };
 
-  // Thermal printing handler
+  // Thermal printing handler (Standard Browser Print)
   const handlePrintThermal = () => {
     window.print();
+  };
+
+  // Direct Web Bluetooth ESC/POS Print (Chrome on Android/PWA)
+  const handleBluetoothPrint = async () => {
+    if (!recentOrder) return;
+    try {
+      const receiptData: ReceiptOrderData = {
+        tokenNumber: recentOrder.token?.tokenNumber || '---',
+        billNumber: recentOrder.bill?.billNumber || '---',
+        customerName: recentOrder.customerName || 'Guest Customer',
+        paymentMethod: recentOrder.bill?.paymentMethod || 'UPI',
+        createdAt: recentOrder.createdAt,
+        subtotal: recentOrder.subtotal,
+        taxAmount: recentOrder.taxAmount,
+        discountAmount: recentOrder.discountAmount,
+        netAmount: recentOrder.netAmount,
+        items: recentOrder.items.map((it) => ({
+          name: it.menuItem.name,
+          quantity: it.quantity,
+          price: it.itemPrice,
+          totalPrice: it.totalPrice,
+        })),
+      };
+      await printViaWebBluetooth(receiptData);
+      alert('Bluetooth Receipt Printed Successfully!');
+    } catch (err: any) {
+      alert(`Bluetooth Print Error: ${err.message}`);
+    }
+  };
+
+  // Direct RawBT Intent Print (Instant 1-tap on Android)
+  const handleRawBTPrint = () => {
+    if (!recentOrder) return;
+    const receiptData: ReceiptOrderData = {
+      tokenNumber: recentOrder.token?.tokenNumber || '---',
+      billNumber: recentOrder.bill?.billNumber || '---',
+      customerName: recentOrder.customerName || 'Guest Customer',
+      paymentMethod: recentOrder.bill?.paymentMethod || 'UPI',
+      createdAt: recentOrder.createdAt,
+      subtotal: recentOrder.subtotal,
+      taxAmount: recentOrder.taxAmount,
+      discountAmount: recentOrder.discountAmount,
+      netAmount: recentOrder.netAmount,
+      items: recentOrder.items.map((it) => ({
+        name: it.menuItem.name,
+        quantity: it.quantity,
+        price: it.itemPrice,
+        totalPrice: it.totalPrice,
+      })),
+    };
+    printViaRawBT(receiptData);
   };
 
   // Cancel order handler
@@ -634,16 +687,22 @@ export default function PosBillingPage() {
             </div>
 
             {/* Modal Sticky Bottom Actions */}
-            <div className="p-4 sm:p-5 border-t border-cream-200 bg-white shrink-0 flex items-center space-x-3">
+            <div className="p-4 sm:p-5 border-t border-cream-200 bg-white shrink-0 flex flex-col sm:flex-row items-center gap-2 sm:gap-3">
+              <button
+                onClick={handleBluetoothPrint}
+                className="w-full sm:flex-1 py-3 bg-gradient-to-r from-cocoa-900 via-cocoa-950 to-black hover:from-black hover:to-cocoa-900 text-gold-300 font-extrabold rounded-2xl text-xs sm:text-sm flex items-center justify-center gap-2 transition-all shadow-md border border-gold-500/30"
+              >
+                <Printer className="w-4 h-4 text-gold-400" /> Bluetooth Direct
+              </button>
               <button
                 onClick={handlePrintThermal}
-                className="flex-1 py-3 bg-cocoa-900 hover:bg-gold-600 text-gold-300 hover:text-cocoa-950 font-bold rounded-2xl text-sm flex items-center justify-center gap-2 transition-all shadow-md hover:shadow-lg"
+                className="w-full sm:w-auto px-5 py-3 bg-cream-200 hover:bg-cream-300 text-cocoa-900 font-bold rounded-2xl text-xs sm:text-sm transition-colors border border-cream-300 flex items-center justify-center gap-1.5"
               >
-                <Printer className="w-4 h-4" /> Print Receipt
+                <Printer className="w-3.5 h-3.5" /> System Print
               </button>
               <button
                 onClick={() => setShowPrintModal(false)}
-                className="px-6 py-3 bg-cream-200 hover:bg-cream-300 text-cocoa-900 font-bold rounded-2xl text-sm transition-colors shadow-sm"
+                className="w-full sm:w-auto px-5 py-3 bg-cream-100 hover:bg-cream-200 text-cocoa-700 font-bold rounded-2xl text-xs sm:text-sm transition-colors"
               >
                 Done
               </button>
