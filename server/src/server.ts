@@ -13,6 +13,7 @@ import inventoryRoutes from './routes/inventory';
 import analyticsRoutes from './routes/analytics';
 import staffRoutes from './routes/staff';
 import reportRoutes from './routes/reports';
+import uploadRoutes from './routes/upload';
 
 dotenv.config();
 
@@ -54,6 +55,7 @@ app.use('/api/inventory', inventoryRoutes);
 app.use('/api/analytics', analyticsRoutes);
 app.use('/api/staff', staffRoutes);
 app.use('/api/reports', reportRoutes);
+app.use('/api/upload', uploadRoutes);
 
 // Global Error Handler
 app.use((err: any, _req: express.Request, res: express.Response, _next: express.NextFunction) => {
