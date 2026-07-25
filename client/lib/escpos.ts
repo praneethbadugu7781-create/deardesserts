@@ -1,4 +1,4 @@
-// ESC/POS Thermal Printer Helper for Web Bluetooth & RawBT
+// ESC/POS Thermal Printer Helper for Web Bluetooth & RawBT (Customer Bill + KOT Kitchen Ticket)
 
 export interface ReceiptOrderData {
   tokenNumber: string;
@@ -14,7 +14,7 @@ export interface ReceiptOrderData {
 }
 
 /**
- * Builds raw ESC/POS binary buffer for thermal printers
+ * Builds raw ESC/POS binary buffer for Customer Bill
  */
 export function buildEscPosBuffer(order: ReceiptOrderData): Uint8Array {
   const bytes: number[] = [];
@@ -108,7 +108,93 @@ export function buildEscPosBuffer(order: ReceiptOrderData): Uint8Array {
 }
 
 /**
- * Print directly via Web Bluetooth API (navigator.bluetooth in Chrome on Android)
+ * Builds Kitchen Order Ticket (KOT) binary buffer for kitchen chefs
+ */
+export function buildKotEscPosBuffer(order: ReceiptOrderData): Uint8Array {
+  const bytes: number[] = [];
+
+  const addText = (str: string) => {
+    for (let i = 0; i < str.length; i++) {
+      bytes.push(str.charCodeAt(i));
+    }
+  };
+
+  const addLine = (str: string = '') => {
+    addText(str + '\n');
+  };
+
+  // ESC @ - Initialize printer
+  bytes.push(0x1b, 0x40);
+
+  // Center alignment
+  bytes.push(0x1b, 0x61, 0x01);
+
+  // Bold double-height title
+  bytes.push(0x1b, 0x45, 0x01); // Bold on
+  bytes.push(0x1d, 0x21, 0x11); // Double width & height
+  addLine('*** KITCHEN SLIP (KOT) ***');
+  bytes.push(0x1d, 0x21, 0x00); // Normal size
+  bytes.push(0x1b, 0x45, 0x00); // Bold off
+
+  addLine('DEAR DESSERTS - KITCHEN');
+  addLine('--------------------------------');
+
+  // Token Box (MASSIVE DOUBLE SIZE)
+  bytes.push(0x1b, 0x45, 0x01); // Bold
+  bytes.push(0x1d, 0x21, 0x11); // Double size
+  addLine(`TOKEN: ${order.tokenNumber}`);
+  bytes.push(0x1d, 0x21, 0x00); // Normal size
+  bytes.push(0x1b, 0x45, 0x00); // Bold off
+
+  addLine('--------------------------------');
+
+  // Left alignment for order info
+  bytes.push(0x1b, 0x61, 0x00);
+  addLine(`BILL NO : ${order.billNumber}`);
+  addLine(`TIME    : ${new Date(order.createdAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}`);
+  addLine(`CUSTOMER: ${order.customerName}`);
+  addLine('--------------------------------');
+
+  // Items Header
+  bytes.push(0x1b, 0x45, 0x01); // Bold
+  addLine('QTY   ITEM NAME');
+  bytes.push(0x1b, 0x45, 0x00);
+  addLine('--------------------------------');
+
+  // Item rows (Bold items for cook visibility)
+  bytes.push(0x1b, 0x45, 0x01); // Bold
+  order.items.forEach((item) => {
+    const qty = `${item.quantity}x`.padEnd(6);
+    addLine(`${qty}${item.name}`);
+  });
+  bytes.push(0x1b, 0x45, 0x00);
+
+  // Center alignment for footer
+  bytes.push(0x1b, 0x61, 0x01);
+  addLine('--------------------------------');
+  addLine('*** PREPARE FRESH IMMEDIATELY ***');
+  addLine('\n\n\n');
+
+  // Paper cut command (GS V 66 0)
+  bytes.push(0x1d, 0x56, 0x42, 0x00);
+
+  return new Uint8Array(bytes);
+}
+
+/**
+ * Builds combined 2-in-1 Dual Buffer (Customer Bill + KOT Kitchen Ticket)
+ */
+export function buildDualReceiptBuffer(order: ReceiptOrderData): Uint8Array {
+  const customerBuffer = buildEscPosBuffer(order);
+  const kotBuffer = buildKotEscPosBuffer(order);
+  const combined = new Uint8Array(customerBuffer.length + kotBuffer.length);
+  combined.set(customerBuffer, 0);
+  combined.set(kotBuffer, customerBuffer.length);
+  return combined;
+}
+
+/**
+ * Print both Customer Bill + KOT Ticket directly via Web Bluetooth API
  */
 export async function printViaWebBluetooth(order: ReceiptOrderData): Promise<boolean> {
   if (typeof window === 'undefined' || !('bluetooth' in navigator)) {
@@ -144,7 +230,7 @@ export async function printViaWebBluetooth(order: ReceiptOrderData): Promise<boo
 
   if (!targetChar) throw new Error('Printer write characteristic not found.');
 
-  const escPosBuffer = buildEscPosBuffer(order);
+  const escPosBuffer = buildDualReceiptBuffer(order);
   
   // Write in 100-byte chunks
   const chunkSize = 100;
@@ -157,10 +243,10 @@ export async function printViaWebBluetooth(order: ReceiptOrderData): Promise<boo
 }
 
 /**
- * Print directly via RawBT intent URL (Instant 1-tap on Android)
+ * Print both Customer Bill + KOT Ticket via RawBT intent URL
  */
 export function printViaRawBT(order: ReceiptOrderData) {
-  const escPosBuffer = buildEscPosBuffer(order);
+  const escPosBuffer = buildDualReceiptBuffer(order);
   let binary = '';
   for (let i = 0; i < escPosBuffer.length; i++) {
     binary += String.fromCharCode(escPosBuffer[i]);

@@ -684,6 +684,47 @@ export default function PosBillingPage() {
                 {/* Receipt zig-zag edge bottom */}
                 <div className="absolute bottom-0 left-0 right-0 h-2 bg-[url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIxMCIgaGVpZ2h0PSIxMCI+PHBvbHlnb24gcG9pbnRzPSIwLDEwIDUsMCAxMCwxMCIgZmlsbD0iI2ZmZmZmZiIvPjwvc3ZnPg==')] -mb-2"></div>
               </div>
+
+              {/* KITCHEN ORDER TICKET (KOT) SLIP FOR CHEF */}
+              <div id="kot-receipt" className="bg-amber-50/70 p-4 sm:p-5 rounded-xl border-2 border-dashed border-amber-400 font-mono text-sm space-y-3 shadow-sm text-cocoa-900">
+                <div className="text-center flex flex-col items-center pt-1 space-y-1">
+                  <div className="text-xs font-accent font-black tracking-widest uppercase bg-cocoa-900 text-gold-300 px-3 py-1 rounded-full">
+                    *** KITCHEN SLIP (KOT) ***
+                  </div>
+                  <p className="text-[10px] text-cocoa-600 font-bold uppercase tracking-wider">For Chef / Cooking Station</p>
+                  
+                  {/* Token Box */}
+                  <div className="text-2xl font-black text-cocoa-950 bg-amber-200 py-2 px-7 rounded-2xl border-2 border-dashed border-amber-500 shadow-sm mt-2">
+                    TOKEN: {recentOrder.token?.tokenNumber}
+                  </div>
+                  
+                  <div className="flex justify-between w-full text-xs text-cocoa-800 mt-2 font-bold border-b border-amber-300 pb-2">
+                    <div>BILL: {recentOrder.bill?.billNumber}</div>
+                    <div>TIME: {new Date(recentOrder.createdAt).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}</div>
+                  </div>
+                </div>
+
+                <div className="text-xs font-black uppercase text-cocoa-950 border-b border-amber-300 pb-1">
+                  QTY & KITCHEN ITEM NAME
+                </div>
+
+                <div className="space-y-2 font-extrabold text-cocoa-950">
+                  {recentOrder.items.map((it, idx) => (
+                    <div key={idx} className="flex gap-3 items-center py-1 border-b border-amber-200">
+                      <span className="bg-cocoa-900 text-gold-300 font-black px-2.5 py-0.5 rounded text-xs shrink-0">
+                        {it.quantity}x
+                      </span>
+                      <span className="text-sm font-extrabold tracking-tight text-cocoa-950">
+                        {it.menuItem.name}
+                      </span>
+                    </div>
+                  ))}
+                </div>
+
+                <div className="text-center pt-2 text-[10px] font-bold text-amber-900 uppercase tracking-widest border-t border-amber-300">
+                  *** PREPARE FRESH IMMEDIATELY ***
+                </div>
+              </div>
             </div>
 
             {/* Modal Sticky Bottom Actions */}
