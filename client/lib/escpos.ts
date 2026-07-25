@@ -116,18 +116,13 @@ export async function printViaWebBluetooth(order: ReceiptOrderData): Promise<boo
   }
 
   const device = await (navigator as any).bluetooth.requestDevice({
-    filters: [
-      { services: ['000018f0-0000-1000-8000-00805f9b34fb'] },
-      { services: ['00001101-0000-1000-8000-00805f9b34fb'] },
-      { namePrefix: 'POS' },
-      { namePrefix: 'RP' },
-      { namePrefix: 'InnerPrinter' },
-      { namePrefix: 'Bluetooth' },
-    ],
+    acceptAllDevices: true,
     optionalServices: [
       '000018f0-0000-1000-8000-00805f9b34fb',
       '00001101-0000-1000-8000-00805f9b34fb',
+      '0000e7e0-0000-1000-8000-00805f9b34fb',
       '49535343-fe7d-4ae5-8fa9-9fafd205e455',
+      'e7810a71-73ae-499d-8c15-faa9aef0c3f2',
     ],
   });
 
