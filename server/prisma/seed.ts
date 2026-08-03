@@ -41,7 +41,7 @@ async function main() {
   await prisma.user.create({
     data: {
       name: 'Store Manager',
-      email: 'admin@deardesserts.com',
+      email: 'deardesserts.in@gmail.com',
       password: hashedPassword,
       role: 'ADMIN',
       branchId: branch.id,
@@ -70,11 +70,13 @@ async function main() {
 
   // 3. Create Menu Categories
   const categoriesData = [
-    { name: 'Cakes & Pastries', slug: 'cakes', icon: 'Cake', displayOrder: 1, description: 'Freshly baked decadent slices and layered cakes' },
-    { name: 'Warm Waffles', slug: 'waffles', icon: 'Grid', displayOrder: 2, description: 'Crispy Belgian waffles drenched in gourmet spreads' },
-    { name: 'Brownies & Sundaes', slug: 'brownies-sundaes', icon: 'IceCream', displayOrder: 3, description: 'Sizzling brownies and artisanal scoop sundaes' },
-    { name: 'Thickshakes & Drinks', slug: 'shakes', icon: 'CupSoda', displayOrder: 4, description: 'Creamy dessert thickshakes and refreshing sips' },
-    { name: 'Savouries & Snacks', slug: 'savouries', icon: 'Pizza', displayOrder: 5, description: 'Cheesy hot toasts and crispy sides' },
+    { name: 'Bubble Waffles', slug: 'bubble-waffles', icon: 'Grid', displayOrder: 1, description: 'Crispy, fluffy bubble waffles filled with gourmet toppings' },
+    { name: 'Belgian Waffles', slug: 'belgian-waffles', icon: 'Grid', displayOrder: 2, description: 'Golden warm Belgian waffles smothered in dark & milk chocolate' },
+    { name: 'The Poppin Bowl', slug: 'pop-bowl', icon: 'IceCream', displayOrder: 3, description: 'Signature dessert pop bowls layered with cream & crunch' },
+    { name: 'Brownie', slug: 'brownie', icon: 'IceCream', displayOrder: 4, description: 'Decadent chocolate brownies served warm' },
+    { name: 'Specials', slug: 'specials', icon: 'Sparkles', displayOrder: 5, description: 'Chef special Matilda cake, Magnum obsession & Death by Chocolate' },
+    { name: 'The Bowl Cakes', slug: 'bowl-cakes', icon: 'Cake', displayOrder: 6, description: 'Rich layered cake bowls packed with Rocher, Kunafa & Biscoff' },
+    { name: 'The Crunch Corner', slug: 'savories', icon: 'Pizza', displayOrder: 7, description: 'Hot fries, chicken popcorn, chicken wings & cheesy chicken bun' },
   ];
 
   const categories: Record<string, any> = {};
@@ -82,140 +84,70 @@ async function main() {
     categories[cat.slug] = await prisma.category.create({ data: cat });
   }
 
-  // 4. Create Menu Items
+  // 4. Create Menu Items (Original Dear Desserts Menu)
   const menuItemsData = [
-    // Cakes
-    {
-      name: 'Red Velvet Layer Slice',
-      categoryId: categories['cakes'].id,
-      price: 160,
-      taxPercent: 5.0,
-      description: 'Classic velvety sponge with rich cream cheese frosting',
-      isAvailable: true,
-      imageUrl: 'https://images.unsplash.com/photo-1586788680434-30d324b2d46f?w=600',
-      preparationMinutes: 3,
-    },
-    {
-      name: 'Black Forest Special Slice',
-      categoryId: categories['cakes'].id,
-      price: 140,
-      taxPercent: 5.0,
-      description: 'Layers of moist chocolate sponge with cherries & fresh cream',
-      isAvailable: true,
-      imageUrl: 'https://images.unsplash.com/photo-1606313564200-e75d5e30476c?w=600',
-      preparationMinutes: 3,
-    },
-    {
-      name: 'Belgian Truffle Slice',
-      categoryId: categories['cakes'].id,
-      price: 190,
-      taxPercent: 5.0,
-      description: 'Rich 70% dark Belgian chocolate layer cake',
-      isAvailable: true,
-      imageUrl: 'https://images.unsplash.com/photo-1578985545062-69928b1d9587?w=600',
-      preparationMinutes: 4,
-    },
-    // Waffles
-    {
-      name: 'Nutella Overload Waffle',
-      categoryId: categories['waffles'].id,
-      price: 190,
-      taxPercent: 5.0,
-      description: 'Crispy warm waffle smothered in Nutella & dark chocochips',
-      isAvailable: true,
-      imageUrl: 'https://images.unsplash.com/photo-1562376552-0d160a2f238d?w=600',
-      preparationMinutes: 7,
-    },
-    {
-      name: 'Lotus Biscoff Crunch Waffle',
-      categoryId: categories['waffles'].id,
-      price: 210,
-      taxPercent: 5.0,
-      description: 'Golden waffle layered with Biscoff spread & crushed biscuits',
-      isAvailable: true,
-      imageUrl: 'https://images.unsplash.com/photo-1598214886806-c87b84b7078b?w=600',
-      preparationMinutes: 8,
-    },
-    // Brownies & Sundaes
-    {
-      name: 'Sizzling Chocolate Brownie',
-      categoryId: categories['brownies-sundaes'].id,
-      price: 180,
-      taxPercent: 5.0,
-      description: 'Hot walnut brownie served on a sizzling plate with vanilla ice cream',
-      isAvailable: true,
-      imageUrl: 'https://images.unsplash.com/photo-1563805042-7684c019e1cb?w=600',
-      preparationMinutes: 6,
-    },
-    {
-      name: 'Double Chocolate Fudge Sundae',
-      categoryId: categories['brownies-sundaes'].id,
-      price: 160,
-      taxPercent: 5.0,
-      description: 'Two scoops of Belgian dark choc ice cream topped with hot fudge',
-      isAvailable: true,
-      imageUrl: 'https://images.unsplash.com/photo-1497034825429-c343d7c6a68f?w=600',
-      preparationMinutes: 4,
-    },
-    {
-      name: 'Special Royal Fruit Salad',
-      categoryId: categories['brownies-sundaes'].id,
-      price: 130,
-      taxPercent: 5.0,
-      description: 'Fresh seasonal fruits with Madagascar vanilla scoop & honey drizzle',
-      isAvailable: true,
-      imageUrl: 'https://images.unsplash.com/photo-1511690656952-34342bb7c2f2?w=600',
-      preparationMinutes: 5,
-    },
-    // Shakes
-    {
-      name: 'Belgian Chocolate Thickshake',
-      categoryId: categories['shakes'].id,
-      price: 170,
-      taxPercent: 5.0,
-      description: 'Thick blended cocoa shake crowned with chocolate whipped cream',
-      isAvailable: true,
-      imageUrl: 'https://images.unsplash.com/photo-1572490122747-3968b75cc699?w=600',
-      preparationMinutes: 5,
-    },
-    {
-      name: 'Salted Caramel Crunch Shake',
-      categoryId: categories['shakes'].id,
-      price: 180,
-      taxPercent: 5.0,
-      description: 'Caramel ice cream blended with salted praline bits & caramel drizzle',
-      isAvailable: true,
-      imageUrl: 'https://images.unsplash.com/photo-1553787499-6f9133860278?w=600',
-      preparationMinutes: 5,
-    },
-    // Savouries
-    {
-      name: 'Cheesy Garlic Toastie',
-      categoryId: categories['savouries'].id,
-      price: 140,
-      taxPercent: 5.0,
-      description: 'Grilled sandwich with garlic butter, mozzarella & Italian herbs',
-      isAvailable: true,
-      imageUrl: 'https://images.unsplash.com/photo-1573140247632-f8fd74997d5c?w=600',
-      preparationMinutes: 6,
-    },
-    {
-      name: 'Peri Peri Crispy Fries',
-      categoryId: categories['savouries'].id,
-      price: 120,
-      taxPercent: 5.0,
-      description: 'Golden fried potatoes tossed in zesty peri-peri spice mix',
-      isAvailable: true,
-      imageUrl: 'https://images.unsplash.com/photo-1576107232684-1279f3908594?w=600',
-      preparationMinutes: 5,
-    },
+    // Bubble Waffles
+    { name: 'Triple trouble', categoryId: categories['bubble-waffles'].id, price: 180, taxPercent: 5.0, isAvailable: true, preparationMinutes: 6 },
+    { name: 'Triple trouble with ice-cream', categoryId: categories['bubble-waffles'].id, price: 200, taxPercent: 5.0, isAvailable: true, preparationMinutes: 6 },
+    { name: 'Fruity pebble', categoryId: categories['bubble-waffles'].id, price: 200, taxPercent: 5.0, isAvailable: true, preparationMinutes: 6 },
+    { name: 'Kitkat crunch', categoryId: categories['bubble-waffles'].id, price: 210, taxPercent: 5.0, isAvailable: true, preparationMinutes: 6 },
+    { name: 'Oreo dream', categoryId: categories['bubble-waffles'].id, price: 210, taxPercent: 5.0, isAvailable: true, preparationMinutes: 6 },
+    { name: 'Nutella nirvana', categoryId: categories['bubble-waffles'].id, price: 220, taxPercent: 5.0, isAvailable: true, preparationMinutes: 7 },
+    { name: 'Lotus biscoff bliss', categoryId: categories['bubble-waffles'].id, price: 230, taxPercent: 5.0, isAvailable: true, preparationMinutes: 7 },
+
+    // Belgian Waffles
+    { name: 'Triple chocomelt', categoryId: categories['belgian-waffles'].id, price: 120, taxPercent: 5.0, isAvailable: true, preparationMinutes: 5 },
+    { name: 'Coffee mocha', categoryId: categories['belgian-waffles'].id, price: 150, taxPercent: 5.0, isAvailable: true, preparationMinutes: 5 },
+    { name: 'Naked Nutella', categoryId: categories['belgian-waffles'].id, price: 160, taxPercent: 5.0, isAvailable: true, preparationMinutes: 5 },
+    { name: 'Kiki and Oreo', categoryId: categories['belgian-waffles'].id, price: 160, taxPercent: 5.0, isAvailable: true, preparationMinutes: 5 },
+    { name: 'Lotus biscoff Love', categoryId: categories['belgian-waffles'].id, price: 160, taxPercent: 5.0, isAvailable: true, preparationMinutes: 5 },
+
+    // The Poppin' Bowl (Pop Bowl)
+    { name: 'The Triple choco', categoryId: categories['pop-bowl'].id, price: 190, taxPercent: 5.0, isAvailable: true, preparationMinutes: 5 },
+    { name: 'Triple Choco With ice-cream', categoryId: categories['pop-bowl'].id, price: 210, taxPercent: 5.0, isAvailable: true, preparationMinutes: 5 },
+    { name: 'Break time with kitkat', categoryId: categories['pop-bowl'].id, price: 220, taxPercent: 5.0, isAvailable: true, preparationMinutes: 5 },
+    { name: 'Nutella Pop Bowl', categoryId: categories['pop-bowl'].id, price: 230, taxPercent: 5.0, isAvailable: true, preparationMinutes: 5 },
+    { name: 'Biscoff Pop Bowl', categoryId: categories['pop-bowl'].id, price: 240, taxPercent: 5.0, isAvailable: true, preparationMinutes: 5 },
+    { name: 'The Fruit Loaded', categoryId: categories['pop-bowl'].id, price: 250, taxPercent: 5.0, isAvailable: true, preparationMinutes: 5 },
+
+    // Brownie
+    { name: 'Triple chocolate brownie', categoryId: categories['brownie'].id, price: 130, taxPercent: 5.0, isAvailable: true, preparationMinutes: 4 },
+    { name: 'Oreo overload brownie', categoryId: categories['brownie'].id, price: 140, taxPercent: 5.0, isAvailable: true, preparationMinutes: 4 },
+    { name: 'Meltdown with vanilla', categoryId: categories['brownie'].id, price: 160, taxPercent: 5.0, isAvailable: true, preparationMinutes: 4 },
+    { name: 'Biscoff brownie', categoryId: categories['brownie'].id, price: 160, taxPercent: 5.0, isAvailable: true, preparationMinutes: 4 },
+    { name: 'Hazelnut heaven', categoryId: categories['brownie'].id, price: 160, taxPercent: 5.0, isAvailable: true, preparationMinutes: 4 },
+
+    // Specials
+    { name: 'Matilda cake', categoryId: categories['specials'].id, price: 180, taxPercent: 5.0, isAvailable: true, preparationMinutes: 4 },
+    { name: 'Magnum obsession', categoryId: categories['specials'].id, price: 200, taxPercent: 5.0, isAvailable: true, preparationMinutes: 5 },
+    { name: 'Brownie Bowl', categoryId: categories['specials'].id, price: 200, taxPercent: 5.0, isAvailable: true, preparationMinutes: 5 },
+    { name: 'Nutella Bites', categoryId: categories['specials'].id, price: 200, taxPercent: 5.0, isAvailable: true, preparationMinutes: 5 },
+    { name: 'Death By Chocolate', categoryId: categories['specials'].id, price: 240, taxPercent: 5.0, isAvailable: true, preparationMinutes: 5 },
+
+    // The Bowl Cakes
+    { name: 'Triple Choco Bowl', categoryId: categories['bowl-cakes'].id, price: 180, taxPercent: 5.0, isAvailable: true, preparationMinutes: 5 },
+    { name: 'Crunch Chocolate Bowl', categoryId: categories['bowl-cakes'].id, price: 220, taxPercent: 5.0, isAvailable: true, preparationMinutes: 5 },
+    { name: 'Kitkat Bowl', categoryId: categories['bowl-cakes'].id, price: 220, taxPercent: 5.0, isAvailable: true, preparationMinutes: 5 },
+    { name: 'Oreo Overload Bowl', categoryId: categories['bowl-cakes'].id, price: 220, taxPercent: 5.0, isAvailable: true, preparationMinutes: 5 },
+    { name: 'Biscoff Bowl', categoryId: categories['bowl-cakes'].id, price: 230, taxPercent: 5.0, isAvailable: true, preparationMinutes: 5 },
+    { name: 'Kunafa Kraze Bowl', categoryId: categories['bowl-cakes'].id, price: 250, taxPercent: 5.0, isAvailable: true, preparationMinutes: 6 },
+    { name: 'Ferrero Rocher Bowl', categoryId: categories['bowl-cakes'].id, price: 300, taxPercent: 5.0, isAvailable: true, preparationMinutes: 6 },
+
+    // The Crunch Corner (savories)
+    { name: 'Salted French Fries', categoryId: categories['savories'].id, price: 80, taxPercent: 5.0, isAvailable: true, preparationMinutes: 5 },
+    { name: 'Peri Peri French Fries', categoryId: categories['savories'].id, price: 100, taxPercent: 5.0, isAvailable: true, preparationMinutes: 5 },
+    { name: 'Cheesy Fries', categoryId: categories['savories'].id, price: 130, taxPercent: 5.0, isAvailable: true, preparationMinutes: 6 },
+    { name: 'Chicken loaded Fries', categoryId: categories['savories'].id, price: 150, taxPercent: 5.0, isAvailable: true, preparationMinutes: 7 },
+    { name: 'Chicken Popcorn', categoryId: categories['savories'].id, price: 150, taxPercent: 5.0, isAvailable: true, preparationMinutes: 6 },
+    { name: 'Chicken Wings', categoryId: categories['savories'].id, price: 160, taxPercent: 5.0, isAvailable: true, preparationMinutes: 8 },
+    { name: 'Cheesy Chicken Bun', categoryId: categories['savories'].id, price: 100, taxPercent: 5.0, isAvailable: true, preparationMinutes: 5 },
   ];
 
   for (const item of menuItemsData) {
     await prisma.menuItem.create({ data: item });
   }
 
-  console.log(`✅ Seeded ${menuItemsData.length} real menu items across ${categoriesData.length} categories!`);
+  console.log(`✅ Seeded ${menuItemsData.length} original outlet menu items across ${categoriesData.length} categories!`);
   console.log('🎉 Dear Desserts Bhavanipuram Vijayawada Seeding Complete!');
 }
 

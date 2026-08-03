@@ -102,22 +102,98 @@ export default function PosBillingPage() {
     };
   }, []);
 
+const REAL_CATEGORIES: Category[] = [
+  { id: 'cat-1', name: 'Bubble Waffles', slug: 'bubble-waffles' },
+  { id: 'cat-2', name: 'Belgian Waffles', slug: 'belgian-waffles' },
+  { id: 'cat-3', name: "The Poppin' Bowl", slug: 'pop-bowl' },
+  { id: 'cat-4', name: 'Brownie', slug: 'brownie' },
+  { id: 'cat-5', name: 'Specials', slug: 'specials' },
+  { id: 'cat-6', name: 'The Bowl Cakes', slug: 'bowl-cakes' },
+  { id: 'cat-7', name: 'The Crunch Corner', slug: 'savories' },
+];
+
+const REAL_MENU_ITEMS: MenuItem[] = [
+  // Bubble Waffles
+  { id: 'bw-1', name: 'Triple trouble', price: 180, taxPercent: 5, imageUrl: null, description: 'Bubble Waffle', isAvailable: true, category: REAL_CATEGORIES[0] },
+  { id: 'bw-2', name: 'Triple trouble with ice-cream', price: 200, taxPercent: 5, imageUrl: null, description: 'Bubble Waffle', isAvailable: true, category: REAL_CATEGORIES[0] },
+  { id: 'bw-3', name: 'Fruity pebble', price: 200, taxPercent: 5, imageUrl: null, description: 'Bubble Waffle', isAvailable: true, category: REAL_CATEGORIES[0] },
+  { id: 'bw-4', name: 'Kitkat crunch', price: 210, taxPercent: 5, imageUrl: null, description: 'Bubble Waffle', isAvailable: true, category: REAL_CATEGORIES[0] },
+  { id: 'bw-5', name: 'Oreo dream', price: 210, taxPercent: 5, imageUrl: null, description: 'Bubble Waffle', isAvailable: true, category: REAL_CATEGORIES[0] },
+  { id: 'bw-6', name: 'Nutella nirvana', price: 220, taxPercent: 5, imageUrl: null, description: 'Bubble Waffle', isAvailable: true, category: REAL_CATEGORIES[0] },
+  { id: 'bw-7', name: 'Lotus biscoff bliss', price: 230, taxPercent: 5, imageUrl: null, description: 'Bubble Waffle', isAvailable: true, category: REAL_CATEGORIES[0] },
+
+  // Belgian Waffles
+  { id: 'belg-1', name: 'Triple chocomelt', price: 120, taxPercent: 5, imageUrl: null, description: 'Belgian Waffle', isAvailable: true, category: REAL_CATEGORIES[1] },
+  { id: 'belg-2', name: 'Coffee mocha', price: 150, taxPercent: 5, imageUrl: null, description: 'Belgian Waffle', isAvailable: true, category: REAL_CATEGORIES[1] },
+  { id: 'belg-3', name: 'Naked Nutella', price: 160, taxPercent: 5, imageUrl: null, description: 'Belgian Waffle', isAvailable: true, category: REAL_CATEGORIES[1] },
+  { id: 'belg-4', name: 'Kiki and Oreo', price: 160, taxPercent: 5, imageUrl: null, description: 'Belgian Waffle', isAvailable: true, category: REAL_CATEGORIES[1] },
+  { id: 'belg-5', name: 'Lotus biscoff Love', price: 160, taxPercent: 5, imageUrl: null, description: 'Belgian Waffle', isAvailable: true, category: REAL_CATEGORIES[1] },
+
+  // The Poppin' Bowl
+  { id: 'pop-1', name: 'The Triple choco', price: 190, taxPercent: 5, imageUrl: null, description: "Poppin' Bowl", isAvailable: true, category: REAL_CATEGORIES[2] },
+  { id: 'pop-2', name: 'Triple Choco With ice-cream', price: 210, taxPercent: 5, imageUrl: null, description: "Poppin' Bowl", isAvailable: true, category: REAL_CATEGORIES[2] },
+  { id: 'pop-3', name: 'Break time with kitkat', price: 220, taxPercent: 5, imageUrl: null, description: "Poppin' Bowl", isAvailable: true, category: REAL_CATEGORIES[2] },
+  { id: 'pop-4', name: 'Nutella Pop Bowl', price: 230, taxPercent: 5, imageUrl: null, description: "Poppin' Bowl", isAvailable: true, category: REAL_CATEGORIES[2] },
+  { id: 'pop-5', name: 'Biscoff Pop Bowl', price: 240, taxPercent: 5, imageUrl: null, description: "Poppin' Bowl", isAvailable: true, category: REAL_CATEGORIES[2] },
+  { id: 'pop-6', name: 'The Fruit Loaded', price: 250, taxPercent: 5, imageUrl: null, description: "Poppin' Bowl", isAvailable: true, category: REAL_CATEGORIES[2] },
+
+  // Brownie
+  { id: 'br-1', name: 'Triple chocolate brownie', price: 130, taxPercent: 5, imageUrl: null, description: 'Brownie', isAvailable: true, category: REAL_CATEGORIES[3] },
+  { id: 'br-2', name: 'Oreo overload brownie', price: 140, taxPercent: 5, imageUrl: null, description: 'Brownie', isAvailable: true, category: REAL_CATEGORIES[3] },
+  { id: 'br-3', name: 'Meltdown with vanilla', price: 160, taxPercent: 5, imageUrl: null, description: 'Brownie', isAvailable: true, category: REAL_CATEGORIES[3] },
+  { id: 'br-4', name: 'Biscoff brownie', price: 160, taxPercent: 5, imageUrl: null, description: 'Brownie', isAvailable: true, category: REAL_CATEGORIES[3] },
+  { id: 'br-5', name: 'Hazelnut heaven', price: 160, taxPercent: 5, imageUrl: null, description: 'Brownie', isAvailable: true, category: REAL_CATEGORIES[3] },
+
+  // Specials
+  { id: 'sp-1', name: 'Matilda cake', price: 180, taxPercent: 5, imageUrl: null, description: 'Specials', isAvailable: true, category: REAL_CATEGORIES[4] },
+  { id: 'sp-2', name: 'Magnum obsession', price: 200, taxPercent: 5, imageUrl: null, description: 'Specials', isAvailable: true, category: REAL_CATEGORIES[4] },
+  { id: 'sp-3', name: 'Brownie Bowl', price: 200, taxPercent: 5, imageUrl: null, description: 'Specials', isAvailable: true, category: REAL_CATEGORIES[4] },
+  { id: 'sp-4', name: 'Nutella Bites', price: 200, taxPercent: 5, imageUrl: null, description: 'Specials', isAvailable: true, category: REAL_CATEGORIES[4] },
+  { id: 'sp-5', name: 'Death By Chocolate', price: 240, taxPercent: 5, imageUrl: null, description: 'Specials', isAvailable: true, category: REAL_CATEGORIES[4] },
+
+  // The Bowl Cakes
+  { id: 'bc-1', name: 'Triple Choco Bowl', price: 180, taxPercent: 5, imageUrl: null, description: 'Bowl Cake', isAvailable: true, category: REAL_CATEGORIES[5] },
+  { id: 'bc-2', name: 'Crunch Chocolate Bowl', price: 220, taxPercent: 5, imageUrl: null, description: 'Bowl Cake', isAvailable: true, category: REAL_CATEGORIES[5] },
+  { id: 'bc-3', name: 'Kitkat Bowl', price: 220, taxPercent: 5, imageUrl: null, description: 'Bowl Cake', isAvailable: true, category: REAL_CATEGORIES[5] },
+  { id: 'bc-4', name: 'Oreo Overload Bowl', price: 220, taxPercent: 5, imageUrl: null, description: 'Bowl Cake', isAvailable: true, category: REAL_CATEGORIES[5] },
+  { id: 'bc-5', name: 'Biscoff Bowl', price: 230, taxPercent: 5, imageUrl: null, description: 'Bowl Cake', isAvailable: true, category: REAL_CATEGORIES[5] },
+  { id: 'bc-6', name: 'Kunafa Kraze Bowl', price: 250, taxPercent: 5, imageUrl: null, description: 'Bowl Cake', isAvailable: true, category: REAL_CATEGORIES[5] },
+  { id: 'bc-7', name: 'Ferrero Rocher Bowl', price: 300, taxPercent: 5, imageUrl: null, description: 'Bowl Cake', isAvailable: true, category: REAL_CATEGORIES[5] },
+
+  // The Crunch Corner (savories)
+  { id: 'sav-1', name: 'Salted French Fries', price: 80, taxPercent: 5, imageUrl: null, description: 'Savories', isAvailable: true, category: REAL_CATEGORIES[6] },
+  { id: 'sav-2', name: 'Peri Peri French Fries', price: 100, taxPercent: 5, imageUrl: null, description: 'Savories', isAvailable: true, category: REAL_CATEGORIES[6] },
+  { id: 'sav-3', name: 'Cheesy Fries', price: 130, taxPercent: 5, imageUrl: null, description: 'Savories', isAvailable: true, category: REAL_CATEGORIES[6] },
+  { id: 'sav-4', name: 'Chicken loaded Fries', price: 150, taxPercent: 5, imageUrl: null, description: 'Savories', isAvailable: true, category: REAL_CATEGORIES[6] },
+  { id: 'sav-5', name: 'Chicken Popcorn', price: 150, taxPercent: 5, imageUrl: null, description: 'Savories', isAvailable: true, category: REAL_CATEGORIES[6] },
+  { id: 'sav-6', name: 'Chicken Wings', price: 160, taxPercent: 5, imageUrl: null, description: 'Savories', isAvailable: true, category: REAL_CATEGORIES[6] },
+  { id: 'sav-7', name: 'Cheesy Chicken Bun', price: 100, taxPercent: 5, imageUrl: null, description: 'Savories', isAvailable: true, category: REAL_CATEGORIES[6] },
+];
+
   const loadCategories = async () => {
     try {
       const data = await fetchApi('/menu/categories');
-      setCategories(data);
+      if (Array.isArray(data) && data.length > 0) {
+        setCategories(data);
+        return;
+      }
     } catch (err) {
-      console.error(err);
+      console.warn('Categories API fallback:', err);
     }
+    setCategories(REAL_CATEGORIES);
   };
 
   const loadMenuItems = async () => {
     try {
       const data = await fetchApi('/menu/items');
-      setMenuItems(data);
+      if (Array.isArray(data) && data.length > 0) {
+        setMenuItems(data);
+        return;
+      }
     } catch (err) {
-      console.error(err);
+      console.warn('Menu Items API fallback:', err);
     }
+    setMenuItems(REAL_MENU_ITEMS);
   };
 
   const loadTodayOrders = async () => {
@@ -428,47 +504,37 @@ export default function PosBillingPage() {
             </div>
           </div>
 
-          {/* Menu Items Cards Grid */}
-          <div className="grid grid-cols-2 sm:grid-cols-3 gap-4 md:gap-5">
+          {/* Menu Items Cards Grid - Text & Price Only for Fast Billing */}
+          <div className="grid grid-cols-2 sm:grid-cols-3 gap-3 md:gap-4">
             {filteredMenuItems.map((item) => (
               <div
                 key={item.id}
                 onClick={() => addToCart(item)}
-                className={`bg-white/90 backdrop-blur-md rounded-3xl p-4 border shadow-md transition-all hover:shadow-xl hover:-translate-y-1 cursor-pointer flex flex-col justify-between group ${
+                className={`bg-white/90 backdrop-blur-md rounded-2xl p-4 border shadow-sm transition-all hover:shadow-md hover:-translate-y-0.5 cursor-pointer flex flex-col justify-between group ${
                   !item.isAvailable
                     ? 'opacity-60 border-red-200/50 bg-red-50/30 cursor-not-allowed'
-                    : 'border-cream-300/80 hover:border-gold-500/50'
+                    : 'border-cream-300/80 hover:border-gold-500/80 hover:bg-gold-50/30'
                 }`}
               >
                 <div>
-                  {item.imageUrl ? (
-                    <div className="h-28 w-full rounded-2xl overflow-hidden mb-3 bg-cream-200 relative shadow-inner">
-                      <img
-                        src={item.imageUrl}
-                        alt={item.name}
-                        className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
-                      />
-                      {!item.isAvailable && (
-                        <span className="absolute inset-0 bg-black/60 backdrop-blur-sm text-white text-xs font-bold tracking-widest flex items-center justify-center">
-                          OUT OF STOCK
-                        </span>
-                      )}
-                    </div>
-                  ) : null}
-
-                  <h3 className="font-bold text-sm text-cocoa-900 line-clamp-2 group-hover:text-gold-600 transition-colors">
+                  <div className="flex items-center justify-between gap-1 mb-1.5">
+                    <span className="text-[10px] font-bold uppercase tracking-wider text-gold-600 bg-cream-200 px-2 py-0.5 rounded-full">
+                      {item.category?.name || 'Desserts'}
+                    </span>
+                  </div>
+                  <h3 className="font-bold text-sm md:text-base text-cocoa-900 line-clamp-2 group-hover:text-gold-600 transition-colors">
                     {item.name}
                   </h3>
-                  <p className="text-xs text-cocoa-600 line-clamp-1 mt-1 font-medium">{item.description}</p>
                 </div>
 
-                <div className="flex items-center justify-between mt-3 pt-3 border-t border-cream-200/60">
-                  <span className="text-base font-extrabold text-cocoa-900">₹{item.price}</span>
+                <div className="flex items-center justify-between mt-3 pt-2.5 border-t border-cream-200/80">
+                  <span className="text-base md:text-lg font-black text-cocoa-900">₹{item.price}</span>
                   <button
                     disabled={!item.isAvailable}
-                    className="w-8 h-8 rounded-full bg-cocoa-900 text-gold-400 hover:bg-gold-500 hover:text-cocoa-950 flex items-center justify-center transition-all shadow-md font-bold hover:scale-110"
+                    className="px-3 py-1.5 rounded-xl bg-cocoa-900 text-gold-400 hover:bg-gold-500 hover:text-cocoa-950 flex items-center gap-1 transition-all shadow-sm font-bold text-xs hover:scale-105"
                   >
-                    <Plus className="w-4 h-4" />
+                    <Plus className="w-3.5 h-3.5" />
+                    <span>ADD</span>
                   </button>
                 </div>
               </div>
