@@ -27,16 +27,18 @@ export default function Navbar() {
   const { user, logout } = useAuth();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
-  // If on customer home page ('/'), header is handled in page.tsx
-  if (pathname === '/') return null;
+  // If on customer home page ('/') or login page ('/login'), hide global navbar
+  if (pathname === '/' || pathname === '/login') return null;
 
-  // Infer role from user state or current path so links NEVER disappear
+  // Infer role ONLY if user is logged in or explicitly on path
   const activeRole = user?.role || (
     pathname.startsWith('/admin') ? 'ADMIN' :
-    pathname === '/pos' ? 'CASHIER' : 'ADMIN'
+    pathname === '/pos' ? 'CASHIER' : null
   );
 
   const getNavItemsForRole = () => {
+    if (!user && !pathname.startsWith('/admin') && pathname !== '/pos') return [];
+
     if (activeRole === 'ADMIN') {
       return [
         { label: 'Dashboard', path: '/admin/dashboard', icon: LayoutDashboard },
