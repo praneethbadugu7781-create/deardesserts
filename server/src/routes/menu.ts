@@ -120,9 +120,13 @@ router.post('/items/bulk', async (req: AuthRequest, res: Response) => {
 // DELETE /api/menu/items/all - Delete ALL menu items
 router.delete('/items/all', async (_req: AuthRequest, res: Response) => {
   try {
+    // First delete all OrderItems that reference MenuItems (foreign key)
+    await prisma.orderItem.deleteMany({});
+    // Then delete all menu items
     const deleted = await prisma.menuItem.deleteMany({});
     res.json({ message: `Deleted ${deleted.count} menu items` });
   } catch (error) {
+    console.error('Delete all error:', error);
     res.status(500).json({ error: 'Failed to delete all menu items' });
   }
 });
@@ -195,6 +199,8 @@ router.patch('/items/:id/toggle-availability', async (req: AuthRequest, res: Res
 router.delete('/items/:id', async (req: AuthRequest, res: Response) => {
   try {
     const { id } = req.params;
+    // Delete OrderItems referencing this item first
+    await prisma.orderItem.deleteMany({ where: { menuItemId: id } });
     await prisma.menuItem.delete({ where: { id } });
     res.json({ message: 'Menu item deleted successfully' });
   } catch (error) {
