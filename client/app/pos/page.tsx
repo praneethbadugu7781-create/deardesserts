@@ -96,7 +96,10 @@ export default function PosBillingPage() {
     loadTodayOrders();
     loadDisabledItems();
 
-    const handleStorageChange = () => loadDisabledItems();
+    const handleStorageChange = () => {
+      loadDisabledItems();
+      loadMenuItems();
+    };
     window.addEventListener('storage', handleStorageChange);
 
     const socket = getSocket();
@@ -133,64 +136,6 @@ const REAL_CATEGORIES: Category[] = [
   { id: 'cat-7', name: 'The Crunch Corner', slug: 'savories' },
 ];
 
-const REAL_MENU_ITEMS: MenuItem[] = [
-  // Bubble Waffles
-  { id: 'bw-1', name: 'Triple trouble', price: 180, taxPercent: 5, imageUrl: null, description: 'Bubble Waffle', isAvailable: true, category: REAL_CATEGORIES[0] },
-  { id: 'bw-2', name: 'Triple trouble with ice-cream', price: 200, taxPercent: 5, imageUrl: null, description: 'Bubble Waffle', isAvailable: true, category: REAL_CATEGORIES[0] },
-  { id: 'bw-3', name: 'Fruity pebble', price: 200, taxPercent: 5, imageUrl: null, description: 'Bubble Waffle', isAvailable: true, category: REAL_CATEGORIES[0] },
-  { id: 'bw-4', name: 'Kitkat crunch', price: 210, taxPercent: 5, imageUrl: null, description: 'Bubble Waffle', isAvailable: true, category: REAL_CATEGORIES[0] },
-  { id: 'bw-5', name: 'Oreo dream', price: 210, taxPercent: 5, imageUrl: null, description: 'Bubble Waffle', isAvailable: true, category: REAL_CATEGORIES[0] },
-  { id: 'bw-6', name: 'Nutella nirvana', price: 220, taxPercent: 5, imageUrl: null, description: 'Bubble Waffle', isAvailable: true, category: REAL_CATEGORIES[0] },
-  { id: 'bw-7', name: 'Lotus biscoff bliss', price: 230, taxPercent: 5, imageUrl: null, description: 'Bubble Waffle', isAvailable: true, category: REAL_CATEGORIES[0] },
-
-  // Belgian Waffles
-  { id: 'belg-1', name: 'Triple chocomelt', price: 120, taxPercent: 5, imageUrl: null, description: 'Belgian Waffle', isAvailable: true, category: REAL_CATEGORIES[1] },
-  { id: 'belg-2', name: 'Coffee mocha', price: 150, taxPercent: 5, imageUrl: null, description: 'Belgian Waffle', isAvailable: true, category: REAL_CATEGORIES[1] },
-  { id: 'belg-3', name: 'Naked Nutella', price: 160, taxPercent: 5, imageUrl: null, description: 'Belgian Waffle', isAvailable: true, category: REAL_CATEGORIES[1] },
-  { id: 'belg-4', name: 'Kiki and Oreo', price: 160, taxPercent: 5, imageUrl: null, description: 'Belgian Waffle', isAvailable: true, category: REAL_CATEGORIES[1] },
-  { id: 'belg-5', name: 'Lotus biscoff Love', price: 160, taxPercent: 5, imageUrl: null, description: 'Belgian Waffle', isAvailable: true, category: REAL_CATEGORIES[1] },
-
-  // The Poppin' Bowl
-  { id: 'pop-1', name: 'The Triple choco', price: 190, taxPercent: 5, imageUrl: null, description: "Poppin' Bowl", isAvailable: true, category: REAL_CATEGORIES[2] },
-  { id: 'pop-2', name: 'Triple Choco With ice-cream', price: 210, taxPercent: 5, imageUrl: null, description: "Poppin' Bowl", isAvailable: true, category: REAL_CATEGORIES[2] },
-  { id: 'pop-3', name: 'Break time with kitkat', price: 220, taxPercent: 5, imageUrl: null, description: "Poppin' Bowl", isAvailable: true, category: REAL_CATEGORIES[2] },
-  { id: 'pop-4', name: 'Nutella Pop Bowl', price: 230, taxPercent: 5, imageUrl: null, description: "Poppin' Bowl", isAvailable: true, category: REAL_CATEGORIES[2] },
-  { id: 'pop-5', name: 'Biscoff Pop Bowl', price: 240, taxPercent: 5, imageUrl: null, description: "Poppin' Bowl", isAvailable: true, category: REAL_CATEGORIES[2] },
-  { id: 'pop-6', name: 'The Fruit Loaded', price: 250, taxPercent: 5, imageUrl: null, description: "Poppin' Bowl", isAvailable: true, category: REAL_CATEGORIES[2] },
-
-  // Brownie
-  { id: 'br-1', name: 'Triple chocolate brownie', price: 130, taxPercent: 5, imageUrl: null, description: 'Brownie', isAvailable: true, category: REAL_CATEGORIES[3] },
-  { id: 'br-2', name: 'Oreo overload brownie', price: 140, taxPercent: 5, imageUrl: null, description: 'Brownie', isAvailable: true, category: REAL_CATEGORIES[3] },
-  { id: 'br-3', name: 'Meltdown with vanilla', price: 160, taxPercent: 5, imageUrl: null, description: 'Brownie', isAvailable: true, category: REAL_CATEGORIES[3] },
-  { id: 'br-4', name: 'Biscoff brownie', price: 160, taxPercent: 5, imageUrl: null, description: 'Brownie', isAvailable: true, category: REAL_CATEGORIES[3] },
-  { id: 'br-5', name: 'Hazelnut heaven', price: 160, taxPercent: 5, imageUrl: null, description: 'Brownie', isAvailable: true, category: REAL_CATEGORIES[3] },
-
-  // Specials
-  { id: 'sp-1', name: 'Matilda cake', price: 180, taxPercent: 5, imageUrl: null, description: 'Specials', isAvailable: true, category: REAL_CATEGORIES[4] },
-  { id: 'sp-2', name: 'Magnum obsession', price: 200, taxPercent: 5, imageUrl: null, description: 'Specials', isAvailable: true, category: REAL_CATEGORIES[4] },
-  { id: 'sp-3', name: 'Brownie Bowl', price: 200, taxPercent: 5, imageUrl: null, description: 'Specials', isAvailable: true, category: REAL_CATEGORIES[4] },
-  { id: 'sp-4', name: 'Nutella Bites', price: 200, taxPercent: 5, imageUrl: null, description: 'Specials', isAvailable: true, category: REAL_CATEGORIES[4] },
-  { id: 'sp-5', name: 'Death By Chocolate', price: 240, taxPercent: 5, imageUrl: null, description: 'Specials', isAvailable: true, category: REAL_CATEGORIES[4] },
-
-  // The Bowl Cakes
-  { id: 'bc-1', name: 'Triple Choco Bowl', price: 180, taxPercent: 5, imageUrl: null, description: 'Bowl Cake', isAvailable: true, category: REAL_CATEGORIES[5] },
-  { id: 'bc-2', name: 'Crunch Chocolate Bowl', price: 220, taxPercent: 5, imageUrl: null, description: 'Bowl Cake', isAvailable: true, category: REAL_CATEGORIES[5] },
-  { id: 'bc-3', name: 'Kitkat Bowl', price: 220, taxPercent: 5, imageUrl: null, description: 'Bowl Cake', isAvailable: true, category: REAL_CATEGORIES[5] },
-  { id: 'bc-4', name: 'Oreo Overload Bowl', price: 220, taxPercent: 5, imageUrl: null, description: 'Bowl Cake', isAvailable: true, category: REAL_CATEGORIES[5] },
-  { id: 'bc-5', name: 'Biscoff Bowl', price: 230, taxPercent: 5, imageUrl: null, description: 'Bowl Cake', isAvailable: true, category: REAL_CATEGORIES[5] },
-  { id: 'bc-6', name: 'Kunafa Kraze Bowl', price: 250, taxPercent: 5, imageUrl: null, description: 'Bowl Cake', isAvailable: true, category: REAL_CATEGORIES[5] },
-  { id: 'bc-7', name: 'Ferrero Rocher Bowl', price: 300, taxPercent: 5, imageUrl: null, description: 'Bowl Cake', isAvailable: true, category: REAL_CATEGORIES[5] },
-
-  // The Crunch Corner (savories)
-  { id: 'sav-1', name: 'Salted French Fries', price: 80, taxPercent: 5, imageUrl: null, description: 'Savories', isAvailable: true, category: REAL_CATEGORIES[6] },
-  { id: 'sav-2', name: 'Peri Peri French Fries', price: 100, taxPercent: 5, imageUrl: null, description: 'Savories', isAvailable: true, category: REAL_CATEGORIES[6] },
-  { id: 'sav-3', name: 'Cheesy Fries', price: 130, taxPercent: 5, imageUrl: null, description: 'Savories', isAvailable: true, category: REAL_CATEGORIES[6] },
-  { id: 'sav-4', name: 'Chicken loaded Fries', price: 150, taxPercent: 5, imageUrl: null, description: 'Savories', isAvailable: true, category: REAL_CATEGORIES[6] },
-  { id: 'sav-5', name: 'Chicken Popcorn', price: 150, taxPercent: 5, imageUrl: null, description: 'Savories', isAvailable: true, category: REAL_CATEGORIES[6] },
-  { id: 'sav-6', name: 'Chicken Wings', price: 160, taxPercent: 5, imageUrl: null, description: 'Savories', isAvailable: true, category: REAL_CATEGORIES[6] },
-  { id: 'sav-7', name: 'Cheesy Chicken Bun', price: 100, taxPercent: 5, imageUrl: null, description: 'Savories', isAvailable: true, category: REAL_CATEGORIES[6] },
-];
-
   const loadCategories = async () => {
     try {
       const data = await fetchApi('/menu/categories');
@@ -204,17 +149,30 @@ const REAL_MENU_ITEMS: MenuItem[] = [
     setCategories(REAL_CATEGORIES);
   };
 
-  const loadMenuItems = async () => {
-    try {
-      const data = await fetchApi('/menu/items');
-      if (Array.isArray(data) && data.length > 0) {
-        setMenuItems(data);
-        return;
+  const loadMenuItems = () => {
+    // Read menu items from localStorage (synced from Admin menu)
+    if (typeof window !== 'undefined') {
+      const saved = localStorage.getItem('dd_menu_items');
+      if (saved) {
+        try {
+          const parsed = JSON.parse(saved);
+          if (Array.isArray(parsed) && parsed.length > 0) {
+            // Ensure taxPercent exists for POS billing
+            const withTax = parsed.map((it: any) => ({
+              ...it,
+              taxPercent: it.taxPercent || 5,
+              imageUrl: it.imageUrl || null,
+              description: it.description || null,
+              isAvailable: it.isAvailable !== false,
+            }));
+            setMenuItems(withTax);
+            return;
+          }
+        } catch (e) {}
       }
-    } catch (err) {
-      console.warn('Menu Items API fallback:', err);
     }
-    setMenuItems(REAL_MENU_ITEMS);
+    // Empty menu if nothing saved
+    setMenuItems([]);
   };
 
   const loadTodayOrders = async () => {
