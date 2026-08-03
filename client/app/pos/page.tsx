@@ -152,12 +152,32 @@ const REAL_CATEGORIES: Category[] = [
   const loadMenuItems = async () => {
     try {
       const data = await fetchApi('/menu/items');
-      if (Array.isArray(data)) {
+      if (Array.isArray(data) && data.length > 0) {
         setMenuItems(data);
         return;
       }
     } catch (err) {
       console.warn('Menu Items API error:', err);
+    }
+
+    if (typeof window !== 'undefined') {
+      const saved = localStorage.getItem('dd_menu_items');
+      if (saved) {
+        try {
+          const parsed = JSON.parse(saved);
+          if (Array.isArray(parsed) && parsed.length > 0) {
+            const withTax = parsed.map((it: any) => ({
+              ...it,
+              taxPercent: it.taxPercent || 5,
+              imageUrl: it.imageUrl || null,
+              description: it.description || null,
+              isAvailable: it.isAvailable !== false,
+            }));
+            setMenuItems(withTax);
+            return;
+          }
+        } catch (e) {}
+      }
     }
     setMenuItems([]);
   };
@@ -371,10 +391,21 @@ const REAL_CATEGORIES: Category[] = [
   };
 
   const filteredMenuItems = menuItems.filter((item) => {
-    const matchesCategory = selectedCategory === 'ALL' || item.category?.id === selectedCategory;
+    const catName = item.category?.name?.toLowerCase() || '';
+    const catId = item.category?.id || '';
+    const selCat = selectedCategory.toLowerCase();
+
+    const matchesCategory =
+      selectedCategory === 'ALL' ||
+      catId === selectedCategory ||
+      catName === selCat ||
+      catName.includes(selCat) ||
+      selCat.includes(catName);
+
     const matchesSearch =
       item.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
       (item.description && item.description.toLowerCase().includes(searchQuery.toLowerCase()));
+
     return matchesCategory && matchesSearch;
   });
 
