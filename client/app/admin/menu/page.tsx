@@ -114,7 +114,13 @@ export default function MenuManagementPage() {
       await fetchApi('/menu/items/all', { method: 'DELETE' });
       setItems([]);
     } catch (err: any) {
-      alert(`Failed to remove all: ${err.message}`);
+      // Fallback: Delete items individually if bulk route is not yet deployed on server
+      try {
+        await Promise.all(items.map((it) => fetchApi(`/menu/items/${it.id}`, { method: 'DELETE' }).catch(() => null)));
+        await loadData();
+      } catch (fallbackErr: any) {
+        alert(`Failed to remove all items: ${err.message}`);
+      }
     }
   };
 
