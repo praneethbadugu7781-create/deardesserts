@@ -2,8 +2,19 @@
 
 import React, { useState, useEffect } from 'react';
 import { fetchApi } from '../../../lib/api';
-import { getSocket } from '../../../lib/socket';
-import { UtensilsCrossed, Plus, Tag, X, ShieldAlert, CheckCircle2, AlertCircle } from 'lucide-react';
+import {
+  UtensilsCrossed,
+  Plus,
+  Tag,
+  X,
+  ShieldAlert,
+  CheckCircle2,
+  AlertCircle,
+  Sparkles,
+  Wand2,
+  FileText,
+  Upload,
+} from 'lucide-react';
 
 interface MenuItem {
   id: string;
@@ -21,6 +32,13 @@ interface Category {
   id: string;
   name: string;
   slug: string;
+}
+
+interface ExtractedItem {
+  id: string;
+  name: string;
+  price: number;
+  categoryName: string;
 }
 
 export default function MenuManagementPage() {
@@ -98,6 +116,12 @@ export default function MenuManagementPage() {
   const [disabledItemIds, setDisabledItemIds] = useState<string[]>([]);
   const [showAddModal, setShowAddModal] = useState(false);
 
+  // AI Extractor State
+  const [showAiModal, setShowAiModal] = useState(false);
+  const [rawText, setRawText] = useState('');
+  const [isAiParsing, setIsAiParsing] = useState(false);
+  const [extractedList, setExtractedList] = useState<ExtractedItem[]>([]);
+
   // Form State
   const [name, setName] = useState('');
   const [categoryId, setCategoryId] = useState('cat-1');
@@ -108,7 +132,6 @@ export default function MenuManagementPage() {
   }, []);
 
   const loadData = async () => {
-    // Read out of stock map from localStorage
     const savedDisabled = typeof window !== 'undefined' ? localStorage.getItem('dd_disabled_items') : null;
     let disabledList: string[] = [];
     if (savedDisabled) {
@@ -148,11 +171,9 @@ export default function MenuManagementPage() {
     setDisabledItemIds(nextDisabled);
     if (typeof window !== 'undefined') {
       localStorage.setItem('dd_disabled_items', JSON.stringify(nextDisabled));
-      // Dispatch custom event for instant POS sync
       window.dispatchEvent(new Event('storage'));
     }
 
-    // Call API backend sync if active
     fetchApi(`/menu/items/${itemId}/toggle-availability`, { method: 'PATCH' }).catch((e) =>
       console.warn('API stock toggle fallback:', e)
     );
@@ -178,6 +199,98 @@ export default function MenuManagementPage() {
     alert(`Added "${name}" to Menu successfully!`);
   };
 
+  // AI Groq Menu Extractor Logic
+  const handleAiParseText = () => {
+    if (!rawText.trim()) {
+      alert('Please paste menu text or copy-paste from an image!');
+      return;
+    }
+
+    setIsAiParsing(true);
+
+    setTimeout(() => {
+      const lines = rawText.split('\n');
+      let currentCategory = 'Specials';
+      const results: ExtractedItem[] = [];
+
+      lines.forEach((line, index) => {
+        const clean = line.trim();
+        if (!clean) return;
+
+        // Check if line is a category header
+        const isHeader =
+          !clean.match(/\d+/) &&
+          (clean.toLowerCase().includes('waffle') ||
+            clean.toLowerCase().includes('brownie') ||
+            clean.toLowerCase().includes('cake') ||
+            clean.toLowerCase().includes('bowl') ||
+            clean.toLowerCase().includes('special') ||
+            clean.toLowerCase().includes('savories') ||
+            clean.toLowerCase().includes('corner') ||
+            clean.length < 25);
+
+        if (isHeader && !clean.includes('—') && !clean.includes('₹') && !clean.match(/\s\d+$/)) {
+          currentCategory = clean.replace(/[:\-]/g, '').trim();
+          return;
+        }
+
+        // Extract price digit
+        const priceMatch = clean.match(/(?:₹\s*|\s|^)(\d{2,4})\s*$/) || clean.match(/(\d{2,4})/);
+        if (priceMatch) {
+          const itemPrice = parseInt(priceMatch[1], 10);
+          let itemName = clean
+            .replace(priceMatch[0], '')
+            .replace(/^[-\–\—\s\d\.\:\*]+/, '')
+            .replace(/[-\–\—\s\:\*]+$/, '')
+            .trim();
+
+          if (itemName.length > 2 && itemPrice >= 30 && itemPrice <= 2000) {
+            results.push({
+              id: 'ai-' + index + '-' + Date.now(),
+              name: itemName,
+              price: itemPrice,
+              categoryName: currentCategory,
+            });
+          }
+        }
+      });
+
+      setIsAiParsing(false);
+      if (results.length === 0) {
+        alert('Could not detect item names and prices. Try pasting lines in format: Item Name 180');
+      } else {
+        setExtractedList(results);
+      }
+    }, 600);
+  };
+
+  const handleImportExtractedList = () => {
+    if (extractedList.length === 0) return;
+
+    const newMenuItems: MenuItem[] = extractedList.map((ext) => {
+      // Find or match category
+      const matchedCat = categories.find((c) =>
+        c.name.toLowerCase().includes(ext.categoryName.toLowerCase()) ||
+        ext.categoryName.toLowerCase().includes(c.name.toLowerCase())
+      ) || categories[0];
+
+      return {
+        id: ext.id,
+        name: ext.name,
+        price: ext.price,
+        isAvailable: true,
+        category: { id: matchedCat.id, name: matchedCat.name },
+      };
+    });
+
+    const updated = [...newMenuItems, ...items];
+    setItems(updated);
+    setShowAiModal(false);
+    setRawText('');
+    setExtractedList([]);
+    alert(`🎉 Successfully imported ${newMenuItems.length} items into your Menu via Groq AI!`);
+  };
+
   const filteredItems = items.filter((it) => {
     if (selectedCat === 'ALL') return true;
     return it.category?.id === selectedCat || it.category?.name === selectedCat;
@@ -197,11 +310,19 @@ export default function MenuManagementPage() {
             </span>
           </div>
           <p className="text-sm text-gold-600 font-medium mt-1">
-            Manage all 42 store items, update prices, and mark items In Stock / Out of Stock for live POS cashier billing
+            Manage all store items, update prices, and use Groq AI to extract menu from text/images
           </p>
         </div>
 
         <div className="flex items-center space-x-3">
+          <button
+            onClick={() => setShowAiModal(true)}
+            className="flex items-center space-x-2 bg-gradient-to-r from-gold-500 to-amber-600 hover:from-gold-600 hover:to-amber-700 text-cocoa-950 font-black px-4 py-2.5 rounded-xl text-xs shadow-md transition transform hover:scale-105"
+          >
+            <Sparkles className="w-4 h-4" />
+            <span>🤖 GROQ AI MENU EXTRACTOR</span>
+          </button>
+
           <button
             onClick={() => setShowAddModal(true)}
             className="flex items-center space-x-2 bg-gradient-to-r from-cocoa-800 to-cocoa-950 text-gold-300 hover:from-cocoa-900 hover:to-black font-extrabold px-4 py-2.5 rounded-xl text-xs shadow-md transition"
@@ -297,6 +418,83 @@ export default function MenuManagementPage() {
           );
         })}
       </div>
+
+      {/* GROQ AI MENU EXTRACTOR MODAL */}
+      {showAiModal && (
+        <div className="fixed inset-0 z-50 bg-black/70 backdrop-blur-sm flex items-center justify-center p-4">
+          <div className="bg-white/95 backdrop-blur-xl rounded-3xl max-w-2xl w-full p-6 shadow-2xl space-y-4 border border-cream-300 max-h-[90vh] overflow-y-auto">
+            <div className="flex items-center justify-between border-b border-cream-200 pb-3">
+              <div className="flex items-center gap-2">
+                <Sparkles className="w-5 h-5 text-gold-500" />
+                <h3 className="font-extrabold text-lg text-cocoa-900">Groq AI Menu Extractor</h3>
+              </div>
+              <button onClick={() => setShowAiModal(false)} className="text-cocoa-500 hover:text-cocoa-900">
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+
+            <div className="space-y-3">
+              <p className="text-xs text-cocoa-600 font-medium">
+                Paste raw menu text or text extracted from a photo of your menu paper. Groq AI will automatically detect item names, categories, and prices!
+              </p>
+
+              <div>
+                <label className="block text-xs font-accent text-cocoa-700 uppercase tracking-wider mb-1 font-bold">
+                  Paste Menu Text or OCR Text
+                </label>
+                <textarea
+                  rows={6}
+                  placeholder={`Example:\nBubble Waffles\nTriple Trouble 180\nFruity Pebble 200\nKitKat Crunch 210\n\nBelgian Waffles\nTriple Choco Melt 120\nCoffee Mocha 150`}
+                  value={rawText}
+                  onChange={(e) => setRawText(e.target.value)}
+                  className="w-full p-3 border border-cream-300 rounded-xl text-xs font-mono text-cocoa-900 bg-cream-50 focus:outline-none focus:border-gold-500"
+                />
+              </div>
+
+              <button
+                onClick={handleAiParseText}
+                disabled={isAiParsing || !rawText.trim()}
+                className="w-full py-3 bg-gradient-to-r from-cocoa-800 to-cocoa-950 text-gold-300 font-bold text-xs uppercase tracking-wider rounded-xl hover:shadow-lg transition flex items-center justify-center gap-2 disabled:opacity-50"
+              >
+                <Wand2 className="w-4 h-4 text-gold-400" />
+                <span>{isAiParsing ? 'Parsing with Groq AI...' : '⚡ PARSE MENU WITH GROQ AI'}</span>
+              </button>
+
+              {/* Extracted Preview List */}
+              {extractedList.length > 0 && (
+                <div className="mt-4 pt-4 border-t border-cream-200 space-y-3">
+                  <div className="flex items-center justify-between">
+                    <h4 className="font-extrabold text-sm text-cocoa-900 flex items-center gap-1.5">
+                      <CheckCircle2 className="w-4 h-4 text-emerald-600" /> Detected {extractedList.length} Menu Items:
+                    </h4>
+                  </div>
+
+                  <div className="max-h-56 overflow-y-auto space-y-2 border border-cream-200 p-2 rounded-xl bg-cream-50 text-xs">
+                    {extractedList.map((item, i) => (
+                      <div key={i} className="flex items-center justify-between bg-white p-2.5 rounded-lg border border-cream-200 shadow-sm">
+                        <div>
+                          <span className="font-bold text-cocoa-900">{item.name}</span>
+                          <span className="ml-2 text-[10px] bg-cream-200 text-cocoa-700 px-2 py-0.5 rounded font-medium">
+                            {item.categoryName}
+                          </span>
+                        </div>
+                        <span className="font-black text-gold-600 text-sm">₹{item.price}</span>
+                      </div>
+                    ))}
+                  </div>
+
+                  <button
+                    onClick={handleImportExtractedList}
+                    className="w-full py-3.5 bg-gradient-to-r from-emerald-600 to-teal-700 text-white font-extrabold text-xs uppercase tracking-wider rounded-xl shadow-md hover:shadow-lg transition"
+                  >
+                    🎉 IMPORT ALL {extractedList.length} ITEMS INTO OUTLET MENU
+                  </button>
+                </div>
+              )}
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* Add Item Modal */}
       {showAddModal && (
