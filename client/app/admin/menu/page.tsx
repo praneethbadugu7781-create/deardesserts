@@ -199,8 +199,12 @@ export default function MenuManagementPage() {
     alert(`Added "${name}" to Menu successfully!`);
   };
 
-  // AI Groq Menu Extractor Logic
-  const handleAiParseText = () => {
+  // AI Groq Menu Extractor Logic with Cloud API + Local Fallback
+  const [groqApiKey, setGroqApiKey] = useState<string>(() => {
+    return typeof window !== 'undefined' ? localStorage.getItem('dd_groq_key') || '' : '';
+  });
+
+  const handleAiParseText = async () => {
     if (!rawText.trim()) {
       alert('Please paste menu text or copy-paste from an image!');
       return;
@@ -208,6 +212,59 @@ export default function MenuManagementPage() {
 
     setIsAiParsing(true);
 
+    // Save Groq key if provided
+    if (groqApiKey.trim()) {
+      localStorage.setItem('dd_groq_key', groqApiKey.trim());
+    }
+
+    // Attempt 1: Real Groq Cloud API Call if key provided
+    if (groqApiKey.trim()) {
+      try {
+        const response = await fetch('https://api.groq.com/openai/v1/chat/completions', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${groqApiKey.trim()}`,
+          },
+          body: JSON.stringify({
+            model: 'llama-3.3-70b-versatile',
+            messages: [
+              {
+                role: 'system',
+                content:
+                  'You are a restaurant menu parser. Extract all menu items, prices, and categories from text into a valid JSON array format: [{"name": "Item Name", "price": 180, "categoryName": "Category"}]. Output ONLY valid JSON array and nothing else.',
+              },
+              { role: 'user', content: rawText },
+            ],
+            temperature: 0.1,
+          }),
+        });
+
+        const data = await response.json();
+        const content = data.choices?.[0]?.message?.content;
+
+        if (content) {
+          const jsonMatch = content.match(/\[.*\]/s);
+          if (jsonMatch) {
+            const parsed: any[] = JSON.parse(jsonMatch[0]);
+            const results: ExtractedItem[] = parsed.map((it: any, i: number) => ({
+              id: 'groq-cloud-' + i + '-' + Date.now(),
+              name: it.name || 'Unnamed Item',
+              price: Number(it.price) || 100,
+              categoryName: it.categoryName || 'Specials',
+            }));
+
+            setExtractedList(results);
+            setIsAiParsing(false);
+            return;
+          }
+        }
+      } catch (err) {
+        console.warn('Groq Cloud API error, switching to local NLP engine:', err);
+      }
+    }
+
+    // Attempt 2: Smart Built-in NLP Regex Parser Fallback
     setTimeout(() => {
       const lines = rawText.split('\n');
       let currentCategory = 'Specials';
@@ -217,7 +274,6 @@ export default function MenuManagementPage() {
         const clean = line.trim();
         if (!clean) return;
 
-        // Check if line is a category header
         const isHeader =
           !clean.match(/\d+/) &&
           (clean.toLowerCase().includes('waffle') ||
@@ -234,7 +290,6 @@ export default function MenuManagementPage() {
           return;
         }
 
-        // Extract price digit
         const priceMatch = clean.match(/(?:₹\s*|\s|^)(\d{2,4})\s*$/) || clean.match(/(\d{2,4})/);
         if (priceMatch) {
           const itemPrice = parseInt(priceMatch[1], 10);
@@ -261,7 +316,7 @@ export default function MenuManagementPage() {
       } else {
         setExtractedList(results);
       }
-    }, 600);
+    }, 400);
   };
 
   const handleImportExtractedList = () => {
@@ -439,11 +494,29 @@ export default function MenuManagementPage() {
               </p>
 
               <div>
+                <div className="flex items-center justify-between mb-1">
+                  <label className="text-xs font-accent text-cocoa-700 uppercase tracking-wider font-bold">
+                    Groq API Key (Optional)
+                  </label>
+                  <span className="text-[10px] text-gold-600 font-bold">
+                    {groqApiKey ? '⚡ Groq Cloud Llama-3.3 Active' : '✨ Built-in AI Parser Active'}
+                  </span>
+                </div>
+                <input
+                  type="password"
+                  placeholder="gsk_... (Leave blank to use built-in AI parser)"
+                  value={groqApiKey}
+                  onChange={(e) => setGroqApiKey(e.target.value)}
+                  className="w-full px-3 py-2 border border-cream-300 rounded-xl text-xs font-mono text-cocoa-900 bg-cream-50 focus:outline-none focus:border-gold-500"
+                />
+              </div>
+
+              <div>
                 <label className="block text-xs font-accent text-cocoa-700 uppercase tracking-wider mb-1 font-bold">
                   Paste Menu Text or OCR Text
                 </label>
                 <textarea
-                  rows={6}
+                  rows={5}
                   placeholder={`Example:\nBubble Waffles\nTriple Trouble 180\nFruity Pebble 200\nKitKat Crunch 210\n\nBelgian Waffles\nTriple Choco Melt 120\nCoffee Mocha 150`}
                   value={rawText}
                   onChange={(e) => setRawText(e.target.value)}
