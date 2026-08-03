@@ -7,12 +7,11 @@ import { fetchApi } from '@/lib/api';
 import { LayoutDashboard, ShoppingCart, ChefHat, ArrowRight, Shield, ArrowLeft, KeyRound, Mail, Lock, CheckCircle2 } from 'lucide-react';
 import Link from 'next/link';
 
-type Role = 'ADMIN' | 'CASHIER' | 'KITCHEN_STAFF';
+type Role = 'ADMIN' | 'CASHIER';
 
 const ROLES = [
   { id: 'ADMIN', label: 'Admin', icon: LayoutDashboard, defaultEmail: 'deardesserts.in@gmail.com' },
   { id: 'CASHIER', label: 'Cashier POS', icon: ShoppingCart, defaultEmail: 'cashier@deardesserts.com' },
-  { id: 'KITCHEN_STAFF', label: 'Kitchen KDS', icon: ChefHat, defaultEmail: 'kitchen@deardesserts.com' },
 ] as const;
 
 export default function LoginPage() {
@@ -69,9 +68,12 @@ export default function LoginPage() {
     try {
       await login(email, password);
 
-      if (role === 'ADMIN') router.push('/admin/dashboard');
-      else if (role === 'CASHIER') router.push('/pos');
-      else if (role === 'KITCHEN_STAFF') router.push('/kds');
+      const targetEmail = email.trim().toLowerCase();
+      if (targetEmail.includes('cashier')) {
+        window.location.href = '/pos';
+      } else {
+        window.location.href = '/admin/dashboard';
+      }
     } catch (err: any) {
       setError(err.message || 'Invalid email or password.');
     } finally {

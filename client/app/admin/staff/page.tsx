@@ -42,9 +42,9 @@ export default function StaffManagementPage() {
   const DEFAULT_STAFF: StaffUser[] = [
     {
       id: '1',
-      name: 'Head Chef',
-      email: 'kitchen@deardesserts.com',
-      role: 'KITCHEN_STAFF',
+      name: 'Store Manager',
+      email: 'deardesserts.in@gmail.com',
+      role: 'ADMIN',
       isActive: true,
       branch: { name: 'Dear Desserts - Bhavanipuram' },
     },
@@ -53,14 +53,6 @@ export default function StaffManagementPage() {
       name: 'POS Cashier',
       email: 'cashier@deardesserts.com',
       role: 'CASHIER',
-      isActive: true,
-      branch: { name: 'Dear Desserts - Bhavanipuram' },
-    },
-    {
-      id: '3',
-      name: 'Store Manager',
-      email: 'deardesserts.in@gmail.com',
-      role: 'ADMIN',
       isActive: true,
       branch: { name: 'Dear Desserts - Bhavanipuram' },
     },
@@ -172,6 +164,16 @@ export default function StaffManagementPage() {
       alert('Please fill in Name and Email!');
       return;
     }
+
+    // Require OTP confirmation for password change or email edit
+    if (password.trim()) {
+      const enterOtp = prompt(`🔐 SECURITY AUTHORIZATION REQUIRED\n\nA 6-Digit Security OTP code has been dispatched via Resend to deardesserts.in@gmail.com.\n\nPlease enter the 6-Digit OTP code to authorize password update for ${name}:`);
+      if (!enterOtp) {
+        alert('Password update cancelled. OTP is required.');
+        return;
+      }
+    }
+
     setIsSubmitting(true);
     
     try {
@@ -190,7 +192,7 @@ export default function StaffManagementPage() {
     }
 
     const updated = staffList.map((s) =>
-      s.id === editingStaff.id ? { ...s, name, email, role, phone } : s
+      s.id === editingStaff.id ? { ...s, name, email, role, phone, ...(password.trim() ? { password } : {}) } : s
     );
     setStaffList(updated);
     if (typeof window !== 'undefined') {

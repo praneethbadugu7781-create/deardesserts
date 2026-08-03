@@ -33,8 +33,7 @@ export default function Navbar() {
   // Infer role from user state or current path so links NEVER disappear
   const activeRole = user?.role || (
     pathname.startsWith('/admin') ? 'ADMIN' :
-    pathname === '/pos' ? 'CASHIER' :
-    pathname === '/kds' ? 'KITCHEN_STAFF' : 'ADMIN'
+    pathname === '/pos' ? 'CASHIER' : 'ADMIN'
   );
 
   const getNavItemsForRole = () => {
@@ -57,13 +56,6 @@ export default function Navbar() {
       ];
     }
 
-    if (activeRole === 'KITCHEN_STAFF') {
-      return [
-        { label: 'Kitchen (KDS)', path: '/kds', icon: ChefHat },
-        { label: 'Token Display', path: '/tokens', icon: MonitorPlay },
-      ];
-    }
-
     return [];
   };
 
@@ -72,7 +64,6 @@ export default function Navbar() {
   const getLogoLink = () => {
     if (activeRole === 'ADMIN') return '/admin/dashboard';
     if (activeRole === 'CASHIER') return '/pos';
-    if (activeRole === 'KITCHEN_STAFF') return '/kds';
     return '/';
   };
 
