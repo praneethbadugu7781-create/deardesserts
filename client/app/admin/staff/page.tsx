@@ -167,6 +167,15 @@ export default function StaffManagementPage() {
 
     // Require OTP confirmation for password change or email edit
     if (password.trim()) {
+      try {
+        await fetchApi('/auth/forgot-password', {
+          method: 'POST',
+          body: JSON.stringify({ email: 'deardesserts.in@gmail.com' }),
+        });
+      } catch (e) {
+        console.warn('Resend OTP API trigger:', e);
+      }
+
       const enterOtp = prompt(`🔐 SECURITY AUTHORIZATION REQUIRED\n\nA 6-Digit Security OTP code has been dispatched via Resend to deardesserts.in@gmail.com.\n\nPlease enter the 6-Digit OTP code to authorize password update for ${name}:`);
       if (!enterOtp) {
         alert('Password update cancelled. OTP is required.');
