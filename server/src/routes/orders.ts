@@ -3,6 +3,7 @@ import { PrismaClient } from '@prisma/client';
 import { OrderStatus, PaymentMethod } from '../types';
 import { authenticateJWT, requireRole, AuthRequest } from '../middleware/auth';
 import { emitOrderCreated, emitOrderStatusChanged } from '../socket';
+import { sendOrderReceiptEmail } from '../lib/resend';
 
 const router = Router();
 const prisma = new PrismaClient();
@@ -227,6 +228,20 @@ router.post('/', authenticateJWT, requireRole(['ADMIN', 'CASHIER']), async (req:
     });
 
     emitOrderCreated(newOrder);
+
+    // Asynchronously dispatch receipt email via Resend
+    sendOrderReceiptEmail({
+      billNumber: newOrder.bill?.billNumber || billNum,
+      tokenNumber: newOrder.token?.tokenNumber || tokenStr,
+      customerName: newOrder.customerName || 'Guest',
+      customerEmail: req.body.customerEmail || 'deardesserts.in@gmail.com',
+      netAmount: newOrder.netAmount,
+      items: newOrder.items.map((it) => ({
+        name: it.menuItem.name,
+        quantity: it.quantity,
+        totalPrice: it.totalPrice,
+      })),
+    }).catch((err) => console.error('[Resend Error]', err));
 
     res.status(201).json(newOrder);
   } catch (error: any) {
