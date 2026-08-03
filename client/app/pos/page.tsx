@@ -149,29 +149,16 @@ const REAL_CATEGORIES: Category[] = [
     setCategories(REAL_CATEGORIES);
   };
 
-  const loadMenuItems = () => {
-    // Read menu items from localStorage (synced from Admin menu)
-    if (typeof window !== 'undefined') {
-      const saved = localStorage.getItem('dd_menu_items');
-      if (saved) {
-        try {
-          const parsed = JSON.parse(saved);
-          if (Array.isArray(parsed) && parsed.length > 0) {
-            // Ensure taxPercent exists for POS billing
-            const withTax = parsed.map((it: any) => ({
-              ...it,
-              taxPercent: it.taxPercent || 5,
-              imageUrl: it.imageUrl || null,
-              description: it.description || null,
-              isAvailable: it.isAvailable !== false,
-            }));
-            setMenuItems(withTax);
-            return;
-          }
-        } catch (e) {}
+  const loadMenuItems = async () => {
+    try {
+      const data = await fetchApi('/menu/items');
+      if (Array.isArray(data)) {
+        setMenuItems(data);
+        return;
       }
+    } catch (err) {
+      console.warn('Menu Items API error:', err);
     }
-    // Empty menu if nothing saved
     setMenuItems([]);
   };
 

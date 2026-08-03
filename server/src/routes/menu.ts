@@ -81,6 +81,52 @@ router.post('/items', authenticateJWT, requireRole(['ADMIN']), async (req: AuthR
   }
 });
 
+// POST /api/menu/items/bulk - Bulk create items (ADMIN only) - for Groq AI import
+router.post('/items/bulk', authenticateJWT, requireRole(['ADMIN']), async (req: AuthRequest, res: Response) => {
+  try {
+    const { items } = req.body;
+
+    if (!Array.isArray(items) || items.length === 0) {
+      return res.status(400).json({ error: 'Items array is required' });
+    }
+
+    const created: any[] = [];
+    for (const item of items) {
+      if (!item.name || !item.categoryId || item.price === undefined) continue;
+
+      const newItem = await prisma.menuItem.create({
+        data: {
+          name: item.name,
+          categoryId: item.categoryId,
+          price: parseFloat(item.price),
+          taxPercent: item.taxPercent ? parseFloat(item.taxPercent) : 5.0,
+          description: item.description || null,
+          imageUrl: null,
+          isCombo: false,
+          preparationMinutes: 5,
+        },
+        include: { category: true },
+      });
+      created.push(newItem);
+    }
+
+    res.status(201).json({ message: `${created.length} items created`, items: created });
+  } catch (error) {
+    console.error('Bulk create error:', error);
+    res.status(500).json({ error: 'Failed to bulk create menu items' });
+  }
+});
+
+// DELETE /api/menu/items/all - Delete ALL menu items (ADMIN only)
+router.delete('/items/all', authenticateJWT, requireRole(['ADMIN']), async (req: AuthRequest, res: Response) => {
+  try {
+    const deleted = await prisma.menuItem.deleteMany({});
+    res.json({ message: `Deleted ${deleted.count} menu items` });
+  } catch (error) {
+    res.status(500).json({ error: 'Failed to delete all menu items' });
+  }
+});
+
 // PUT /api/menu/items/:id - Update item details (ADMIN only)
 router.put('/items/:id', authenticateJWT, requireRole(['ADMIN']), async (req: AuthRequest, res: Response) => {
   try {
@@ -117,11 +163,31 @@ router.patch('/items/:id/stock', authenticateJWT, requireRole(['ADMIN', 'CASHIER
     const updated = await prisma.menuItem.update({
       where: { id },
       data: { isAvailable: Boolean(isAvailable) },
+      include: { category: true },
     });
 
     res.json(updated);
   } catch (error) {
     res.status(500).json({ error: 'Failed to update item availability status' });
+  }
+});
+
+// PATCH /api/menu/items/:id/toggle-availability - Toggle stock (no body needed)
+router.patch('/items/:id/toggle-availability', async (req: AuthRequest, res: Response) => {
+  try {
+    const { id } = req.params;
+    const item = await prisma.menuItem.findUnique({ where: { id } });
+    if (!item) return res.status(404).json({ error: 'Item not found' });
+
+    const updated = await prisma.menuItem.update({
+      where: { id },
+      data: { isAvailable: !item.isAvailable },
+      include: { category: true },
+    });
+
+    res.json(updated);
+  } catch (error) {
+    res.status(500).json({ error: 'Failed to toggle availability' });
   }
 });
 

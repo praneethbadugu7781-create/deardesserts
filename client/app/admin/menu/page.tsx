@@ -12,6 +12,7 @@ import {
   Wand2,
   Trash2,
   XCircle,
+  RefreshCw,
 } from 'lucide-react';
 
 interface MenuItem {
@@ -40,31 +41,22 @@ interface ExtractedItem {
 }
 
 export default function MenuManagementPage() {
-  const REAL_CATEGORIES: Category[] = [
-    { id: 'cat-1', name: 'Bubble Waffles', slug: 'bubble-waffles' },
-    { id: 'cat-2', name: 'Belgian Waffles', slug: 'belgian-waffles' },
-    { id: 'cat-3', name: "The Poppin' Bowl", slug: 'pop-bowl' },
-    { id: 'cat-4', name: 'Brownie', slug: 'brownie' },
-    { id: 'cat-5', name: 'Specials', slug: 'specials' },
-    { id: 'cat-6', name: 'The Bowl Cakes', slug: 'bowl-cakes' },
-    { id: 'cat-7', name: 'The Crunch Corner', slug: 'savories' },
-  ];
-
-  const [categories] = useState<Category[]>(REAL_CATEGORIES);
+  const [categories, setCategories] = useState<Category[]>([]);
   const [items, setItems] = useState<MenuItem[]>([]);
   const [selectedCat, setSelectedCat] = useState<string>('ALL');
-  const [disabledItemIds, setDisabledItemIds] = useState<string[]>([]);
+  const [loading, setLoading] = useState(true);
   const [showAddModal, setShowAddModal] = useState(false);
 
   // AI Extractor State
   const [showAiModal, setShowAiModal] = useState(false);
   const [rawText, setRawText] = useState('');
   const [isAiParsing, setIsAiParsing] = useState(false);
+  const [isImporting, setIsImporting] = useState(false);
   const [extractedList, setExtractedList] = useState<ExtractedItem[]>([]);
 
   // Form State
   const [name, setName] = useState('');
-  const [categoryId, setCategoryId] = useState('cat-1');
+  const [categoryId, setCategoryId] = useState('');
   const [price, setPrice] = useState(180);
 
   // Groq API Key
@@ -76,87 +68,82 @@ export default function MenuManagementPage() {
     loadData();
   }, []);
 
-  // Persist items to localStorage whenever they change
-  useEffect(() => {
-    if (typeof window !== 'undefined') {
-      localStorage.setItem('dd_menu_items', JSON.stringify(items));
-      window.dispatchEvent(new Event('storage'));
-    }
-  }, [items]);
+  const loadData = async () => {
+    setLoading(true);
+    try {
+      const [catsRes, itemsRes] = await Promise.all([
+        fetchApi('/menu/categories').catch(() => []),
+        fetchApi('/menu/items').catch(() => []),
+      ]);
 
-  const loadData = () => {
-    // Load disabled items
-    const savedDisabled = typeof window !== 'undefined' ? localStorage.getItem('dd_disabled_items') : null;
-    if (savedDisabled) {
-      try { setDisabledItemIds(JSON.parse(savedDisabled)); } catch (e) {}
+      if (Array.isArray(catsRes) && catsRes.length > 0) {
+        setCategories(catsRes);
+        if (!categoryId) setCategoryId(catsRes[0].id);
+      }
+      if (Array.isArray(itemsRes)) {
+        setItems(itemsRes);
+      }
+    } catch (err) {
+      console.error('Failed to load menu data:', err);
     }
+    setLoading(false);
+  };
 
-    // Load saved menu items
-    const savedItems = typeof window !== 'undefined' ? localStorage.getItem('dd_menu_items') : null;
-    if (savedItems) {
-      try {
-        const parsed = JSON.parse(savedItems);
-        if (Array.isArray(parsed)) {
-          setItems(parsed);
-        }
-      } catch (e) {}
+  const handleToggleStock = async (itemId: string) => {
+    try {
+      const updated = await fetchApi(`/menu/items/${itemId}/toggle-availability`, { method: 'PATCH' });
+      setItems((prev) => prev.map((it) => (it.id === itemId ? { ...it, isAvailable: updated.isAvailable } : it)));
+    } catch (err: any) {
+      alert(`Failed to toggle stock: ${err.message}`);
     }
   };
 
-  const handleToggleStock = (itemId: string) => {
-    const isCurrentlyDisabled = disabledItemIds.includes(itemId);
-    let nextDisabled: string[];
-
-    if (isCurrentlyDisabled) {
-      nextDisabled = disabledItemIds.filter((id) => id !== itemId);
-    } else {
-      nextDisabled = [...disabledItemIds, itemId];
-    }
-
-    setDisabledItemIds(nextDisabled);
-    if (typeof window !== 'undefined') {
-      localStorage.setItem('dd_disabled_items', JSON.stringify(nextDisabled));
-      window.dispatchEvent(new Event('storage'));
-    }
-  };
-
-  const handleDeleteItem = (itemId: string, itemName: string) => {
+  const handleDeleteItem = async (itemId: string, itemName: string) => {
     if (!confirm(`Are you sure you want to delete "${itemName}" from the menu?`)) return;
-    setItems((prev) => prev.filter((it) => it.id !== itemId));
-  };
-
-  const handleRemoveAll = () => {
-    if (!confirm(`⚠️ Are you sure you want to REMOVE ALL ${items.length} items from the menu? This cannot be undone!`)) return;
-    setItems([]);
-    setDisabledItemIds([]);
-    if (typeof window !== 'undefined') {
-      localStorage.setItem('dd_disabled_items', JSON.stringify([]));
-      window.dispatchEvent(new Event('storage'));
+    try {
+      await fetchApi(`/menu/items/${itemId}`, { method: 'DELETE' });
+      setItems((prev) => prev.filter((it) => it.id !== itemId));
+    } catch (err: any) {
+      alert(`Failed to delete: ${err.message}`);
     }
   };
 
-  const handleCreateItem = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!name.trim()) return;
-
-    const catObj = categories.find((c) => c.id === categoryId) || categories[0];
-    const newItem: MenuItem = {
-      id: 'custom-' + Date.now(),
-      name,
-      price: Number(price),
-      isAvailable: true,
-      category: { id: catObj.id, name: catObj.name },
-    };
-
-    setItems((prev) => [newItem, ...prev]);
-    setName('');
-    setShowAddModal(false);
+  const handleRemoveAll = async () => {
+    if (!confirm(`⚠️ Are you sure you want to REMOVE ALL ${items.length} items from the menu? This cannot be undone!`)) return;
+    try {
+      await fetchApi('/menu/items/all', { method: 'DELETE' });
+      setItems([]);
+    } catch (err: any) {
+      alert(`Failed to remove all: ${err.message}`);
+    }
   };
 
-  // AI Groq Menu Extractor Logic
+  const handleCreateItem = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!name.trim() || !categoryId) return;
+
+    try {
+      const newItem = await fetchApi('/menu/items', {
+        method: 'POST',
+        body: JSON.stringify({
+          name,
+          categoryId,
+          price: Number(price),
+          taxPercent: 5,
+        }),
+      });
+      setItems((prev) => [newItem, ...prev]);
+      setName('');
+      setShowAddModal(false);
+    } catch (err: any) {
+      alert(`Failed to add item: ${err.message}`);
+    }
+  };
+
+  // AI Groq Menu Extractor
   const handleAiParseText = async () => {
     if (!rawText.trim()) {
-      alert('Please paste menu text or copy-paste from an image!');
+      alert('Please paste menu text!');
       return;
     }
 
@@ -166,7 +153,7 @@ export default function MenuManagementPage() {
       localStorage.setItem('dd_groq_key', groqApiKey.trim());
     }
 
-    // Attempt 1: Real Groq Cloud API
+    // Attempt 1: Groq Cloud API
     if (groqApiKey.trim()) {
       try {
         const response = await fetch('https://api.groq.com/openai/v1/chat/completions', {
@@ -209,93 +196,105 @@ export default function MenuManagementPage() {
           }
         }
       } catch (err) {
-        console.warn('Groq Cloud API error, switching to local parser:', err);
+        console.warn('Groq Cloud error, using local parser:', err);
       }
     }
 
-    // Attempt 2: Local NLP Fallback
-    setTimeout(() => {
-      const lines = rawText.split('\n');
-      let currentCategory = 'Specials';
-      const results: ExtractedItem[] = [];
+    // Attempt 2: Local NLP fallback
+    const lines = rawText.split('\n');
+    let currentCategory = 'Specials';
+    const results: ExtractedItem[] = [];
 
-      lines.forEach((line, index) => {
-        const clean = line.trim();
-        if (!clean) return;
+    lines.forEach((line, index) => {
+      const clean = line.trim();
+      if (!clean) return;
 
-        const isHeader =
-          !clean.match(/\d+/) &&
-          (clean.toLowerCase().includes('waffle') ||
-            clean.toLowerCase().includes('brownie') ||
-            clean.toLowerCase().includes('cake') ||
-            clean.toLowerCase().includes('bowl') ||
-            clean.toLowerCase().includes('special') ||
-            clean.toLowerCase().includes('savories') ||
-            clean.toLowerCase().includes('corner') ||
-            clean.length < 25);
+      const isHeader =
+        !clean.match(/\d+/) &&
+        (clean.toLowerCase().includes('waffle') ||
+          clean.toLowerCase().includes('brownie') ||
+          clean.toLowerCase().includes('cake') ||
+          clean.toLowerCase().includes('bowl') ||
+          clean.toLowerCase().includes('special') ||
+          clean.toLowerCase().includes('savories') ||
+          clean.toLowerCase().includes('corner') ||
+          clean.toLowerCase().includes('fries') ||
+          clean.toLowerCase().includes('chicken') ||
+          clean.length < 25);
 
-        if (isHeader && !clean.includes('—') && !clean.includes('₹') && !clean.match(/\s\d+$/)) {
-          currentCategory = clean.replace(/[:\-]/g, '').trim();
-          return;
-        }
-
-        const priceMatch = clean.match(/(?:₹\s*|\s|^)(\d{2,4})\s*$/) || clean.match(/(\d{2,4})/);
-        if (priceMatch) {
-          const itemPrice = parseInt(priceMatch[1], 10);
-          let itemName = clean
-            .replace(priceMatch[0], '')
-            .replace(/^[-\–\—\s\d\.\:\*]+/, '')
-            .replace(/[-\–\—\s\:\*]+$/, '')
-            .trim();
-
-          if (itemName.length > 2 && itemPrice >= 30 && itemPrice <= 2000) {
-            results.push({
-              id: 'ai-' + index + '-' + Date.now(),
-              name: itemName,
-              price: itemPrice,
-              categoryName: currentCategory,
-            });
-          }
-        }
-      });
-
-      setIsAiParsing(false);
-      if (results.length === 0) {
-        alert('Could not detect items. Try format: Item Name 180');
-      } else {
-        setExtractedList(results);
+      if (isHeader && !clean.includes('₹') && !clean.match(/\s\d+$/)) {
+        currentCategory = clean.replace(/[:\-]/g, '').trim();
+        return;
       }
-    }, 400);
-  };
 
-  const handleImportExtractedList = () => {
-    if (extractedList.length === 0) return;
+      const priceMatch = clean.match(/(?:₹\s*|\s)(\d{2,4})\s*$/) || clean.match(/(\d{2,4})/);
+      if (priceMatch) {
+        const itemPrice = parseInt(priceMatch[1], 10);
+        let itemName = clean
+          .replace(priceMatch[0], '')
+          .replace(/^[-\–\—\s\d\.\:\*]+/, '')
+          .replace(/[-\–\—\s\:\*]+$/, '')
+          .trim();
 
-    const newMenuItems: MenuItem[] = extractedList.map((ext) => {
-      const matchedCat = categories.find((c) =>
-        c.name.toLowerCase().includes(ext.categoryName.toLowerCase()) ||
-        ext.categoryName.toLowerCase().includes(c.name.toLowerCase())
-      ) || categories[0];
-
-      return {
-        id: ext.id,
-        name: ext.name,
-        price: ext.price,
-        isAvailable: true,
-        category: { id: matchedCat.id, name: matchedCat.name },
-      };
+        if (itemName.length > 2 && itemPrice >= 30 && itemPrice <= 2000) {
+          results.push({
+            id: 'ai-' + index + '-' + Date.now(),
+            name: itemName,
+            price: itemPrice,
+            categoryName: currentCategory,
+          });
+        }
+      }
     });
 
-    setItems((prev) => [...newMenuItems, ...prev]);
-    setShowAiModal(false);
-    setRawText('');
-    setExtractedList([]);
-    alert(`🎉 Successfully imported ${newMenuItems.length} items!`);
+    setIsAiParsing(false);
+    if (results.length === 0) {
+      alert('Could not detect items. Try format: Item Name 180');
+    } else {
+      setExtractedList(results);
+    }
+  };
+
+  const handleImportExtractedList = async () => {
+    if (extractedList.length === 0) return;
+    setIsImporting(true);
+
+    try {
+      // Map extracted items to DB items with proper categoryId
+      const itemsToCreate = extractedList.map((ext) => {
+        const matchedCat = categories.find((c) =>
+          c.name.toLowerCase().includes(ext.categoryName.toLowerCase()) ||
+          ext.categoryName.toLowerCase().includes(c.name.toLowerCase())
+        ) || categories[0];
+
+        return {
+          name: ext.name,
+          categoryId: matchedCat?.id || categories[0]?.id,
+          price: ext.price,
+          taxPercent: 5,
+        };
+      });
+
+      const result = await fetchApi('/menu/items/bulk', {
+        method: 'POST',
+        body: JSON.stringify({ items: itemsToCreate }),
+      });
+
+      // Reload from DB
+      await loadData();
+      setShowAiModal(false);
+      setRawText('');
+      setExtractedList([]);
+      alert(`🎉 Successfully imported ${result.items?.length || itemsToCreate.length} items into MongoDB!`);
+    } catch (err: any) {
+      alert(`Import failed: ${err.message}`);
+    }
+    setIsImporting(false);
   };
 
   const filteredItems = items.filter((it) => {
     if (selectedCat === 'ALL') return true;
-    return it.category?.id === selectedCat || it.category?.name === selectedCat;
+    return it.category?.id === selectedCat;
   });
 
   return (
@@ -312,11 +311,19 @@ export default function MenuManagementPage() {
             </span>
           </div>
           <p className="text-sm text-gold-600 font-medium mt-1">
-            Add items via Groq AI or manually. Manage stock for live POS billing.
+            All items stored in MongoDB. Add via Groq AI or manually.
           </p>
         </div>
 
         <div className="flex items-center space-x-2 flex-wrap gap-y-2">
+          <button
+            onClick={loadData}
+            className="flex items-center space-x-1 bg-cream-200 hover:bg-cream-300 text-cocoa-800 font-bold px-3 py-2.5 rounded-xl text-xs transition border border-cream-300"
+          >
+            <RefreshCw className="w-3.5 h-3.5" />
+            <span>Refresh</span>
+          </button>
+
           <button
             onClick={() => setShowAiModal(true)}
             className="flex items-center space-x-2 bg-gradient-to-r from-gold-500 to-amber-600 hover:from-gold-600 hover:to-amber-700 text-cocoa-950 font-black px-4 py-2.5 rounded-xl text-xs shadow-md transition transform hover:scale-105"
@@ -372,42 +379,47 @@ export default function MenuManagementPage() {
         ))}
       </div>
 
+      {/* Loading State */}
+      {loading && (
+        <div className="bg-white/80 rounded-3xl border border-cream-300/80 p-12 text-center shadow-sm">
+          <RefreshCw className="w-8 h-8 text-gold-500 animate-spin mx-auto mb-3" />
+          <p className="text-sm font-bold text-cocoa-700">Loading menu from MongoDB...</p>
+        </div>
+      )}
+
       {/* Empty State */}
-      {items.length === 0 && (
+      {!loading && items.length === 0 && (
         <div className="bg-white/80 backdrop-blur-xl rounded-3xl border border-cream-300/80 p-12 text-center shadow-sm">
           <div className="text-6xl mb-4">🍰</div>
           <h2 className="text-xl font-display font-bold text-cocoa-900 mb-2">No Menu Items Yet</h2>
           <p className="text-sm text-cocoa-600 mb-6 max-w-md mx-auto">
-            Add your dessert menu items using <strong>Groq AI Extractor</strong> (paste text from your menu) or add them <strong>manually</strong> one by one.
+            Add your dessert menu using <strong>Groq AI Extractor</strong> (paste text from your menu) or add <strong>manually</strong>.
           </p>
           <div className="flex items-center justify-center gap-3">
             <button
               onClick={() => setShowAiModal(true)}
               className="flex items-center gap-2 bg-gradient-to-r from-gold-500 to-amber-600 text-cocoa-950 font-black px-6 py-3 rounded-xl text-sm shadow-lg hover:scale-105 transition"
             >
-              <Sparkles className="w-5 h-5" />
-              🤖 GROQ AI EXTRACTOR
+              <Sparkles className="w-5 h-5" /> 🤖 GROQ AI EXTRACTOR
             </button>
             <button
               onClick={() => setShowAddModal(true)}
               className="flex items-center gap-2 bg-gradient-to-r from-cocoa-800 to-cocoa-950 text-gold-300 font-bold px-6 py-3 rounded-xl text-sm shadow-lg transition"
             >
-              <Plus className="w-5 h-5" />
-              Add Item Manually
+              <Plus className="w-5 h-5" /> Add Manually
             </button>
           </div>
         </div>
       )}
 
       {/* Menu Cards Grid */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
-        {filteredItems.map((item) => {
-          const isOut = disabledItemIds.includes(item.id);
-          return (
+      {!loading && (
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
+          {filteredItems.map((item) => (
             <div
               key={item.id}
               className={`bg-white/90 backdrop-blur-xl rounded-2xl p-4 border shadow-sm flex flex-col justify-between transition-all ${
-                isOut ? 'border-red-300 bg-red-50/20' : 'border-cream-300/80 hover:shadow-md'
+                !item.isAvailable ? 'border-red-300 bg-red-50/20' : 'border-cream-300/80 hover:shadow-md'
               }`}
             >
               <div>
@@ -415,23 +427,14 @@ export default function MenuManagementPage() {
                   <span className="text-[10px] font-black uppercase tracking-wider px-2 py-0.5 rounded-md bg-cream-200 text-cocoa-700">
                     {item.category?.name || 'Desserts'}
                   </span>
-                  <span className="font-display font-extrabold text-lg text-cocoa-900">
-                    ₹{item.price}
-                  </span>
+                  <span className="font-display font-extrabold text-lg text-cocoa-900">₹{item.price}</span>
                 </div>
-
-                <h3 className="font-display font-bold text-base text-cocoa-900 leading-snug">
-                  {item.name}
-                </h3>
+                <h3 className="font-display font-bold text-base text-cocoa-900 leading-snug">{item.name}</h3>
               </div>
 
               <div className="pt-3 mt-3 border-t border-cream-200 flex items-center justify-between gap-2">
-                <span
-                  className={`text-xs font-black flex items-center gap-1 ${
-                    isOut ? 'text-red-600' : 'text-emerald-600'
-                  }`}
-                >
-                  {isOut ? (
+                <span className={`text-xs font-black flex items-center gap-1 ${!item.isAvailable ? 'text-red-600' : 'text-emerald-600'}`}>
+                  {!item.isAvailable ? (
                     <><AlertCircle className="w-3.5 h-3.5" /> Out of Stock</>
                   ) : (
                     <><CheckCircle2 className="w-3.5 h-3.5" /> In Stock</>
@@ -446,23 +449,22 @@ export default function MenuManagementPage() {
                   >
                     <Trash2 className="w-3.5 h-3.5" />
                   </button>
-
                   <button
                     onClick={() => handleToggleStock(item.id)}
                     className={`px-3 py-1.5 rounded-xl text-xs font-black transition shadow-sm ${
-                      isOut
+                      !item.isAvailable
                         ? 'bg-emerald-600 hover:bg-emerald-700 text-white'
                         : 'bg-red-500 hover:bg-red-600 text-white'
                     }`}
                   >
-                    {isOut ? 'IN STOCK' : 'OUT OF STOCK'}
+                    {!item.isAvailable ? 'IN STOCK' : 'OUT OF STOCK'}
                   </button>
                 </div>
               </div>
             </div>
-          );
-        })}
-      </div>
+          ))}
+        </div>
+      )}
 
       {/* GROQ AI MENU EXTRACTOR MODAL */}
       {showAiModal && (
@@ -480,14 +482,12 @@ export default function MenuManagementPage() {
 
             <div className="space-y-3">
               <p className="text-xs text-cocoa-600 font-medium">
-                Paste raw menu text or OCR text from a photo. Groq AI (Llama-3.3-70B) will extract item names, categories & prices!
+                Paste menu text or OCR text from a photo. Items will be saved directly to <strong>MongoDB database</strong>.
               </p>
 
               <div>
                 <div className="flex items-center justify-between mb-1">
-                  <label className="text-xs font-accent text-cocoa-700 uppercase tracking-wider font-bold">
-                    Groq API Key
-                  </label>
+                  <label className="text-xs font-accent text-cocoa-700 uppercase tracking-wider font-bold">Groq API Key</label>
                   <span className="text-[10px] text-gold-600 font-bold">
                     {groqApiKey ? '⚡ Groq Cloud Llama-3.3 Active' : '✨ Built-in Parser Active'}
                   </span>
@@ -502,12 +502,10 @@ export default function MenuManagementPage() {
               </div>
 
               <div>
-                <label className="block text-xs font-accent text-cocoa-700 uppercase tracking-wider mb-1 font-bold">
-                  Paste Menu Text
-                </label>
+                <label className="block text-xs font-accent text-cocoa-700 uppercase tracking-wider mb-1 font-bold">Paste Menu Text</label>
                 <textarea
                   rows={5}
-                  placeholder={`Example:\nBubble Waffles\nTriple Trouble 180\nFruity Pebble 200\n\nBrownies\nTriple Chocolate Brownie 130\nOreo Overload Brownie 140`}
+                  placeholder={`Example:\nBubble Waffles\nTriple Trouble 180\nFruity Pebble 200\n\nBrownies\nTriple Chocolate Brownie 130`}
                   value={rawText}
                   onChange={(e) => setRawText(e.target.value)}
                   className="w-full p-3 border border-cream-300 rounded-xl text-xs font-mono text-cocoa-900 bg-cream-50 focus:outline-none focus:border-gold-500"
@@ -535,9 +533,7 @@ export default function MenuManagementPage() {
                       <div key={i} className="flex items-center justify-between bg-white p-2.5 rounded-lg border border-cream-200 shadow-sm">
                         <div>
                           <span className="font-bold text-cocoa-900">{item.name}</span>
-                          <span className="ml-2 text-[10px] bg-cream-200 text-cocoa-700 px-2 py-0.5 rounded font-medium">
-                            {item.categoryName}
-                          </span>
+                          <span className="ml-2 text-[10px] bg-cream-200 text-cocoa-700 px-2 py-0.5 rounded font-medium">{item.categoryName}</span>
                         </div>
                         <span className="font-black text-gold-600 text-sm">₹{item.price}</span>
                       </div>
@@ -546,9 +542,10 @@ export default function MenuManagementPage() {
 
                   <button
                     onClick={handleImportExtractedList}
-                    className="w-full py-3.5 bg-gradient-to-r from-emerald-600 to-teal-700 text-white font-extrabold text-xs uppercase tracking-wider rounded-xl shadow-md hover:shadow-lg transition"
+                    disabled={isImporting}
+                    className="w-full py-3.5 bg-gradient-to-r from-emerald-600 to-teal-700 text-white font-extrabold text-xs uppercase tracking-wider rounded-xl shadow-md hover:shadow-lg transition disabled:opacity-50"
                   >
-                    🎉 IMPORT ALL {extractedList.length} ITEMS INTO MENU
+                    {isImporting ? '⏳ Saving to MongoDB...' : `🎉 IMPORT ALL ${extractedList.length} ITEMS INTO MONGODB`}
                   </button>
                 </div>
               )}
