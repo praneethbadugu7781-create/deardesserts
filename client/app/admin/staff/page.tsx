@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect } from 'react';
 import { fetchApi } from '../../../lib/api';
-import { Users, UserPlus, Clock, CheckCircle2, X, Edit3, KeyRound, ShieldAlert } from 'lucide-react';
+import { Users, UserPlus, Clock, CheckCircle2, X, Edit3, KeyRound, ShieldAlert, Lock, Key } from 'lucide-react';
 
 interface StaffUser {
   id: string;
@@ -240,6 +240,34 @@ export default function StaffManagementPage() {
             <span>Add Staff Member</span>
           </button>
         </div>
+      </div>
+
+      {/* Store Manager Admin Card */}
+      <div className="bg-white/90 backdrop-blur-xl border border-cream-300 rounded-3xl p-6 shadow-md flex flex-col md:flex-row items-center justify-between gap-4">
+        <div className="flex items-center gap-4">
+          <div className="w-12 h-12 rounded-2xl bg-cocoa-900 text-gold-300 flex items-center justify-center font-bold text-xl shadow-md">
+            👑
+          </div>
+          <div>
+            <div className="flex items-center gap-2">
+              <h2 className="text-xl font-display font-bold text-cocoa-900">Store Manager Admin Account</h2>
+              <span className="px-2.5 py-0.5 rounded-full text-xs font-bold bg-gold-400/20 text-cocoa-900 border border-gold-300">
+                ADMIN
+              </span>
+            </div>
+            <p className="text-xs text-cocoa-600 font-medium mt-0.5">
+              Login Email: <strong className="text-cocoa-900">deardesserts.in@gmail.com</strong>
+            </p>
+          </div>
+        </div>
+
+        <button
+          onClick={() => window.location.href = '/admin/settings'}
+          className="flex items-center space-x-2 bg-gradient-to-r from-cocoa-800 to-cocoa-950 text-gold-300 hover:from-cocoa-900 hover:to-black font-extrabold px-5 py-3 rounded-xl text-xs shadow-md transition"
+        >
+          <Lock className="w-4 h-4" />
+          <span>🔑 CHANGE ADMIN PASSWORD</span>
+        </button>
       </div>
 
       {/* Staff Roster Grid */}

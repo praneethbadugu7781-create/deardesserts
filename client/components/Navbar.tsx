@@ -17,6 +17,7 @@ import {
   UtensilsCrossed,
   Users,
   FileSpreadsheet,
+  Settings,
   LogOut,
   Menu,
   X,
@@ -48,6 +49,7 @@ export default function Navbar() {
         { label: 'Menu & Offers', path: '/admin/menu', icon: UtensilsCrossed },
         { label: 'Staff', path: '/admin/staff', icon: Users },
         { label: 'Reports', path: '/admin/reports', icon: FileSpreadsheet },
+        { label: 'Settings', path: '/admin/settings', icon: Settings },
       ];
     }
 
