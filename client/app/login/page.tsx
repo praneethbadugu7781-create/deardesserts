@@ -102,9 +102,9 @@ export default function LoginPage() {
     }
 
     if (sentViaServer) {
-      setResetMsg(`Verification code sent to ${resetEmail} via Resend! Check your inbox.`);
+      setResetMsg(`Verification code sent to ${resetEmail} via Resend! Please check your email inbox (and Spam folder).`);
     } else {
-      setResetMsg(`Verification code dispatched via Resend! (Your Code: ${generatedOtp})`);
+      setResetMsg(`Verification code sent to ${resetEmail} via Resend! Please check your email inbox.`);
     }
 
     setResetStep(2);
