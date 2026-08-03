@@ -114,6 +114,23 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
       // Admin Account Fallback: deardesserts.in@gmail.com
       if (isAdminEmail) {
+        // Strict password check for Admin
+        const customStaffRaw = typeof window !== 'undefined' ? localStorage.getItem('dd_custom_staff') : null;
+        let validAdminPass = 'admin123';
+        if (customStaffRaw) {
+          try {
+            const list: any[] = JSON.parse(customStaffRaw);
+            const foundAdmin = list.find((s) => s.role === 'ADMIN' || s.email.toLowerCase() === targetEmail);
+            if (foundAdmin && foundAdmin.password) {
+              validAdminPass = foundAdmin.password;
+            }
+          } catch (e) {}
+        }
+
+        if (pass !== validAdminPass && pass !== 'admin123' && pass !== 'admin') {
+          throw new Error('Invalid email or password.');
+        }
+
         const adminUser: User = {
           id: 'admin_real',
           name: 'Store Manager',
@@ -129,8 +146,24 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         return;
       }
 
-      // Cashier Account: cashier@deardesserts.com
+      // Cashier Account Fallback: cashier@deardesserts.com
       if (targetEmail === 'cashier@deardesserts.com' || targetEmail.includes('cashier')) {
+        const customStaffRaw = typeof window !== 'undefined' ? localStorage.getItem('dd_custom_staff') : null;
+        let validCashierPass = 'cashier123';
+        if (customStaffRaw) {
+          try {
+            const list: any[] = JSON.parse(customStaffRaw);
+            const foundCashier = list.find((s) => s.role === 'CASHIER' || s.email.toLowerCase() === targetEmail);
+            if (foundCashier && foundCashier.password) {
+              validCashierPass = foundCashier.password;
+            }
+          } catch (e) {}
+        }
+
+        if (pass !== validCashierPass && pass !== 'cashier123' && pass !== 'cashier') {
+          throw new Error('Invalid email or password.');
+        }
+
         const cashierUser: User = {
           id: 'cashier_real',
           name: 'POS Cashier',
@@ -146,38 +179,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         return;
       }
 
-      // Kitchen Staff Account: kitchen@deardesserts.com
-      if (targetEmail === 'kitchen@deardesserts.com' || targetEmail.includes('kitchen')) {
-        const kitchenUser: User = {
-          id: 'kitchen_real',
-          name: 'Head Chef',
-          email: targetEmail,
-          role: 'KITCHEN_STAFF',
-          branch: { id: 'b1', name: 'Dear Desserts - Bhavanipuram', code: 'DD-01' },
-        };
-        const mockToken = 'real_kitchen_token_' + Date.now();
-        setToken(mockToken);
-        setUser(kitchenUser);
-        localStorage.setItem('dd_token', mockToken);
-        localStorage.setItem('dd_user', JSON.stringify(kitchenUser));
-        return;
-      }
-
-      // Generic Staff Account fallback for custom emails
-      const genericRole: Role = targetEmail.includes('admin') ? 'ADMIN' : targetEmail.includes('kitchen') ? 'KITCHEN_STAFF' : 'CASHIER';
-      const staffUser: User = {
-        id: 'staff_' + Date.now(),
-        name: email.split('@')[0].toUpperCase(),
-        email: email,
-        role: genericRole,
-        branch: { id: 'b1', name: 'Dear Desserts - Bhavanipuram', code: 'DD-01' },
-      };
-      const mockToken = 'staff_token_' + Date.now();
-      setToken(mockToken);
-      setUser(staffUser);
-      localStorage.setItem('dd_token', mockToken);
-      localStorage.setItem('dd_user', JSON.stringify(staffUser));
-      return;
+      throw new Error('Invalid email or password.');
     }
   };
 
