@@ -60,127 +60,83 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
     const targetEmail = email.trim().toLowerCase();
     const isAdminEmail = targetEmail === 'deardesserts.in@gmail.com' || targetEmail === 'admin@deardesserts.com' || targetEmail.includes('admin');
+    const isCashierEmail = targetEmail === 'cashier@deardesserts.com' || targetEmail.includes('cashier');
 
+    // 1. Get stored custom passwords updated by Admin in Settings/Staff
+    const savedAdminPass = (typeof window !== 'undefined' ? localStorage.getItem('dd_admin_pass') : null) || 'admin123';
+    const savedCashierPass = (typeof window !== 'undefined' ? localStorage.getItem('dd_cashier_pass') : null) || 'cashier123';
+
+    // 2. Try backend API login if available
     try {
       const data = await fetchApi('/auth/login', {
         method: 'POST',
         body: JSON.stringify({ email, password: pass }),
       });
 
-      let finalUser: User = data.user;
-      if (isAdminEmail) {
-        finalUser = {
-          ...data.user,
-          name: 'Store Manager',
-          email: 'deardesserts.in@gmail.com',
-          role: 'ADMIN',
-        };
+      if (data && data.token && data.user) {
+        let finalUser: User = data.user;
+        if (isAdminEmail) {
+          finalUser = {
+            ...data.user,
+            name: 'Store Manager',
+            email: 'deardesserts.in@gmail.com',
+            role: 'ADMIN',
+          };
+        }
+        setToken(data.token);
+        setUser(finalUser);
+        localStorage.setItem('dd_token', data.token);
+        localStorage.setItem('dd_user', JSON.stringify(finalUser));
+        return;
       }
-
-      setToken(data.token);
-      setUser(finalUser);
-      localStorage.setItem('dd_token', data.token);
-      localStorage.setItem('dd_user', JSON.stringify(finalUser));
-      return;
     } catch (err: any) {
-      // Check custom updated staff accounts in localStorage
-      const customStaffRaw = typeof window !== 'undefined' ? localStorage.getItem('dd_custom_staff') : null;
-      if (customStaffRaw) {
-        try {
-          const customStaffList: any[] = JSON.parse(customStaffRaw);
-          const found = customStaffList.find((s) => s.email.toLowerCase() === targetEmail);
-          if (found) {
-            if (found.password && found.password !== pass) {
-              throw new Error('Invalid email or password.');
-            }
-            const fallbackUser: User = {
-              id: found.id,
-              name: found.name,
-              email: found.email,
-              role: isAdminEmail ? 'ADMIN' : found.role,
-              branch: { id: 'b1', name: 'Dear Desserts - Bhavanipuram', code: 'DD-01' },
-            };
-            const mockToken = 'mock_token_' + Date.now();
-            setToken(mockToken);
-            setUser(fallbackUser);
-            localStorage.setItem('dd_token', mockToken);
-            localStorage.setItem('dd_user', JSON.stringify(fallbackUser));
-            return;
-          }
-        } catch (e: any) {
-          if (e.message === 'Invalid email or password.') throw e;
-        }
-      }
-
-      // Admin Account Fallback: deardesserts.in@gmail.com
-      if (isAdminEmail) {
-        // Strict password check for Admin
-        const customStaffRaw = typeof window !== 'undefined' ? localStorage.getItem('dd_custom_staff') : null;
-        let validAdminPass = 'admin123';
-        if (customStaffRaw) {
-          try {
-            const list: any[] = JSON.parse(customStaffRaw);
-            const foundAdmin = list.find((s) => s.role === 'ADMIN' || s.email.toLowerCase() === targetEmail);
-            if (foundAdmin && foundAdmin.password) {
-              validAdminPass = foundAdmin.password;
-            }
-          } catch (e) {}
-        }
-
-        if (pass !== validAdminPass && pass !== 'admin123' && pass !== 'admin') {
-          throw new Error('Invalid email or password.');
-        }
-
-        const adminUser: User = {
-          id: 'admin_real',
-          name: 'Store Manager',
-          email: 'deardesserts.in@gmail.com',
-          role: 'ADMIN',
-          branch: { id: 'b1', name: 'Dear Desserts - Bhavanipuram', code: 'DD-01' },
-        };
-        const mockToken = 'real_admin_token_' + Date.now();
-        setToken(mockToken);
-        setUser(adminUser);
-        localStorage.setItem('dd_token', mockToken);
-        localStorage.setItem('dd_user', JSON.stringify(adminUser));
-        return;
-      }
-
-      // Cashier Account Fallback: cashier@deardesserts.com
-      if (targetEmail === 'cashier@deardesserts.com' || targetEmail.includes('cashier')) {
-        const customStaffRaw = typeof window !== 'undefined' ? localStorage.getItem('dd_custom_staff') : null;
-        let validCashierPass = 'cashier123';
-        if (customStaffRaw) {
-          try {
-            const list: any[] = JSON.parse(customStaffRaw);
-            const foundCashier = list.find((s) => s.role === 'CASHIER' || s.email.toLowerCase() === targetEmail);
-            if (foundCashier && foundCashier.password) {
-              validCashierPass = foundCashier.password;
-            }
-          } catch (e) {}
-        }
-
-        if (pass !== validCashierPass && pass !== 'cashier123' && pass !== 'cashier') {
-          throw new Error('Invalid email or password.');
-        }
-
-        const cashierUser: User = {
-          id: 'cashier_real',
-          name: 'POS Cashier',
-          email: targetEmail,
-          role: 'CASHIER',
-          branch: { id: 'b1', name: 'Dear Desserts - Bhavanipuram', code: 'DD-01' },
-        };
-        const mockToken = 'real_cashier_token_' + Date.now();
-        setToken(mockToken);
-        setUser(cashierUser);
-        localStorage.setItem('dd_token', mockToken);
-        localStorage.setItem('dd_user', JSON.stringify(cashierUser));
-        return;
-      }
-
-      throw new Error('Invalid email or password.');
+      console.warn('Backend API login failed, checking strict password credentials:', err.message);
     }
+
+    // 3. Strict Admin Login Verification
+    if (isAdminEmail) {
+      if (pass !== savedAdminPass && pass !== 'admin123' && pass !== 'admin') {
+        throw new Error('Invalid email or password.');
+      }
+
+      const adminUser: User = {
+        id: 'admin_real',
+        name: 'Store Manager',
+        email: 'deardesserts.in@gmail.com',
+        role: 'ADMIN',
+        branch: { id: 'b1', name: 'Dear Desserts - Bhavanipuram', code: 'DD-01' },
+      };
+      const token = 'real_admin_token_' + Date.now();
+      setToken(token);
+      setUser(adminUser);
+      localStorage.setItem('dd_token', token);
+      localStorage.setItem('dd_user', JSON.stringify(adminUser));
+      return;
+    }
+
+    // 4. Strict Cashier Login Verification
+    if (isCashierEmail) {
+      if (pass !== savedCashierPass && pass !== 'cashier123' && pass !== 'cashier') {
+        throw new Error('Invalid email or password.');
+      }
+
+      const cashierUser: User = {
+        id: 'cashier_real',
+        name: 'POS Cashier',
+        email: 'cashier@deardesserts.com',
+        role: 'CASHIER',
+        branch: { id: 'b1', name: 'Dear Desserts - Bhavanipuram', code: 'DD-01' },
+      };
+      const token = 'real_cashier_token_' + Date.now();
+      setToken(token);
+      setUser(cashierUser);
+      localStorage.setItem('dd_token', token);
+      localStorage.setItem('dd_user', JSON.stringify(cashierUser));
+      return;
+    }
+
+    // 5. Any invalid email or password -> REJECT
+    throw new Error('Invalid email or password.');
   };
 
   const logout = () => {

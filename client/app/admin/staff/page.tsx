@@ -41,14 +41,6 @@ export default function StaffManagementPage() {
 
   const DEFAULT_STAFF: StaffUser[] = [
     {
-      id: '1',
-      name: 'Store Manager',
-      email: 'deardesserts.in@gmail.com',
-      role: 'ADMIN',
-      isActive: true,
-      branch: { name: 'Dear Desserts - Bhavanipuram' },
-    },
-    {
       id: '2',
       name: 'POS Cashier',
       email: 'cashier@deardesserts.com',
@@ -73,19 +65,17 @@ export default function StaffManagementPage() {
       let finalStaff: StaffUser[] = DEFAULT_STAFF;
       
       if (staffRes && Array.isArray(staffRes) && staffRes.length > 0) {
-        finalStaff = staffRes.map((s: StaffUser) =>
-          s.email === 'admin@deardesserts.com' ? { ...s, email: 'deardesserts.in@gmail.com' } : s
-        );
+        finalStaff = staffRes.filter((s: StaffUser) => s.role !== 'ADMIN' && s.email !== 'deardesserts.in@gmail.com');
       } else if (storedStaff) {
         try {
           const parsed = JSON.parse(storedStaff);
-          finalStaff = parsed.map((s: StaffUser) =>
-            s.email === 'admin@deardesserts.com' ? { ...s, email: 'deardesserts.in@gmail.com' } : s
-          );
+          finalStaff = parsed.filter((s: StaffUser) => s.role !== 'ADMIN' && s.email !== 'deardesserts.in@gmail.com');
         } catch (e) {
           finalStaff = DEFAULT_STAFF;
         }
       }
+
+      if (finalStaff.length === 0) finalStaff = DEFAULT_STAFF;
 
       setStaffList(finalStaff);
 
@@ -198,6 +188,14 @@ export default function StaffManagementPage() {
       });
     } catch (err) {
       console.warn('API update fallback to client storage:', err);
+    }
+
+    if (password.trim()) {
+      if (role === 'CASHIER' || email.includes('cashier')) {
+        localStorage.setItem('dd_cashier_pass', password.trim());
+      } else if (role === 'ADMIN' || email.includes('deardesserts')) {
+        localStorage.setItem('dd_admin_pass', password.trim());
+      }
     }
 
     const updated = staffList.map((s) =>
