@@ -93,17 +93,90 @@ export default function CustomerHomePage() {
     return () => window.removeEventListener('scroll', onScroll);
   }, []);
 
+const REAL_CATEGORIES: Category[] = [
+  { id: 'cat-1', name: 'Bubble Waffles', slug: 'bubble-waffles' },
+  { id: 'cat-2', name: 'Belgian Waffles', slug: 'belgian-waffles' },
+  { id: 'cat-3', name: "The Poppin' Bowl", slug: 'pop-bowl' },
+  { id: 'cat-4', name: 'Brownies', slug: 'brownies' },
+  { id: 'cat-5', name: 'Specials', slug: 'specials' },
+  { id: 'cat-6', name: 'Bowl Cakes', slug: 'bowl-cakes' },
+  { id: 'cat-7', name: 'The Crunch Corner', slug: 'savories' },
+];
+
+const REAL_MENU_ITEMS: MenuItem[] = [
+  // Bubble Waffles
+  { id: 'bw-1', name: 'Triple Trouble', price: 180, taxPercent: 5, imageUrl: 'https://images.unsplash.com/photo-1562376552-0d160a2f238d?w=600', description: 'Bubble Waffle', isAvailable: true, isCombo: false, preparationMinutes: 6, category: REAL_CATEGORIES[0] },
+  { id: 'bw-2', name: 'Triple Trouble with Ice Cream', price: 200, taxPercent: 5, imageUrl: 'https://images.unsplash.com/photo-1562376552-0d160a2f238d?w=600', description: 'Bubble Waffle', isAvailable: true, isCombo: false, preparationMinutes: 6, category: REAL_CATEGORIES[0] },
+  { id: 'bw-3', name: 'Fruity Pebble', price: 200, taxPercent: 5, imageUrl: 'https://images.unsplash.com/photo-1562376552-0d160a2f238d?w=600', description: 'Bubble Waffle', isAvailable: true, isCombo: false, preparationMinutes: 6, category: REAL_CATEGORIES[0] },
+  { id: 'bw-4', name: 'KitKat Crunch', price: 210, taxPercent: 5, imageUrl: 'https://images.unsplash.com/photo-1562376552-0d160a2f238d?w=600', description: 'Bubble Waffle', isAvailable: true, isCombo: false, preparationMinutes: 6, category: REAL_CATEGORIES[0] },
+  { id: 'bw-5', name: 'Oreo Dream', price: 210, taxPercent: 5, imageUrl: 'https://images.unsplash.com/photo-1562376552-0d160a2f238d?w=600', description: 'Bubble Waffle', isAvailable: true, isCombo: false, preparationMinutes: 6, category: REAL_CATEGORIES[0] },
+  { id: 'bw-6', name: 'Nutella Nirvana', price: 220, taxPercent: 5, imageUrl: 'https://images.unsplash.com/photo-1562376552-0d160a2f238d?w=600', description: 'Bubble Waffle', isAvailable: true, isCombo: false, preparationMinutes: 7, category: REAL_CATEGORIES[0] },
+  { id: 'bw-7', name: 'Lotus Biscoff Bliss', price: 230, taxPercent: 5, imageUrl: 'https://images.unsplash.com/photo-1598214886806-c87b84b7078b?w=600', description: 'Bubble Waffle', isAvailable: true, isCombo: false, preparationMinutes: 7, category: REAL_CATEGORIES[0] },
+
+  // Belgian Waffles
+  { id: 'belg-1', name: 'Triple Choco Melt', price: 120, taxPercent: 5, imageUrl: 'https://images.unsplash.com/photo-1562376552-0d160a2f238d?w=600', description: 'Belgian Waffle', isAvailable: true, isCombo: false, preparationMinutes: 5, category: REAL_CATEGORIES[1] },
+  { id: 'belg-2', name: 'Coffee Mocha', price: 150, taxPercent: 5, imageUrl: 'https://images.unsplash.com/photo-1562376552-0d160a2f238d?w=600', description: 'Belgian Waffle', isAvailable: true, isCombo: false, preparationMinutes: 5, category: REAL_CATEGORIES[1] },
+  { id: 'belg-3', name: 'Naked Nutella', price: 160, taxPercent: 5, imageUrl: 'https://images.unsplash.com/photo-1562376552-0d160a2f238d?w=600', description: 'Belgian Waffle', isAvailable: true, isCombo: false, preparationMinutes: 5, category: REAL_CATEGORIES[1] },
+  { id: 'belg-4', name: 'Kiki & Oreo', price: 160, taxPercent: 5, imageUrl: 'https://images.unsplash.com/photo-1562376552-0d160a2f238d?w=600', description: 'Belgian Waffle', isAvailable: true, isCombo: false, preparationMinutes: 5, category: REAL_CATEGORIES[1] },
+  { id: 'belg-5', name: 'Lotus Biscoff Love', price: 160, taxPercent: 5, imageUrl: 'https://images.unsplash.com/photo-1598214886806-c87b84b7078b?w=600', description: 'Belgian Waffle', isAvailable: true, isCombo: false, preparationMinutes: 5, category: REAL_CATEGORIES[1] },
+
+  // The Poppin' Bowl
+  { id: 'pop-1', name: 'The Triple Choco', price: 190, taxPercent: 5, imageUrl: 'https://images.unsplash.com/photo-1497034825429-c343d7c6a68f?w=600', description: "Poppin' Bowl", isAvailable: true, isCombo: false, preparationMinutes: 5, category: REAL_CATEGORIES[2] },
+  { id: 'pop-2', name: 'Triple Choco with Ice Cream', price: 210, taxPercent: 5, imageUrl: 'https://images.unsplash.com/photo-1497034825429-c343d7c6a68f?w=600', description: "Poppin' Bowl", isAvailable: true, isCombo: false, preparationMinutes: 5, category: REAL_CATEGORIES[2] },
+  { id: 'pop-3', name: 'Break Time with KitKat', price: 220, taxPercent: 5, imageUrl: 'https://images.unsplash.com/photo-1497034825429-c343d7c6a68f?w=600', description: "Poppin' Bowl", isAvailable: true, isCombo: false, preparationMinutes: 5, category: REAL_CATEGORIES[2] },
+  { id: 'pop-4', name: 'Nutella Pop Bowl', price: 230, taxPercent: 5, imageUrl: 'https://images.unsplash.com/photo-1497034825429-c343d7c6a68f?w=600', description: "Poppin' Bowl", isAvailable: true, isCombo: false, preparationMinutes: 5, category: REAL_CATEGORIES[2] },
+  { id: 'pop-5', name: 'Biscoff Pop Bowl', price: 240, taxPercent: 5, imageUrl: 'https://images.unsplash.com/photo-1497034825429-c343d7c6a68f?w=600', description: "Poppin' Bowl", isAvailable: true, isCombo: false, preparationMinutes: 5, category: REAL_CATEGORIES[2] },
+  { id: 'pop-6', name: 'The Fruit Loaded', price: 250, taxPercent: 5, imageUrl: 'https://images.unsplash.com/photo-1511690656952-34342bb7c2f2?w=600', description: "Poppin' Bowl", isAvailable: true, isCombo: false, preparationMinutes: 5, category: REAL_CATEGORIES[2] },
+
+  // Brownies
+  { id: 'br-1', name: 'Triple Chocolate Brownie', price: 130, taxPercent: 5, imageUrl: 'https://images.unsplash.com/photo-1563805042-7684c019e1cb?w=600', description: 'Brownie', isAvailable: true, isCombo: false, preparationMinutes: 4, category: REAL_CATEGORIES[3] },
+  { id: 'br-2', name: 'Oreo Overload Brownie', price: 140, taxPercent: 5, imageUrl: 'https://images.unsplash.com/photo-1563805042-7684c019e1cb?w=600', description: 'Brownie', isAvailable: true, isCombo: false, preparationMinutes: 4, category: REAL_CATEGORIES[3] },
+  { id: 'br-3', name: 'Meltdown with Vanilla', price: 160, taxPercent: 5, imageUrl: 'https://images.unsplash.com/photo-1563805042-7684c019e1cb?w=600', description: 'Brownie', isAvailable: true, isCombo: false, preparationMinutes: 4, category: REAL_CATEGORIES[3] },
+  { id: 'br-4', name: 'Biscoff Brownie', price: 160, taxPercent: 5, imageUrl: 'https://images.unsplash.com/photo-1563805042-7684c019e1cb?w=600', description: 'Brownie', isAvailable: true, isCombo: false, preparationMinutes: 4, category: REAL_CATEGORIES[3] },
+  { id: 'br-5', name: 'Hazelnut Heaven', price: 160, taxPercent: 5, imageUrl: 'https://images.unsplash.com/photo-1563805042-7684c019e1cb?w=600', description: 'Brownie', isAvailable: true, isCombo: false, preparationMinutes: 4, category: REAL_CATEGORIES[3] },
+
+  // Specials
+  { id: 'sp-1', name: 'Matilda Cake', price: 180, taxPercent: 5, imageUrl: 'https://images.unsplash.com/photo-1578985545062-69928b1d9587?w=600', description: 'Specials', isAvailable: true, isCombo: false, preparationMinutes: 4, category: REAL_CATEGORIES[4] },
+  { id: 'sp-2', name: 'Magnum Obsession', price: 200, taxPercent: 5, imageUrl: 'https://images.unsplash.com/photo-1578985545062-69928b1d9587?w=600', description: 'Specials', isAvailable: true, isCombo: false, preparationMinutes: 5, category: REAL_CATEGORIES[4] },
+  { id: 'sp-3', name: 'Brownie Bowl', price: 200, taxPercent: 5, imageUrl: 'https://images.unsplash.com/photo-1563805042-7684c019e1cb?w=600', description: 'Specials', isAvailable: true, isCombo: false, preparationMinutes: 5, category: REAL_CATEGORIES[4] },
+  { id: 'sp-4', name: 'Nutella Bites', price: 200, taxPercent: 5, imageUrl: 'https://images.unsplash.com/photo-1578985545062-69928b1d9587?w=600', description: 'Specials', isAvailable: true, isCombo: false, preparationMinutes: 5, category: REAL_CATEGORIES[4] },
+  { id: 'sp-5', name: 'Death by Chocolate', price: 240, taxPercent: 5, imageUrl: 'https://images.unsplash.com/photo-1578985545062-69928b1d9587?w=600', description: 'Specials', isAvailable: true, isCombo: false, preparationMinutes: 5, category: REAL_CATEGORIES[4] },
+
+  // Bowl Cakes
+  { id: 'bc-1', name: 'Triple Choco Bowl', price: 180, taxPercent: 5, imageUrl: 'https://images.unsplash.com/photo-1578985545062-69928b1d9587?w=600', description: 'Bowl Cake', isAvailable: true, isCombo: false, preparationMinutes: 5, category: REAL_CATEGORIES[5] },
+  { id: 'bc-2', name: 'Crunch Chocolate Bowl', price: 220, taxPercent: 5, imageUrl: 'https://images.unsplash.com/photo-1578985545062-69928b1d9587?w=600', description: 'Bowl Cake', isAvailable: true, isCombo: false, preparationMinutes: 5, category: REAL_CATEGORIES[5] },
+  { id: 'bc-3', name: 'KitKat Bowl', price: 220, taxPercent: 5, imageUrl: 'https://images.unsplash.com/photo-1578985545062-69928b1d9587?w=600', description: 'Bowl Cake', isAvailable: true, isCombo: false, preparationMinutes: 5, category: REAL_CATEGORIES[5] },
+  { id: 'bc-4', name: 'Oreo Overload Bowl', price: 220, taxPercent: 5, imageUrl: 'https://images.unsplash.com/photo-1578985545062-69928b1d9587?w=600', description: 'Bowl Cake', isAvailable: true, isCombo: false, preparationMinutes: 5, category: REAL_CATEGORIES[5] },
+  { id: 'bc-5', name: 'Biscoff Bowl', price: 230, taxPercent: 5, imageUrl: 'https://images.unsplash.com/photo-1578985545062-69928b1d9587?w=600', description: 'Bowl Cake', isAvailable: true, isCombo: false, preparationMinutes: 5, category: REAL_CATEGORIES[5] },
+  { id: 'bc-6', name: 'Kunafa Kraze Bowl', price: 250, taxPercent: 5, imageUrl: 'https://images.unsplash.com/photo-1578985545062-69928b1d9587?w=600', description: 'Bowl Cake', isAvailable: true, isCombo: false, preparationMinutes: 6, category: REAL_CATEGORIES[5] },
+  { id: 'bc-7', name: 'Ferrero Rocher Bowl', price: 300, taxPercent: 5, imageUrl: 'https://images.unsplash.com/photo-1578985545062-69928b1d9587?w=600', description: 'Bowl Cake', isAvailable: true, isCombo: false, preparationMinutes: 6, category: REAL_CATEGORIES[5] },
+
+  // The Crunch Corner (savories)
+  { id: 'sav-1', name: 'Salted French Fries', price: 80, taxPercent: 5, imageUrl: 'https://images.unsplash.com/photo-1576107232684-1279f3908594?w=600', description: 'Savories', isAvailable: true, isCombo: false, preparationMinutes: 5, category: REAL_CATEGORIES[6] },
+  { id: 'sav-2', name: 'Peri Peri French Fries', price: 100, taxPercent: 5, imageUrl: 'https://images.unsplash.com/photo-1576107232684-1279f3908594?w=600', description: 'Savories', isAvailable: true, isCombo: false, preparationMinutes: 5, category: REAL_CATEGORIES[6] },
+  { id: 'sav-3', name: 'Cheesy Fries', price: 130, taxPercent: 5, imageUrl: 'https://images.unsplash.com/photo-1576107232684-1279f3908594?w=600', description: 'Savories', isAvailable: true, isCombo: false, preparationMinutes: 6, category: REAL_CATEGORIES[6] },
+  { id: 'sav-4', name: 'Chicken Loaded Fries', price: 150, taxPercent: 5, imageUrl: 'https://images.unsplash.com/photo-1576107232684-1279f3908594?w=600', description: 'Savories', isAvailable: true, isCombo: false, preparationMinutes: 7, category: REAL_CATEGORIES[6] },
+  { id: 'sav-5', name: 'Chicken Popcorn', price: 150, taxPercent: 5, imageUrl: 'https://images.unsplash.com/photo-1576107232684-1279f3908594?w=600', description: 'Savories', isAvailable: true, isCombo: false, preparationMinutes: 6, category: REAL_CATEGORIES[6] },
+  { id: 'sav-6', name: 'Chicken Wings', price: 160, taxPercent: 5, imageUrl: 'https://images.unsplash.com/photo-1576107232684-1279f3908594?w=600', description: 'Savories', isAvailable: true, isCombo: false, preparationMinutes: 8, category: REAL_CATEGORIES[6] },
+  { id: 'sav-7', name: 'Cheesy Chicken Bun', price: 100, taxPercent: 5, imageUrl: 'https://images.unsplash.com/photo-1576107232684-1279f3908594?w=600', description: 'Savories', isAvailable: true, isCombo: false, preparationMinutes: 5, category: REAL_CATEGORIES[6] },
+];
+
   const loadCustomerMenu = async () => {
     try {
       const [catsRes, itemsRes] = await Promise.all([
-        fetchApi('/menu/categories'),
-        fetchApi('/menu/items'),
+        fetchApi('/menu/categories').catch(() => null),
+        fetchApi('/menu/items').catch(() => null),
       ]);
-      setCategories(catsRes || []);
-      setItems(itemsRes || []);
+      if (Array.isArray(catsRes) && catsRes.length > 0 && Array.isArray(itemsRes) && itemsRes.length > 0) {
+        setCategories(catsRes);
+        setItems(itemsRes);
+        return;
+      }
     } catch (err) {
       console.error('Failed to load menu:', err);
     }
+    setCategories(REAL_CATEGORIES);
+    setItems(REAL_MENU_ITEMS);
   };
 
   const handleRolePresetSelect = (role: Role) => {
