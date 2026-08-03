@@ -120,30 +120,14 @@ router.post('/items/bulk', async (req: AuthRequest, res: Response) => {
 // DELETE /api/menu/items/all - Delete ALL menu items
 router.delete('/items/all', async (_req: AuthRequest, res: Response) => {
   try {
-    // Use transaction to safely delete all related data
-    const result = await prisma.$transaction(async (tx) => {
-      // Get all menu item IDs
-      const allItems = await tx.menuItem.findMany({ select: { id: true } });
-      const itemIds = allItems.map((i) => i.id);
-
-      if (itemIds.length === 0) {
-        return { count: 0 };
-      }
-
-      // Delete OrderItems that reference these MenuItems
-      await tx.orderItem.deleteMany({
-        where: { menuItemId: { in: itemIds } },
-      });
-
-      // Now delete all menu items
-      const deleted = await tx.menuItem.deleteMany({});
-      return deleted;
-    });
-
-    res.json({ message: `Deleted ${result.count} menu items` });
+    // Delete all OrderItems referencing menu items first
+    await prisma.orderItem.deleteMany({}).catch((e) => console.warn('OrderItem delete fallback:', e));
+    // Delete all menu items
+    const deleted = await prisma.menuItem.deleteMany({});
+    res.json({ message: `Deleted ${deleted.count} menu items` });
   } catch (error: any) {
-    console.error('Delete all error:', error?.message || error);
-    res.status(500).json({ error: 'Failed to delete all menu items: ' + (error?.message || 'Unknown error') });
+    console.error('Delete all error:', error);
+    res.status(500).json({ error: error?.message || 'Failed to delete all menu items' });
   }
 });
 
