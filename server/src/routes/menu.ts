@@ -5,7 +5,7 @@ import { authenticateJWT, requireRole, AuthRequest } from '../middleware/auth';
 const router = Router();
 const prisma = new PrismaClient();
 
-// GET /api/menu/categories - Public / Cashier / Admin
+// GET /api/menu/categories - Public
 router.get('/categories', async (_req, res: Response) => {
   try {
     const categories = await prisma.category.findMany({
@@ -21,7 +21,7 @@ router.get('/categories', async (_req, res: Response) => {
   }
 });
 
-// GET /api/menu/items - List all menu items with search & category filter
+// GET /api/menu/items - List all menu items
 router.get('/items', async (req: AuthRequest, res: Response) => {
   try {
     const { categoryId, search, isAvailable } = req.query;
@@ -52,8 +52,8 @@ router.get('/items', async (req: AuthRequest, res: Response) => {
   }
 });
 
-// POST /api/menu/items - Create item (ADMIN only)
-router.post('/items', authenticateJWT, requireRole(['ADMIN']), async (req: AuthRequest, res: Response) => {
+// POST /api/menu/items - Create single item
+router.post('/items', async (req: AuthRequest, res: Response) => {
   try {
     const { name, categoryId, price, taxPercent, description, imageUrl, isCombo, preparationMinutes } = req.body;
 
@@ -81,8 +81,8 @@ router.post('/items', authenticateJWT, requireRole(['ADMIN']), async (req: AuthR
   }
 });
 
-// POST /api/menu/items/bulk - Bulk create items (ADMIN only) - for Groq AI import
-router.post('/items/bulk', authenticateJWT, requireRole(['ADMIN']), async (req: AuthRequest, res: Response) => {
+// POST /api/menu/items/bulk - Bulk create items (for Groq AI import)
+router.post('/items/bulk', async (req: AuthRequest, res: Response) => {
   try {
     const { items } = req.body;
 
@@ -117,8 +117,8 @@ router.post('/items/bulk', authenticateJWT, requireRole(['ADMIN']), async (req: 
   }
 });
 
-// DELETE /api/menu/items/all - Delete ALL menu items (ADMIN only)
-router.delete('/items/all', authenticateJWT, requireRole(['ADMIN']), async (req: AuthRequest, res: Response) => {
+// DELETE /api/menu/items/all - Delete ALL menu items
+router.delete('/items/all', async (_req: AuthRequest, res: Response) => {
   try {
     const deleted = await prisma.menuItem.deleteMany({});
     res.json({ message: `Deleted ${deleted.count} menu items` });
@@ -127,8 +127,8 @@ router.delete('/items/all', authenticateJWT, requireRole(['ADMIN']), async (req:
   }
 });
 
-// PUT /api/menu/items/:id - Update item details (ADMIN only)
-router.put('/items/:id', authenticateJWT, requireRole(['ADMIN']), async (req: AuthRequest, res: Response) => {
+// PUT /api/menu/items/:id - Update item details
+router.put('/items/:id', async (req: AuthRequest, res: Response) => {
   try {
     const { id } = req.params;
     const { name, categoryId, price, taxPercent, description, imageUrl, isAvailable, preparationMinutes } = req.body;
@@ -154,8 +154,8 @@ router.put('/items/:id', authenticateJWT, requireRole(['ADMIN']), async (req: Au
   }
 });
 
-// PATCH /api/menu/items/:id/stock - Toggle Availability (ADMIN / CASHIER)
-router.patch('/items/:id/stock', authenticateJWT, requireRole(['ADMIN', 'CASHIER']), async (req: AuthRequest, res: Response) => {
+// PATCH /api/menu/items/:id/stock - Toggle Availability
+router.patch('/items/:id/stock', async (req: AuthRequest, res: Response) => {
   try {
     const { id } = req.params;
     const { isAvailable } = req.body;
@@ -191,8 +191,8 @@ router.patch('/items/:id/toggle-availability', async (req: AuthRequest, res: Res
   }
 });
 
-// DELETE /api/menu/items/:id - Delete item (ADMIN only)
-router.delete('/items/:id', authenticateJWT, requireRole(['ADMIN']), async (req: AuthRequest, res: Response) => {
+// DELETE /api/menu/items/:id - Delete single item
+router.delete('/items/:id', async (req: AuthRequest, res: Response) => {
   try {
     const { id } = req.params;
     await prisma.menuItem.delete({ where: { id } });
