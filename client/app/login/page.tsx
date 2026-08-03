@@ -3,7 +3,8 @@
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { useAuth } from '@/lib/auth';
-import { LayoutDashboard, ShoppingCart, ChefHat, ArrowRight, Shield, ArrowLeft } from 'lucide-react';
+import { fetchApi } from '@/lib/api';
+import { LayoutDashboard, ShoppingCart, ChefHat, ArrowRight, Shield, ArrowLeft, KeyRound, Mail, Lock, CheckCircle2 } from 'lucide-react';
 import Link from 'next/link';
 
 type Role = 'ADMIN' | 'CASHIER' | 'KITCHEN_STAFF';
@@ -23,12 +24,22 @@ export default function LoginPage() {
   const [error, setError] = useState('');
   const [isLoading, setIsLoading] = useState(false);
 
+  // Forgot password modal state
+  const [showForgotModal, setShowForgotModal] = useState(false);
+  const [resetEmail, setResetEmail] = useState('');
+  const [otpCode, setOtpCode] = useState('');
+  const [newPassword, setNewPassword] = useState('');
+  const [resetStep, setResetStep] = useState<1 | 2>(1); // Step 1: Send OTP, Step 2: Verify & Reset
+  const [resetMsg, setResetMsg] = useState('');
+  const [resetError, setResetError] = useState('');
+  const [isResetting, setIsResetting] = useState(false);
+
   useEffect(() => {
     updateCredentialsForRole(role);
   }, [role]);
 
   const updateCredentialsForRole = (selectedRole: Role) => {
-    const defaultRoleConfig = ROLES.find(r => r.id === selectedRole);
+    const defaultRoleConfig = ROLES.find((r) => r.id === selectedRole);
     let targetEmail = defaultRoleConfig?.defaultEmail || '';
 
     // Check custom staff email configured by Admin in Staff Management
@@ -36,7 +47,7 @@ export default function LoginPage() {
     if (customStaffRaw) {
       try {
         const staffList: any[] = JSON.parse(customStaffRaw);
-        const customAccount = staffList.find(s => s.role === selectedRole);
+        const customAccount = staffList.find((s) => s.role === selectedRole);
         if (customAccount) {
           targetEmail = customAccount.email || targetEmail;
         }
@@ -46,7 +57,7 @@ export default function LoginPage() {
     }
 
     setEmail(targetEmail);
-    setPassword(''); // Do NOT auto-fill password so user must enter correct password!
+    setPassword('');
     setError('');
   };
 
@@ -57,11 +68,10 @@ export default function LoginPage() {
 
     try {
       await login(email, password);
-      
+
       if (role === 'ADMIN') router.push('/admin/dashboard');
       else if (role === 'CASHIER') router.push('/pos');
       else if (role === 'KITCHEN_STAFF') router.push('/kds');
-      
     } catch (err: any) {
       setError(err.message || 'Invalid email or password.');
     } finally {
@@ -69,14 +79,64 @@ export default function LoginPage() {
     }
   };
 
+  const handleSendResetOtp = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setResetError('');
+    setResetMsg('');
+    setIsResetting(true);
+
+    try {
+      await fetchApi('/auth/forgot-password', {
+        method: 'POST',
+        body: JSON.stringify({ email: resetEmail }),
+      });
+      setResetMsg(`Verification code sent to ${resetEmail} via Resend!`);
+      setResetStep(2);
+    } catch (err: any) {
+      setResetError(err.message || 'Failed to send verification code. Check email address.');
+    } finally {
+      setIsResetting(false);
+    }
+  };
+
+  const handleResetPassword = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setResetError('');
+    setResetMsg('');
+    setIsResetting(true);
+
+    try {
+      await fetchApi('/auth/reset-password', {
+        method: 'POST',
+        body: JSON.stringify({ email: resetEmail, otpCode, newPassword }),
+      });
+      alert('Password updated successfully via Resend! You can now log in.');
+      setShowForgotModal(false);
+      setPassword(newPassword);
+    } catch (err: any) {
+      setResetError(err.message || 'Invalid verification code or failed to reset password.');
+    } finally {
+      setIsResetting(false);
+    }
+  };
+
+  const openForgotModal = () => {
+    setResetEmail(email || 'deardesserts.in@gmail.com');
+    setOtpCode('');
+    setNewPassword('');
+    setResetStep(1);
+    setResetError('');
+    setResetMsg('');
+    setShowForgotModal(true);
+  };
+
   return (
     <div className="min-h-screen bg-cream-100 flex items-center justify-center p-4 relative overflow-hidden font-sans">
       {/* Decorative background elements */}
       <div className="absolute top-[-10%] left-[-10%] w-[40%] h-[40%] bg-gold-500/10 rounded-full blur-3xl pointer-events-none" />
       <div className="absolute bottom-[-10%] right-[-10%] w-[50%] h-[50%] bg-cocoa-900/5 rounded-full blur-3xl pointer-events-none" />
-      
+
       <div className="w-full max-w-2xl bg-white/80 backdrop-blur-xl rounded-3xl border border-cream-300/80 shadow-2xl p-8 md:p-12 relative z-10">
-        
         {/* Logos */}
         <div className="flex flex-col items-center justify-center mb-10 space-y-3">
           <img src="/ddlogo.png" alt="Dear Desserts Logo" className="h-20 w-auto object-contain drop-shadow-md" />
@@ -98,8 +158,8 @@ export default function LoginPage() {
                 type="button"
                 onClick={() => setRole(r.id as Role)}
                 className={`flex flex-col items-center justify-center p-4 rounded-2xl transition-all duration-300 border ${
-                  isSelected 
-                    ? 'bg-cocoa-900 text-gold-300 border-cocoa-900 shadow-md scale-105' 
+                  isSelected
+                    ? 'bg-cocoa-900 text-gold-300 border-cocoa-900 shadow-md scale-105'
                     : 'bg-cream-200 text-cocoa-600 border-cream-300 hover:bg-cream-300/80'
                 }`}
               >
@@ -117,7 +177,7 @@ export default function LoginPage() {
               <span>{error}</span>
             </div>
           )}
-          
+
           <div className="space-y-4">
             <div>
               <label className="block text-sm font-medium text-cocoa-900 mb-1">Email Address</label>
@@ -130,9 +190,19 @@ export default function LoginPage() {
                 required
               />
             </div>
-            
+
             <div>
-              <label className="block text-sm font-medium text-cocoa-900 mb-1">Password</label>
+              <div className="flex items-center justify-between mb-1">
+                <label className="block text-sm font-medium text-cocoa-900">Password</label>
+                <button
+                  type="button"
+                  onClick={openForgotModal}
+                  className="text-xs font-semibold text-gold-600 hover:text-cocoa-900 transition-colors flex items-center gap-1"
+                >
+                  <KeyRound className="w-3.5 h-3.5" />
+                  Forgot Password? (Resend OTP)
+                </button>
+              </div>
               <input
                 type="password"
                 value={password}
@@ -161,6 +231,108 @@ export default function LoginPage() {
           </Link>
         </div>
       </div>
+
+      {/* Resend Password Reset Modal */}
+      {showForgotModal && (
+        <div className="fixed inset-0 bg-cocoa-950/60 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+          <div className="bg-white rounded-3xl border border-cream-300 p-6 md:p-8 max-w-md w-full shadow-2xl relative animate-in fade-in zoom-in duration-200">
+            <div className="flex items-center justify-between mb-4 pb-3 border-b border-cream-200">
+              <h2 className="text-xl font-display font-bold text-cocoa-900 flex items-center gap-2">
+                <KeyRound className="w-5 h-5 text-gold-500" />
+                Resend Password Reset
+              </h2>
+              <button
+                onClick={() => setShowForgotModal(false)}
+                className="text-cocoa-400 hover:text-cocoa-900 text-lg font-bold"
+              >
+                ✕
+              </button>
+            </div>
+
+            {resetError && (
+              <div className="bg-red-50 text-red-700 p-3 rounded-xl text-xs font-bold border border-red-200 mb-4 flex items-center gap-2">
+                <Shield className="w-4 h-4 shrink-0" />
+                {resetError}
+              </div>
+            )}
+
+            {resetMsg && (
+              <div className="bg-emerald-50 text-emerald-800 p-3 rounded-xl text-xs font-bold border border-emerald-200 mb-4 flex items-center gap-2">
+                <CheckCircle2 className="w-4 h-4 shrink-0 text-emerald-600" />
+                {resetMsg}
+              </div>
+            )}
+
+            {resetStep === 1 ? (
+              <form onSubmit={handleSendResetOtp} className="space-y-4">
+                <p className="text-xs text-cocoa-600">
+                  Enter your registered account email address. We will send a 6-digit verification code via Resend to reset your password.
+                </p>
+                <div>
+                  <label className="block text-xs font-semibold text-cocoa-900 mb-1">Email Address</label>
+                  <div className="relative">
+                    <Mail className="w-4 h-4 absolute left-3 top-3.5 text-cocoa-400" />
+                    <input
+                      type="email"
+                      value={resetEmail}
+                      onChange={(e) => setResetEmail(e.target.value)}
+                      placeholder="deardesserts.in@gmail.com"
+                      className="w-full pl-9 pr-4 py-2.5 rounded-xl border border-cream-300 bg-cream-50 text-sm font-medium text-cocoa-900 focus:outline-none focus:ring-2 focus:ring-gold-500"
+                      required
+                    />
+                  </div>
+                </div>
+
+                <button
+                  type="submit"
+                  disabled={isResetting}
+                  className="w-full py-3 bg-cocoa-900 hover:bg-cocoa-950 text-gold-300 font-bold rounded-xl text-sm transition-all"
+                >
+                  {isResetting ? 'Sending OTP via Resend...' : '📩 Send Verification Code'}
+                </button>
+              </form>
+            ) : (
+              <form onSubmit={handleResetPassword} className="space-y-4">
+                <div>
+                  <label className="block text-xs font-semibold text-cocoa-900 mb-1">6-Digit Verification Code</label>
+                  <input
+                    type="text"
+                    maxLength={6}
+                    value={otpCode}
+                    onChange={(e) => setOtpCode(e.target.value)}
+                    placeholder="e.g. 849201"
+                    className="w-full text-center tracking-widest text-lg font-mono py-2.5 rounded-xl border border-cream-300 bg-cream-50 font-bold text-cocoa-900 focus:outline-none focus:ring-2 focus:ring-gold-500"
+                    required
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-xs font-semibold text-cocoa-900 mb-1">New Password</label>
+                  <div className="relative">
+                    <Lock className="w-4 h-4 absolute left-3 top-3.5 text-cocoa-400" />
+                    <input
+                      type="password"
+                      value={newPassword}
+                      onChange={(e) => setNewPassword(e.target.value)}
+                      placeholder="Enter new strong password"
+                      className="w-full pl-9 pr-4 py-2.5 rounded-xl border border-cream-300 bg-cream-50 text-sm font-medium text-cocoa-900 focus:outline-none focus:ring-2 focus:ring-gold-500"
+                      required
+                    />
+                  </div>
+                </div>
+
+                <button
+                  type="submit"
+                  disabled={isResetting}
+                  className="w-full py-3 bg-gradient-to-r from-cocoa-800 to-cocoa-950 text-gold-300 font-bold rounded-xl text-sm transition-all"
+                >
+                  {isResetting ? 'Updating Password...' : '🔑 Reset & Update Password'}
+                </button>
+              </form>
+            )}
+          </div>
+        </div>
+      )}
     </div>
   );
 }

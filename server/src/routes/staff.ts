@@ -3,6 +3,7 @@ import { PrismaClient } from '@prisma/client';
 import { Role } from '../types';
 import bcrypt from 'bcryptjs';
 import { authenticateJWT, requireRole, AuthRequest } from '../middleware/auth';
+import { sendStaffCredentialsUpdatedEmail } from '../lib/resend';
 
 const router = Router();
 const prisma = new PrismaClient();
@@ -52,6 +53,13 @@ router.post('/', authenticateJWT, requireRole(['ADMIN']), async (req: AuthReques
       select: { id: true, name: true, email: true, role: true, phone: true },
     });
 
+    sendStaffCredentialsUpdatedEmail({
+      name,
+      email,
+      role,
+      password,
+    }).catch((err) => console.error('[Resend Staff Email Error]', err));
+
     res.status(201).json(newUser);
   } catch (error: any) {
     if (error.code === 'P2002') {
@@ -83,6 +91,13 @@ router.put('/:id', authenticateJWT, requireRole(['ADMIN']), async (req: AuthRequ
       data: updateData,
       select: { id: true, name: true, email: true, role: true, phone: true, isActive: true },
     });
+
+    sendStaffCredentialsUpdatedEmail({
+      name: updatedUser.name,
+      email: updatedUser.email,
+      role: updatedUser.role,
+      ...(password && password.trim() ? { password } : {}),
+    }).catch((err) => console.error('[Resend Staff Update Error]', err));
 
     res.json(updatedUser);
   } catch (error: any) {

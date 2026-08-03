@@ -3,6 +3,7 @@ import { PrismaClient } from '@prisma/client';
 import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
 import { authenticateJWT, AuthRequest } from '../middleware/auth';
+import { sendPasswordResetOtpEmail } from '../lib/resend';
 
 const router = Router();
 const prisma = new PrismaClient();
@@ -79,6 +80,62 @@ router.get('/me', authenticateJWT, async (req: AuthRequest, res: Response) => {
     res.json(user);
   } catch (error) {
     res.status(500).json({ error: 'Failed to fetch current user profile' });
+  }
+});
+
+// In-memory OTP storage for password reset
+const otpStore: Record<string, { code: string; expiresAt: number }> = {};
+
+// POST /api/auth/forgot-password
+router.post('/forgot-password', async (req: AuthRequest, res: Response) => {
+  try {
+    const { email } = req.body;
+    const targetEmail = (email || '').trim().toLowerCase();
+    if (!targetEmail) return res.status(400).json({ error: 'Email is required' });
+
+    // Generate random 6-digit OTP code
+    const otpCode = Math.floor(100000 + Math.random() * 900000).toString();
+    const expiresAt = Date.now() + 10 * 60 * 1000; // 10 minutes
+
+    otpStore[targetEmail] = { code: otpCode, expiresAt };
+
+    // Send OTP via Resend
+    await sendPasswordResetOtpEmail({ email: targetEmail, otpCode });
+
+    res.json({ message: `Verification code sent to ${targetEmail} via Resend!` });
+  } catch (error: any) {
+    console.error('Forgot password error:', error);
+    res.status(500).json({ error: 'Failed to send password reset email via Resend' });
+  }
+});
+
+// POST /api/auth/reset-password
+router.post('/reset-password', async (req: AuthRequest, res: Response) => {
+  try {
+    const { email, otpCode, newPassword } = req.body;
+    if (!email || !otpCode || !newPassword) {
+      return res.status(400).json({ error: 'Email, OTP code, and new password are required' });
+    }
+
+    const key = email.trim().toLowerCase();
+    const record = otpStore[key];
+
+    if (!record || record.code !== otpCode || Date.now() > record.expiresAt) {
+      return res.status(400).json({ error: 'Invalid or expired verification code. Please request a new code.' });
+    }
+
+    delete otpStore[key];
+
+    const hashedPassword = await bcrypt.hash(newPassword, 10);
+    await prisma.user.updateMany({
+      where: { email: key },
+      data: { password: hashedPassword },
+    });
+
+    res.json({ message: 'Password reset successfully! You can now log in.' });
+  } catch (error: any) {
+    console.error('Reset password error:', error);
+    res.status(500).json({ error: 'Failed to reset password' });
   }
 });
 
