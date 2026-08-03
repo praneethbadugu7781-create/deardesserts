@@ -167,7 +167,6 @@ export default function StaffManagementPage() {
 
     // Require OTP confirmation for password change or email edit
     if (password.trim()) {
-      const generatedOtp = Math.floor(100000 + Math.random() * 900000).toString();
       try {
         await fetchApi('/auth/forgot-password', {
           method: 'POST',
@@ -177,9 +176,9 @@ export default function StaffManagementPage() {
         console.warn('Resend OTP API trigger:', e);
       }
 
-      const enterOtp = prompt(`🔐 SECURITY AUTHORIZATION REQUIRED\n\nA 6-Digit OTP code has been sent via Resend to deardesserts.in@gmail.com!\n\n(Authorization Code: ${generatedOtp})\n\nPlease enter the 6-Digit Code to authorize password update for ${name}:`);
+      const enterOtp = prompt(`🔐 SECURITY AUTHORIZATION REQUIRED\n\nA 6-Digit Security OTP code has been dispatched via Resend to deardesserts.in@gmail.com!\n\nPlease check your Gmail Inbox (and Spam folder) and enter the 6-Digit OTP code to authorize password update for ${name}:`);
       if (!enterOtp) {
-        alert('Password update cancelled. Authorization OTP is required.');
+        alert('Password update cancelled. Security OTP from email is required.');
         return;
       }
     }
