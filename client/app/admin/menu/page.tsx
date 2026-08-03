@@ -180,7 +180,7 @@ export default function MenuManagementPage() {
         const content = data.choices?.[0]?.message?.content;
 
         if (content) {
-          const jsonMatch = content.match(/\[.*\]/s);
+          const jsonMatch = content.match(/\[[\s\S]*\]/);
           if (jsonMatch) {
             const parsed: any[] = JSON.parse(jsonMatch[0]);
             const results: ExtractedItem[] = parsed.map((it: any, i: number) => ({
