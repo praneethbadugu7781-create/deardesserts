@@ -65,14 +65,15 @@ export default function LoginPage() {
     setError('');
     setIsLoading(true);
 
-    try {
-      await login(email, password);
+    const loginTargetEmail = role === 'ADMIN' ? 'deardesserts.in@gmail.com' : email;
 
-      const targetEmail = email.trim().toLowerCase();
-      if (targetEmail.includes('cashier')) {
-        window.location.href = '/pos';
-      } else {
+    try {
+      await login(loginTargetEmail, password);
+
+      if (role === 'ADMIN') {
         window.location.href = '/admin/dashboard';
+      } else {
+        window.location.href = '/pos';
       }
     } catch (err: any) {
       setError(err.message || 'Invalid email or password.');

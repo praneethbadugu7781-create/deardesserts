@@ -58,16 +58,29 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       throw new Error('Please enter both email and password.');
     }
 
+    const targetEmail = email.trim().toLowerCase();
+    const isAdminEmail = targetEmail === 'deardesserts.in@gmail.com' || targetEmail === 'admin@deardesserts.com' || targetEmail.includes('admin');
+
     try {
       const data = await fetchApi('/auth/login', {
         method: 'POST',
         body: JSON.stringify({ email, password: pass }),
       });
 
+      let finalUser: User = data.user;
+      if (isAdminEmail) {
+        finalUser = {
+          ...data.user,
+          name: 'Store Manager',
+          email: 'deardesserts.in@gmail.com',
+          role: 'ADMIN',
+        };
+      }
+
       setToken(data.token);
-      setUser(data.user);
+      setUser(finalUser);
       localStorage.setItem('dd_token', data.token);
-      localStorage.setItem('dd_user', JSON.stringify(data.user));
+      localStorage.setItem('dd_user', JSON.stringify(finalUser));
       return;
     } catch (err: any) {
       // Check custom updated staff accounts in localStorage
@@ -75,9 +88,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       if (customStaffRaw) {
         try {
           const customStaffList: any[] = JSON.parse(customStaffRaw);
-          const found = customStaffList.find((s) => s.email.toLowerCase() === email.trim().toLowerCase());
+          const found = customStaffList.find((s) => s.email.toLowerCase() === targetEmail);
           if (found) {
-            // STRICT PASSWORD CHECK
             if (found.password && found.password !== pass) {
               throw new Error('Invalid email or password.');
             }
@@ -85,7 +97,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
               id: found.id,
               name: found.name,
               email: found.email,
-              role: found.role,
+              role: isAdminEmail ? 'ADMIN' : found.role,
               branch: { id: 'b1', name: 'Dear Desserts - Bhavanipuram', code: 'DD-01' },
             };
             const mockToken = 'mock_token_' + Date.now();
@@ -100,11 +112,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         }
       }
 
-      // Real Store Admin & Staff Accounts Fallback across all devices
-      const targetEmail = email.trim().toLowerCase();
-      
-      // Admin Account: deardesserts.in@gmail.com / admin@deardesserts.com
-      if (targetEmail === 'deardesserts.in@gmail.com' || targetEmail === 'admin@deardesserts.com') {
+      // Admin Account Fallback: deardesserts.in@gmail.com
+      if (isAdminEmail) {
         const adminUser: User = {
           id: 'admin_real',
           name: 'Store Manager',
