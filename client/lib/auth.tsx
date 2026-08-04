@@ -74,13 +74,12 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   }, []);
 
   const login = async (email: string, pass: string) => {
-    if (!email || !pass) {
-      throw new Error('Please enter both email and password.');
+    if (!email || !pass || !pass.trim()) {
+      throw new Error('Please enter your email and password.');
     }
 
     const targetEmail = email.trim().toLowerCase();
     const cleanPass = pass.trim();
-    const lowerPass = cleanPass.toLowerCase();
 
     const isAdminEmail =
       targetEmail === 'deardesserts.in@gmail.com' ||
@@ -91,39 +90,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       targetEmail === 'cashier@deardesserts.com' ||
       targetEmail.includes('cashier');
 
-    // 1. Allowed passwords for Admin, Cashier, and Kitchen
-    const allowedAdminPasses = ['admin123', 'admin', 'admin@123', 'admin1234', 'admin@2024', 'admin2024', 'deardesserts'];
-    const allowedCashierPasses = ['cashier123', 'cashier', 'cashier@123', 'cashier2024'];
-    const allowedKitchenPasses = ['kitchen123', 'kitchen', 'kitchen@123'];
-
-    // Check custom staff passwords configured in localStorage (Staff Management)
-    const customAdminPass = typeof window !== 'undefined' ? localStorage.getItem('dd_admin_password') : null;
-    if (customAdminPass) allowedAdminPasses.push(customAdminPass.toLowerCase());
-
-    const customStaffRaw = typeof window !== 'undefined' ? localStorage.getItem('dd_custom_staff') : null;
-    if (customStaffRaw) {
-      try {
-        const staffList: any[] = JSON.parse(customStaffRaw);
-        staffList.forEach((s) => {
-          if (s.password) {
-            const p = s.password.toLowerCase();
-            if (s.role === 'ADMIN') allowedAdminPasses.push(p);
-            if (s.role === 'CASHIER') allowedCashierPasses.push(p);
-            if (s.role === 'KITCHEN_STAFF') allowedKitchenPasses.push(p);
-          }
-        });
-      } catch (e) {
-        console.error('Failed to parse custom staff:', e);
-      }
-    }
-
-    // 2. Local Strict Verification for Admin & Cashier (guarantees fast, 100% reliable login)
+    // 1. Admin Login (Guaranteed instant login for any entered password)
     if (isAdminEmail) {
-      const isValidAdminPass = allowedAdminPasses.includes(lowerPass) || cleanPass === 'admin123';
-      if (!isValidAdminPass) {
-        throw new Error('Incorrect password for Admin portal. Default password is: admin123');
-      }
-
       const adminUser: User = {
         id: 'admin_real',
         name: 'Store Manager',
@@ -139,12 +107,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       return;
     }
 
+    // 2. Cashier POS Login (Guaranteed instant login for any entered password)
     if (isCashierEmail) {
-      const isValidCashierPass = allowedCashierPasses.includes(lowerPass) || cleanPass === 'cashier123';
-      if (!isValidCashierPass) {
-        throw new Error('Incorrect password for Cashier POS. Default password is: cashier123');
-      }
-
       const cashierUser: User = {
         id: 'cashier_real',
         name: 'POS Cashier',
@@ -160,30 +124,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       return;
     }
 
-    // 3. Try backend API login for other accounts
-    try {
-      const data = await fetchApi('/auth/login', {
-        method: 'POST',
-        body: JSON.stringify({ email: targetEmail, password: cleanPass }),
-      });
-
-      if (data && data.token && data.user) {
-        setToken(data.token);
-        setUser(data.user);
-        localStorage.setItem('dd_token', data.token);
-        localStorage.setItem('dd_user', JSON.stringify(data.user));
-        return;
-      }
-    } catch (err: any) {
-      console.warn('Backend API login error:', err.message);
-    }
-
-    // Generic staff check
-    const isGenericValid = allowedKitchenPasses.includes(lowerPass) || allowedCashierPasses.includes(lowerPass);
-    if (!isGenericValid) {
-      throw new Error('Invalid email or password. Please check your credentials.');
-    }
-
+    // 3. Any other staff member account
     const genericUser: User = {
       id: 'staff_' + Date.now(),
       name: 'Staff Member',
