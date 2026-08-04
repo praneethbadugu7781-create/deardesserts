@@ -682,119 +682,198 @@ const REAL_MENU_ITEMS: MenuItem[] = [
         </div>
       </section>
 
-      {/* Footer */}
-      <footer className="relative border-t-4 border-gold-500/40 bg-cocoa-950 pt-16 text-cream-100">
-        <div className="mx-auto grid max-w-7xl grid-cols-1 gap-10 border-b border-cocoa-800 px-4 pb-12 sm:px-6 md:grid-cols-2 lg:grid-cols-4 lg:px-8">
-          <div className="space-y-4">
-            <Logo size="lg" theme="dark" />
-            <p className="text-sm leading-relaxed text-cream-300/70">
-              Handcrafted Belgian waffles, warm chocolate fudge, artisanal thickshakes, and gourmet quick bites — made fresh with love.
-            </p>
-            <div className="flex gap-3 pt-2">
-              {[Instagram, Facebook, Twitter].map((Icon, i) => (
-                <a
-                  key={i}
-                  href="#"
-                  className="flex h-10 w-10 items-center justify-center rounded-full border border-cocoa-700 bg-cocoa-900 text-gold-400 transition-all duration-300 hover:border-gold-500/50 hover:bg-caramel-600 hover:text-white hover:scale-110"
+      {/* Ultra-Luxury Footer */}
+      <footer className="relative border-t-2 border-gold-500/30 bg-gradient-to-b from-cocoa-950 via-black to-cocoa-950 text-cream-100 pt-20 overflow-hidden">
+        {/* Subtle Watermark */}
+        <div className="absolute inset-x-0 bottom-10 flex justify-center pointer-events-none opacity-5 overflow-hidden select-none">
+          <span className="font-display font-black text-[12vw] leading-none text-gold-300 tracking-wider whitespace-nowrap">
+            DEAR DESSERTS
+          </span>
+        </div>
+
+        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 relative z-10 space-y-16">
+          {/* Top VIP Dessert Club Glass Card */}
+          <div className="bg-gradient-to-r from-cocoa-900/90 via-cocoa-950 to-black/90 backdrop-blur-xl border border-gold-400/30 p-8 md:p-10 rounded-3xl shadow-2xl flex flex-col lg:flex-row items-center justify-between gap-8">
+            <div className="space-y-2 text-center lg:text-left max-w-xl">
+              <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-gold-500/20 text-gold-400 text-xs font-accent font-extrabold uppercase tracking-wider">
+                <Sparkles className="w-3.5 h-3.5" /> VIP Dessert Club
+              </div>
+              <h3 className="text-2xl sm:text-3xl font-display font-extrabold text-cream-100 tracking-tight">
+                Unlock Secret Releases & Special Offers
+              </h3>
+              <p className="text-xs sm:text-sm text-cream-300/80 font-medium">
+                Subscribe to get exclusive weekend waffle promo codes & secret menu drops delivered to your inbox.
+              </p>
+            </div>
+
+            <div className="w-full lg:w-auto">
+              {subscribed ? (
+                <div className="rounded-2xl border border-gold-400/40 bg-cocoa-900/90 px-6 py-4 text-center text-sm font-bold text-gold-300 shadow-md">
+                  🎉 Welcome to the Dear Desserts VIP Club!
+                </div>
+              ) : (
+                <form
+                  onSubmit={(e) => {
+                    e.preventDefault();
+                    if (newsletterEmail) setSubscribed(true);
+                  }}
+                  className="flex flex-col sm:flex-row items-center gap-3 w-full sm:w-auto"
                 >
-                  <Icon className="h-4 w-4" />
-                </a>
-              ))}
-            </div>
-          </div>
-
-          <div>
-            <h4 className="font-display text-xl text-gold-400">Quick Links</h4>
-            <ul className="mt-4 space-y-2.5 text-sm text-cream-300/70">
-              {[
-                { label: 'Menu Explorer', href: '#menu-section' },
-                { label: 'Signature Specials', href: '#specials-section' },
-                { label: 'Our Story', href: '#story-section' },
-                { label: 'Token TV Screen', href: '/tokens' },
-              ].map((link) => (
-                <li key={link.label}>
-                  <a href={link.href} className="transition hover:text-gold-400 hover:translate-x-1 inline-block duration-300">
-                    {link.label}
-                  </a>
-                </li>
-              ))}
-            </ul>
-          </div>
-
-          <div>
-            <h4 className="font-display text-xl text-gold-400">Visit Us</h4>
-            <div className="mt-4 space-y-3 text-sm text-cream-300/70">
-              <div className="flex gap-2">
-                <Clock className="mt-0.5 h-4 w-4 flex-shrink-0 text-caramel-500" />
-                <div>
-                  <div className="font-semibold text-white">Everyday</div>
-                  <div>Mon – Sun: 11:00 AM – 11:30 PM</div>
-                </div>
-              </div>
-              <div className="flex gap-2">
-                <MapPin className="mt-0.5 h-4 w-4 flex-shrink-0 text-caramel-500" />
-                <div>
-                  <div className="font-semibold text-white">Dear Desserts</div>
-                  <div>Swathi Theatre Road, Opp. Sri Balaji Sweets, Bhavanipuram, Vijayawada</div>
-                  <a
-                    href="https://maps.app.goo.gl/RmuEvt2cNEy637Vk6"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="inline-flex items-center gap-1 mt-1 text-xs font-bold text-gold-400 hover:text-gold-300 underline"
-                  >
-                    Open in Google Maps ↗
-                  </a>
-                </div>
-              </div>
-              <div className="flex gap-2">
-                <Phone className="mt-0.5 h-4 w-4 flex-shrink-0 text-caramel-500" />
-                <div>+91 98765 43210</div>
-              </div>
-            </div>
-          </div>
-
-          <div>
-            <h4 className="font-display text-xl text-gold-400">Dessert Club</h4>
-            <p className="mt-4 text-sm text-cream-300/70">Exclusive offers & promo codes delivered to your inbox.</p>
-            {subscribed ? (
-              <div className="mt-4 rounded-xl border border-gold-500/30 bg-cocoa-900 px-4 py-3 text-center text-sm font-semibold text-gold-400">
-                Welcome to the Dessert Club!
-              </div>
-            ) : (
-              <form
-                onSubmit={(e) => {
-                  e.preventDefault();
-                  if (newsletterEmail) setSubscribed(true);
-                }}
-                className="mt-4"
-              >
-                <div className="relative">
                   <input
                     type="email"
-                    placeholder="your@email.com"
+                    placeholder="Enter your email address..."
                     value={newsletterEmail}
                     onChange={(e) => setNewsletterEmail(e.target.value)}
                     required
-                    className="w-full rounded-xl border border-cocoa-700 bg-cocoa-900 px-4 py-3 text-sm text-white placeholder-cocoa-600 outline-none transition focus:border-gold-500/50 focus:ring-2 focus:ring-gold-500/20"
+                    className="w-full sm:w-72 rounded-2xl border border-cocoa-700 bg-cocoa-900/90 px-5 py-3.5 text-xs text-white placeholder-cocoa-500 outline-none transition focus:border-gold-500 focus:ring-2 focus:ring-gold-500/20"
                   />
                   <button
                     type="submit"
-                    className="absolute right-2 top-1/2 -translate-y-1/2 rounded-lg bg-caramel-600 p-2 text-white transition hover:bg-caramel-500 hover:scale-105"
+                    className="w-full sm:w-auto px-7 py-3.5 rounded-2xl bg-gradient-to-r from-gold-400 to-caramel-500 hover:from-gold-300 hover:to-caramel-400 text-cocoa-950 font-extrabold text-xs tracking-wider uppercase shadow-lg transition-transform hover:scale-105 active:scale-95 whitespace-nowrap"
                   >
-                    <Send className="h-4 w-4" />
+                    Subscribe Now
                   </button>
-                </div>
-              </form>
-            )}
+                </form>
+              )}
+            </div>
           </div>
-        </div>
 
-        <div className="mx-auto flex max-w-7xl flex-col items-center justify-between gap-3 px-4 py-6 text-xs text-cream-400/80 sm:flex-row sm:px-6 lg:px-8 border-t border-cocoa-900">
-          <div>© 2026 <strong className="text-gold-400">Dear Desserts</strong> • Swathi Theatre Road, Bhavanipuram, Vijayawada</div>
-          <div className="flex gap-4 text-xs font-medium">
-            <Link href="/menu" className="hover:text-gold-300 transition">Full Menu</Link>
-            <a href="https://maps.app.goo.gl/RmuEvt2cNEy637Vk6" target="_blank" rel="noopener noreferrer" className="hover:text-gold-300 transition">Google Maps</a>
-            <Link href="/tokens" className="hover:text-gold-300 transition">Token TV</Link>
+          {/* Main 4-Column Footer Links */}
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-10 border-b border-cocoa-800/80 pb-16">
+            {/* Col 1: Brand & Socials */}
+            <div className="space-y-5">
+              <Logo size="lg" theme="dark" />
+              <p className="text-xs leading-relaxed text-cream-300/70 font-medium">
+                Handcrafted Belgian waffles, warm chocolate fudge, artisanal thickshakes, and gourmet quick bites — made fresh with love daily at our Vijayawada outlet.
+              </p>
+              <div className="flex items-center gap-3 pt-1">
+                {[
+                  { Icon: Instagram, href: 'https://instagram.com' },
+                  { Icon: Facebook, href: 'https://facebook.com' },
+                  { Icon: Twitter, href: 'https://twitter.com' },
+                ].map(({ Icon, href }, i) => (
+                  <a
+                    key={i}
+                    href={href}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="flex h-9 w-9 items-center justify-center rounded-xl border border-cocoa-700 bg-cocoa-900 text-gold-400 transition-all duration-300 hover:border-gold-400 hover:bg-gold-400 hover:text-cocoa-950 hover:scale-110 shadow-sm"
+                  >
+                    <Icon className="h-4 w-4" />
+                  </a>
+                ))}
+              </div>
+            </div>
+
+            {/* Col 2: Gourmet Menu Catalog */}
+            <div className="space-y-4">
+              <h4 className="font-display text-lg font-bold text-gold-400 tracking-wide">Gourmet Catalog</h4>
+              <ul className="space-y-2.5 text-xs text-cream-300/80 font-medium">
+                <li>
+                  <Link href="/menu" className="hover:text-gold-300 transition flex items-center gap-1.5 font-bold text-gold-400">
+                    <span>🍰 Full Menu Catalog</span>
+                  </Link>
+                </li>
+                {['Bubble Waffles', 'Belgian Waffles', 'The Poppin Bowl', 'Brownies & Sundaes', 'Bowl Cakes', 'The Crunch Corner'].map((catName) => (
+                  <li key={catName}>
+                    <Link href="/menu" className="hover:text-gold-300 transition hover:translate-x-1 inline-block duration-200">
+                      {catName}
+                    </Link>
+                  </li>
+                ))}
+              </ul>
+            </div>
+
+            {/* Col 3: Outlet Location & Hours */}
+            <div className="space-y-4">
+              <h4 className="font-display text-lg font-bold text-gold-400 tracking-wide">Flagship Outlet</h4>
+              <div className="space-y-3 text-xs text-cream-300/80 font-medium">
+                <div className="flex items-start gap-2.5">
+                  <Clock className="h-4 w-4 text-gold-400 shrink-0 mt-0.5" />
+                  <div>
+                    <div className="font-extrabold text-white">Mon – Sun: 11:00 AM – 11:30 PM</div>
+                    <div className="text-[10px] text-green-400 font-bold mt-0.5">🟢 Outlet Open Everyday</div>
+                  </div>
+                </div>
+
+                <div className="flex items-start gap-2.5">
+                  <MapPin className="h-4 w-4 text-gold-400 shrink-0 mt-0.5" />
+                  <div>
+                    <div className="font-bold text-white">Dear Desserts Outlet</div>
+                    <div>Swathi Theatre Road, Opp. Sri Balaji Sweets, Bhavanipuram, Vijayawada</div>
+                    <a
+                      href="https://maps.app.goo.gl/RmuEvt2cNEy637Vk6"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="inline-flex items-center gap-1 mt-1 text-[11px] font-bold text-gold-400 hover:text-gold-300 underline"
+                    >
+                      Get Driving Directions ↗
+                    </a>
+                  </div>
+                </div>
+
+                <div className="flex items-center gap-2.5">
+                  <Phone className="h-4 w-4 text-gold-400 shrink-0" />
+                  <a href="tel:+919876543210" className="hover:text-gold-300 font-bold text-white transition">
+                    +91 98765 43210
+                  </a>
+                </div>
+              </div>
+            </div>
+
+            {/* Col 4: Quick Portals & Staff Links */}
+            <div className="space-y-4">
+              <h4 className="font-display text-lg font-bold text-gold-400 tracking-wide">Live Portals</h4>
+              <ul className="space-y-2.5 text-xs text-cream-300/80 font-medium">
+                <li>
+                  <Link href="/tokens" className="hover:text-gold-300 transition hover:translate-x-1 inline-block">
+                    📺 Token TV Live Display
+                  </Link>
+                </li>
+                <li>
+                  <Link href="/pos" className="hover:text-gold-300 transition hover:translate-x-1 inline-block">
+                    🛒 Cashier POS Terminal
+                  </Link>
+                </li>
+                <li>
+                  <Link href="/kds" className="hover:text-gold-300 transition hover:translate-x-1 inline-block">
+                    👨‍🍳 Kitchen Display (KDS)
+                  </Link>
+                </li>
+                <li>
+                  <Link href="/admin/dashboard" className="hover:text-gold-300 transition hover:translate-x-1 inline-block">
+                    📊 Executive Admin Dashboard
+                  </Link>
+                </li>
+                <li className="pt-2">
+                  <button
+                    onClick={() => setShowStaffModal(true)}
+                    className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-xl bg-cocoa-900 border border-cocoa-700 text-gold-300 text-[11px] font-extrabold hover:bg-cocoa-800 transition"
+                  >
+                    <Lock className="w-3 h-3 text-gold-400" />
+                    <span>Staff Portal Login</span>
+                  </button>
+                </li>
+              </ul>
+            </div>
+          </div>
+
+          {/* Bottom Copyright & Back-to-Top Bar */}
+          <div className="flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-cream-400/70 pb-12">
+            <div>
+              © {new Date().getFullYear()} <strong className="text-gold-400 font-bold">Dear Desserts</strong> • Swathi Theatre Road, Bhavanipuram, Vijayawada
+            </div>
+
+            <div className="flex items-center gap-6">
+              <Link href="/menu" className="hover:text-gold-300 transition">Full Menu</Link>
+              <a href="https://maps.app.goo.gl/RmuEvt2cNEy637Vk6" target="_blank" rel="noopener noreferrer" className="hover:text-gold-300 transition">Location</a>
+              <button
+                onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
+                className="hover:text-gold-300 font-bold text-gold-400 transition flex items-center gap-1 bg-cocoa-900/80 px-3 py-1 rounded-xl border border-cocoa-700"
+              >
+                <span>↑ Back to Top</span>
+              </button>
+            </div>
           </div>
         </div>
       </footer>
