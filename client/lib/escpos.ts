@@ -46,7 +46,6 @@ export function buildEscPosBuffer(order: ReceiptOrderData): Uint8Array {
   addLine('Swathi Theatre Road, Opp. Sri Balaji Sweets');
   addLine('Bhavanipuram, Vijayawada - 520012');
   addLine('Ph: +91 98765 43210');
-  addLine('GSTIN: 37AAACD1234F1Z9');
   addLine('--------------------------------');
 
   // Token Box (Double size)
@@ -84,7 +83,6 @@ export function buildEscPosBuffer(order: ReceiptOrderData): Uint8Array {
   // Totals (Right align)
   bytes.push(0x1b, 0x61, 0x02);
   addLine(`Subtotal: Rs.${order.subtotal}`);
-  addLine(`GST (5%): Rs.${order.taxAmount}`);
   if (order.discountAmount > 0) {
     addLine(`Discount: -Rs.${order.discountAmount}`);
   }

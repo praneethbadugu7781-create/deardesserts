@@ -72,7 +72,7 @@ export default function ReportsPage() {
           <h1 className="text-3xl font-display font-bold text-cocoa-900 tracking-tight flex items-center gap-2">
             <FileSpreadsheet className="w-6 h-6 text-gold-400" /> Business Reports & Tax Ledger
           </h1>
-          <p className="text-sm text-gold-600 font-medium mt-1">Generate sales, revenue, GST tax reports and export to CSV or PDF</p>
+          <p className="text-sm text-gold-600 font-medium mt-1">Generate sales and revenue reports and export to CSV or PDF</p>
         </div>
 
         <div className="flex items-center space-x-3">
@@ -173,8 +173,8 @@ export default function ReportsPage() {
         </div>
 
         <div className="bg-white/80 backdrop-blur-xl p-5 rounded-2xl border border-cream-300/80 shadow-md">
-          <div className="text-xs font-accent font-bold text-cocoa-600 uppercase tracking-wider">GST Tax Collected</div>
-          <div className="text-3xl font-display font-black text-gold-600 mt-2">₹{report?.summary.totalTaxCollected.toLocaleString() || 0}</div>
+          <div className="text-xs font-accent font-bold text-cocoa-600 uppercase tracking-wider">Total Discounts</div>
+          <div className="text-3xl font-display font-black text-gold-600 mt-2">₹{report?.summary.totalDiscountsGiven.toLocaleString() || 0}</div>
         </div>
 
         <div className="bg-white/80 backdrop-blur-xl p-5 rounded-2xl border border-cream-300/80 shadow-md">
@@ -204,7 +204,7 @@ export default function ReportsPage() {
                 <th className="py-3 px-4">Customer</th>
                 <th className="py-3 px-4">Payment</th>
                 <th className="py-3 px-4 text-right">Subtotal</th>
-                <th className="py-3 px-4 text-right">GST (5%)</th>
+                <th className="py-3 px-4 text-right">Discount (₹)</th>
                 <th className="py-3 px-4 text-right">Net Total</th>
                 <th className="py-3 px-4 text-center">Status</th>
               </tr>
@@ -218,7 +218,7 @@ export default function ReportsPage() {
                   <td className="py-3 px-4">{ord.customerName}</td>
                   <td className="py-3 px-4 font-bold">{ord.paymentMethod}</td>
                   <td className="py-3 px-4 text-right">₹{ord.subtotal}</td>
-                  <td className="py-3 px-4 text-right text-cocoa-600">₹{ord.tax}</td>
+                  <td className="py-3 px-4 text-right text-cocoa-600">₹{ord.discount}</td>
                   <td className="py-3 px-4 text-right font-black text-cocoa-900">₹{ord.netTotal}</td>
                   <td className="py-3 px-4 text-center">
                     <span

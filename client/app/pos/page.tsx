@@ -417,7 +417,7 @@ const REAL_CATEGORIES: Category[] = [
           <h1 className="text-xl sm:text-2xl font-display font-extrabold tracking-tight flex items-center gap-2 text-cocoa-900">
             <ShoppingCart className="w-6 h-6 text-gold-500" /> POS Billing Terminal
           </h1>
-          <p className="text-xs text-cocoa-600 font-medium hidden sm:block">Fast QSR Checkout • GST Bill & Auto Token Generation</p>
+          <p className="text-xs text-cocoa-600 font-medium hidden sm:block">Fast QSR Checkout • Instant Bill & Auto Token Generation</p>
         </div>
 
         <div className="flex items-center justify-between sm:justify-end gap-2">
@@ -797,10 +797,6 @@ const REAL_CATEGORIES: Category[] = [
                   <div className="flex justify-between text-cocoa-600 font-medium">
                     <span>Subtotal:</span>
                     <span>₹{recentOrder.subtotal}</span>
-                  </div>
-                  <div className="flex justify-between text-cocoa-600 font-medium">
-                    <span>GST (5%):</span>
-                    <span>₹{recentOrder.taxAmount}</span>
                   </div>
                   {recentOrder.discountAmount > 0 && (
                     <div className="flex justify-between text-red-600 font-bold">
