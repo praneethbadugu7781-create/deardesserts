@@ -542,21 +542,21 @@ const REAL_CATEGORIES: Category[] = [
                     </h3>
                   </div>
 
-                  <div className="flex items-center justify-between mt-3 pt-2.5 border-t border-cream-200/80">
-                    <span className="text-base md:text-lg font-black text-cocoa-900">₹{item.price}</span>
+                  <div className="flex items-center justify-between gap-1.5 mt-3 pt-2 border-t border-cream-200/80">
+                    <span className="text-sm sm:text-base font-black text-cocoa-900 shrink-0">₹{item.price}</span>
                     {isOut ? (
                       <button
                         disabled
-                        className="px-2.5 py-1 rounded-xl bg-gray-200 text-gray-500 font-black text-[10px] tracking-wider uppercase border border-gray-300 cursor-not-allowed"
+                        className="px-2 py-1 rounded-lg bg-gray-200 text-gray-500 font-bold text-[9px] uppercase border border-gray-300 cursor-not-allowed shrink-0"
                       >
                         OUT OF STOCK
                       </button>
                     ) : (
                       <button
-                        className="px-3 py-1.5 rounded-xl bg-cocoa-900 text-gold-400 hover:bg-gold-500 hover:text-cocoa-950 flex items-center gap-1 transition-all shadow-sm font-bold text-xs hover:scale-105"
+                        className="px-2.5 py-1 sm:px-3 sm:py-1 rounded-xl bg-cocoa-900 text-gold-300 hover:bg-gold-500 hover:text-cocoa-950 flex items-center gap-1 transition-all shadow-sm font-bold text-xs shrink-0 active:scale-95"
                       >
-                        <Plus className="w-3.5 h-3.5" />
-                        <span>ADD</span>
+                        <Plus className="w-3 h-3 text-gold-400" />
+                        <span>Add</span>
                       </button>
                     )}
                   </div>
@@ -975,30 +975,31 @@ const REAL_CATEGORIES: Category[] = [
       )}
       {/* Floating Bottom Cart Bar for Mobile */}
       {cart.length > 0 && mobileTab === 'MENU' && (
-        <div className="lg:hidden fixed bottom-4 left-4 right-4 z-40">
+        <div className="lg:hidden fixed bottom-3 left-3 right-3 z-40 animate-in slide-in-from-bottom duration-300">
           <button
             onClick={() => setMobileTab('CART')}
-            className="w-full bg-gradient-to-r from-cocoa-900 via-cocoa-950 to-black text-gold-300 p-4 rounded-3xl shadow-2xl border-2 border-gold-400/40 flex items-center justify-between transition-all active:scale-95"
+            className="w-full bg-gradient-to-r from-cocoa-900 via-cocoa-950 to-black text-gold-300 p-3 rounded-2xl shadow-2xl border border-gold-400/40 flex items-center justify-between transition-transform active:scale-95"
           >
-            <div className="flex items-center gap-3">
-              <div className="relative p-2.5 rounded-2xl bg-gold-500/20 text-gold-400">
-                <ShoppingCart className="w-6 h-6" />
-                <span className="absolute -top-1 -right-1 bg-gold-400 text-cocoa-950 font-black text-xs h-5 w-5 rounded-full flex items-center justify-center">
+            <div className="flex items-center gap-2.5 min-w-0">
+              <div className="relative p-2 rounded-xl bg-gold-500/20 text-gold-400 shrink-0">
+                <ShoppingCart className="w-5 h-5" />
+                <span className="absolute -top-1 -right-1 bg-gold-400 text-cocoa-950 font-black text-[10px] h-4 w-4 rounded-full flex items-center justify-center">
                   {cart.reduce((sum, ci) => sum + ci.quantity, 0)}
                 </span>
               </div>
-              <div className="text-left">
-                <div className="font-accent text-[10px] font-extrabold uppercase tracking-wider text-gold-400">
-                  {cart.length} {cart.length === 1 ? 'Item' : 'Items'} Selected
+              <div className="text-left truncate">
+                <div className="text-xs font-bold text-white tracking-tight flex items-center gap-1.5">
+                  <span>{cart.length} {cart.length === 1 ? 'item' : 'items'}</span>
+                  <span className="text-gold-400">•</span>
+                  <span className="font-extrabold text-gold-300 text-sm">Total: ₹{netTotal}</span>
                 </div>
-                <div className="font-display text-lg font-black text-white">
-                  Total: ₹{netTotal}
-                </div>
+                <div className="text-[10px] text-cream-300 font-medium truncate">Tap to review order & pay</div>
               </div>
             </div>
 
-            <div className="flex items-center gap-2 px-4 py-2.5 rounded-2xl bg-gold-400 text-cocoa-950 font-accent text-xs font-black uppercase tracking-wider shadow-md">
-              View Bill <Receipt className="w-4 h-4" />
+            <div className="flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-gold-400 text-cocoa-950 text-xs font-extrabold shrink-0 shadow-md">
+              <span>View Bill</span>
+              <Receipt className="w-3.5 h-3.5" />
             </div>
           </button>
         </div>
