@@ -5,6 +5,7 @@ import React from 'react';
 export default function Logo({
   size = 'md',
   variant = 'full',
+  theme = 'light',
 }: {
   size?: 'sm' | 'md' | 'lg' | 'xl' | '2xl';
   variant?: 'full' | 'icon-only' | 'title-only';
@@ -51,10 +52,10 @@ export default function Logo({
 
       {variant !== 'icon-only' && (
         <div className="flex flex-col justify-center leading-none">
-          <span className={`font-display font-black tracking-tight ${titleTextMap[size]} text-cocoa-900`}>
-            Dear <span className="text-gold-500">Desserts</span>
+          <span className={`font-display font-black tracking-tight ${titleTextMap[size]} ${theme === 'dark' ? 'text-cream-100' : 'text-cocoa-900'}`}>
+            Dear <span className="text-gold-400">Desserts</span>
           </span>
-          <span className={`font-accent font-extrabold uppercase tracking-widest text-gold-600/90 mt-0.5 ${subtextMap[size]}`}>
+          <span className={`font-accent font-extrabold uppercase tracking-widest text-gold-400/90 mt-0.5 ${subtextMap[size]}`}>
             Love At First Bite
           </span>
         </div>

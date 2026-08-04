@@ -1,0 +1,249 @@
+'use client';
+
+import React, { useState, useEffect } from 'react';
+import Link from 'next/link';
+import { fetchApi } from '../../lib/api';
+import Logo from '../../components/Logo';
+import { Search, Sparkles, ArrowLeft, Clock, ShoppingCart } from 'lucide-react';
+
+interface Category {
+  id: string;
+  name: string;
+  slug: string;
+}
+
+interface MenuItem {
+  id: string;
+  name: string;
+  price: number;
+  taxPercent: number;
+  imageUrl?: string;
+  description?: string;
+  isAvailable: boolean;
+  isCombo: boolean;
+  preparationMinutes?: number;
+  category?: Category;
+}
+
+const REAL_CATEGORIES: Category[] = [
+  { id: 'cat-1', name: 'Bubble Waffles', slug: 'bubble-waffles' },
+  { id: 'cat-2', name: 'Belgian Waffles', slug: 'belgian-waffles' },
+  { id: 'cat-3', name: "The Poppin' Bowl", slug: 'pop-bowl' },
+  { id: 'cat-4', name: 'Brownies', slug: 'brownies' },
+  { id: 'cat-5', name: 'Specials', slug: 'specials' },
+  { id: 'cat-6', name: 'Bowl Cakes', slug: 'bowl-cakes' },
+  { id: 'cat-7', name: 'The Crunch Corner', slug: 'savories' },
+];
+
+const REAL_MENU_ITEMS: MenuItem[] = [
+  // Bubble Waffles
+  { id: 'bw-1', name: 'Triple Trouble', price: 180, taxPercent: 0, imageUrl: 'https://images.unsplash.com/photo-1562376552-0d160a2f238d?w=600', description: 'Bubble Waffle', isAvailable: true, isCombo: false, preparationMinutes: 6, category: REAL_CATEGORIES[0] },
+  { id: 'bw-2', name: 'Triple Trouble with Ice Cream', price: 200, taxPercent: 0, imageUrl: 'https://images.unsplash.com/photo-1562376552-0d160a2f238d?w=600', description: 'Bubble Waffle', isAvailable: true, isCombo: false, preparationMinutes: 6, category: REAL_CATEGORIES[0] },
+  { id: 'bw-3', name: 'Fruity Pebble', price: 200, taxPercent: 0, imageUrl: 'https://images.unsplash.com/photo-1562376552-0d160a2f238d?w=600', description: 'Bubble Waffle', isAvailable: true, isCombo: false, preparationMinutes: 6, category: REAL_CATEGORIES[0] },
+  { id: 'bw-4', name: 'KitKat Crunch', price: 210, taxPercent: 0, imageUrl: 'https://images.unsplash.com/photo-1562376552-0d160a2f238d?w=600', description: 'Bubble Waffle', isAvailable: true, isCombo: false, preparationMinutes: 6, category: REAL_CATEGORIES[0] },
+  { id: 'bw-5', name: 'Oreo Dream', price: 210, taxPercent: 0, imageUrl: 'https://images.unsplash.com/photo-1562376552-0d160a2f238d?w=600', description: 'Bubble Waffle', isAvailable: true, isCombo: false, preparationMinutes: 6, category: REAL_CATEGORIES[0] },
+  { id: 'bw-6', name: 'Nutella Nirvana', price: 220, taxPercent: 0, imageUrl: 'https://images.unsplash.com/photo-1562376552-0d160a2f238d?w=600', description: 'Bubble Waffle', isAvailable: true, isCombo: false, preparationMinutes: 7, category: REAL_CATEGORIES[0] },
+  { id: 'bw-7', name: 'Lotus Biscoff Bliss', price: 230, taxPercent: 0, imageUrl: 'https://images.unsplash.com/photo-1598214886806-c87b84b7078b?w=600', description: 'Bubble Waffle', isAvailable: true, isCombo: false, preparationMinutes: 7, category: REAL_CATEGORIES[0] },
+
+  // Belgian Waffles
+  { id: 'belg-1', name: 'Triple Choco Melt', price: 120, taxPercent: 0, imageUrl: 'https://images.unsplash.com/photo-1562376552-0d160a2f238d?w=600', description: 'Belgian Waffle', isAvailable: true, isCombo: false, preparationMinutes: 5, category: REAL_CATEGORIES[1] },
+  { id: 'belg-2', name: 'Coffee Mocha', price: 150, taxPercent: 0, imageUrl: 'https://images.unsplash.com/photo-1562376552-0d160a2f238d?w=600', description: 'Belgian Waffle', isAvailable: true, isCombo: false, preparationMinutes: 5, category: REAL_CATEGORIES[1] },
+  { id: 'belg-3', name: 'Naked Nutella', price: 160, taxPercent: 0, imageUrl: 'https://images.unsplash.com/photo-1562376552-0d160a2f238d?w=600', description: 'Belgian Waffle', isAvailable: true, isCombo: false, preparationMinutes: 5, category: REAL_CATEGORIES[1] },
+  { id: 'belg-4', name: 'Kiki & Oreo', price: 160, taxPercent: 0, imageUrl: 'https://images.unsplash.com/photo-1562376552-0d160a2f238d?w=600', description: 'Belgian Waffle', isAvailable: true, isCombo: false, preparationMinutes: 5, category: REAL_CATEGORIES[1] },
+  { id: 'belg-5', name: 'Red Velvet Love', price: 170, taxPercent: 0, imageUrl: 'https://images.unsplash.com/photo-1562376552-0d160a2f238d?w=600', description: 'Belgian Waffle', isAvailable: true, isCombo: false, preparationMinutes: 5, category: REAL_CATEGORIES[1] },
+
+  // The Poppin' Bowl
+  { id: 'pop-1', name: 'Overloaded Brownie Pop', price: 200, taxPercent: 0, imageUrl: 'https://images.unsplash.com/photo-1606313564200-e75d5e30476c?w=600', description: 'Poppin Bowl', isAvailable: true, isCombo: false, preparationMinutes: 5, category: REAL_CATEGORIES[2] },
+  { id: 'pop-2', name: 'Nutella Pop Bowl', price: 220, taxPercent: 0, imageUrl: 'https://images.unsplash.com/photo-1606313564200-e75d5e30476c?w=600', description: 'Poppin Bowl', isAvailable: true, isCombo: false, preparationMinutes: 5, category: REAL_CATEGORIES[2] },
+  { id: 'pop-3', name: 'Biscoff Pop Bowl', price: 240, taxPercent: 0, imageUrl: 'https://images.unsplash.com/photo-1606313564200-e75d5e30476c?w=600', description: 'Poppin Bowl', isAvailable: true, isCombo: false, preparationMinutes: 5, category: REAL_CATEGORIES[2] },
+
+  // Brownies & Sundaes
+  { id: 'br-1', name: 'Classic Fudgy Brownie', price: 100, taxPercent: 0, imageUrl: 'https://images.unsplash.com/photo-1606313564200-e75d5e30476c?w=600', description: 'Gourmet Brownie', isAvailable: true, isCombo: false, preparationMinutes: 4, category: REAL_CATEGORIES[3] },
+  { id: 'br-2', name: 'Sizzling Brownie with Ice Cream', price: 160, taxPercent: 0, imageUrl: 'https://images.unsplash.com/photo-1606313564200-e75d5e30476c?w=600', description: 'Sizzling Sundae', isAvailable: true, isCombo: false, preparationMinutes: 6, category: REAL_CATEGORIES[3] },
+  { id: 'br-3', name: 'Nutella Brownie Stack', price: 180, taxPercent: 0, imageUrl: 'https://images.unsplash.com/photo-1606313564200-e75d5e30476c?w=600', description: 'Gourmet Brownie', isAvailable: true, isCombo: false, preparationMinutes: 5, category: REAL_CATEGORIES[3] },
+
+  // Bowl Cakes
+  { id: 'bc-1', name: 'Choco Lava Bowl', price: 150, taxPercent: 0, imageUrl: 'https://images.unsplash.com/photo-1578985545062-69928b1d9587?w=600', description: 'Bowl Cake', isAvailable: true, isCombo: false, preparationMinutes: 5, category: REAL_CATEGORIES[5] },
+  { id: 'bc-2', name: 'Death by Chocolate Bowl', price: 220, taxPercent: 0, imageUrl: 'https://images.unsplash.com/photo-1578985545062-69928b1d9587?w=600', description: 'Bowl Cake', isAvailable: true, isCombo: false, preparationMinutes: 5, category: REAL_CATEGORIES[5] },
+  { id: 'bc-3', name: 'Biscoff Bowl', price: 230, taxPercent: 0, imageUrl: 'https://images.unsplash.com/photo-1578985545062-69928b1d9587?w=600', description: 'Bowl Cake', isAvailable: true, isCombo: false, preparationMinutes: 5, category: REAL_CATEGORIES[5] },
+
+  // The Crunch Corner (Savouries)
+  { id: 'sav-1', name: 'Salted French Fries', price: 80, taxPercent: 0, imageUrl: 'https://images.unsplash.com/photo-1576107232684-1279f3908594?w=600', description: 'Savouries', isAvailable: true, isCombo: false, preparationMinutes: 5, category: REAL_CATEGORIES[6] },
+  { id: 'sav-2', name: 'Peri Peri French Fries', price: 100, taxPercent: 0, imageUrl: 'https://images.unsplash.com/photo-1576107232684-1279f3908594?w=600', description: 'Savouries', isAvailable: true, isCombo: false, preparationMinutes: 5, category: REAL_CATEGORIES[6] },
+  { id: 'sav-3', name: 'Cheesy Chicken Bun', price: 100, taxPercent: 0, imageUrl: 'https://images.unsplash.com/photo-1576107232684-1279f3908594?w=600', description: 'Savouries', isAvailable: true, isCombo: false, preparationMinutes: 5, category: REAL_CATEGORIES[6] },
+];
+
+export default function FullMenuPage() {
+  const [categories, setCategories] = useState<Category[]>([]);
+  const [items, setItems] = useState<MenuItem[]>([]);
+  const [selectedCat, setSelectedCat] = useState<string>('ALL');
+  const [searchQuery, setSearchQuery] = useState<string>('');
+
+  useEffect(() => {
+    loadMenu();
+  }, []);
+
+  const loadMenu = async () => {
+    try {
+      const [catsRes, itemsRes] = await Promise.all([
+        fetchApi('/menu/categories').catch(() => null),
+        fetchApi('/menu/items').catch(() => null),
+      ]);
+
+      if (Array.isArray(catsRes) && catsRes.length > 0 && Array.isArray(itemsRes) && itemsRes.length > 0) {
+        setCategories(catsRes);
+        setItems(itemsRes);
+        return;
+      }
+    } catch (err) {
+      console.error('Failed to load menu:', err);
+    }
+    setCategories(REAL_CATEGORIES);
+    setItems(REAL_MENU_ITEMS);
+  };
+
+  const filteredItems = items.filter((item) => {
+    let matchesCat = selectedCat === 'ALL';
+
+    if (!matchesCat) {
+      const selCatObj = categories.find((c) => c.id === selectedCat || c.slug === selectedCat || c.name === selectedCat);
+      const targetCatId = selCatObj?.id || selectedCat;
+      const targetCatName = (selCatObj?.name || selectedCat).toLowerCase();
+      const targetCatSlug = (selCatObj?.slug || selectedCat).toLowerCase();
+
+      const itemCatId = item.category?.id || '';
+      const itemCatName = (typeof item.category === 'string' ? item.category : item.category?.name || item.description || '').toLowerCase();
+      const itemCatSlug = (item.category?.slug || '').toLowerCase();
+
+      matchesCat = Boolean(
+        (itemCatId && targetCatId && itemCatId === targetCatId) ||
+        (itemCatName && targetCatName && (itemCatName === targetCatName || itemCatName.includes(targetCatName) || targetCatName.includes(itemCatName))) ||
+        (itemCatSlug && targetCatSlug && itemCatSlug === targetCatSlug)
+      );
+    }
+
+    const matchesSearch =
+      !searchQuery.trim() ||
+      item.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      (item.description && item.description.toLowerCase().includes(searchQuery.toLowerCase()));
+
+    return matchesCat && matchesSearch;
+  });
+
+  const displayItems = filteredItems.length > 0 ? filteredItems : items;
+
+  return (
+    <div className="min-h-screen bg-cream-100 font-sans text-cocoa-900 pb-20">
+      {/* Header */}
+      <header className="sticky top-0 z-40 bg-white/80 backdrop-blur-xl border-b border-cream-300/80 py-4 px-4 sm:px-8 shadow-sm flex items-center justify-between">
+        <Link href="/" className="flex items-center gap-2 text-cocoa-800 hover:text-cocoa-950 font-bold text-sm transition">
+          <ArrowLeft className="w-4 h-4 text-gold-500" />
+          <span>Back to Home</span>
+        </Link>
+
+        <Logo size="md" />
+
+        <div className="hidden sm:flex items-center gap-2 bg-cocoa-900 text-gold-300 px-4 py-2 rounded-full text-xs font-bold shadow-sm">
+          <ShoppingCart className="w-4 h-4 text-gold-400" />
+          <span>Outlet Open for Billing</span>
+        </div>
+      </header>
+
+      {/* Hero Banner */}
+      <div className="bg-gradient-to-r from-cocoa-900 via-cocoa-950 to-black text-white py-12 px-4 sm:px-8 text-center space-y-3 relative overflow-hidden">
+        <div className="absolute inset-0 opacity-10 bg-[radial-gradient(#D4AF37_1px,transparent_1px)] [background-size:16px_16px]" />
+        <span className="font-accent text-xs font-bold uppercase tracking-[0.25em] text-gold-400">Complete Dessert Catalog</span>
+        <h1 className="text-3xl sm:text-5xl font-display font-extrabold text-cream-100 tracking-tight">
+          Explore Our <span className="text-gold-400">Full Menu</span>
+        </h1>
+        <p className="text-sm text-cream-300/80 max-w-xl mx-auto font-medium">
+          Freshly baked Belgian waffles, fudgy brownies, artisanal thickshakes, poppin bowls & crunchy quick bites!
+        </p>
+      </div>
+
+      {/* Category Pills & Search */}
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-8 space-y-6">
+        <div className="bg-white/80 backdrop-blur-xl p-4 sm:p-5 rounded-3xl border border-cream-300/80 shadow-md flex flex-col md:flex-row md:items-center justify-between gap-4">
+          {/* Category Tabs */}
+          <div className="flex items-center gap-2 overflow-x-auto pb-2 md:pb-0 scrollbar-hide">
+            <button
+              onClick={() => setSelectedCat('ALL')}
+              className={`px-4 py-2 rounded-2xl text-xs font-bold transition-all ${
+                selectedCat === 'ALL'
+                  ? 'bg-cocoa-900 text-gold-300 shadow-md font-extrabold'
+                  : 'bg-cream-200 text-cocoa-700 hover:bg-cream-300'
+              }`}
+            >
+              All Items ({items.length})
+            </button>
+            {categories.map((cat) => (
+              <button
+                key={cat.id}
+                onClick={() => setSelectedCat(cat.id)}
+                className={`px-4 py-2 rounded-2xl text-xs font-bold whitespace-nowrap transition-all ${
+                  selectedCat === cat.id
+                    ? 'bg-cocoa-900 text-gold-300 shadow-md font-extrabold'
+                    : 'bg-cream-200 text-cocoa-700 hover:bg-cream-300'
+                }`}
+              >
+                {cat.name}
+              </button>
+            ))}
+          </div>
+
+          {/* Search Bar */}
+          <div className="relative w-full md:w-72">
+            <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-cocoa-400" />
+            <input
+              type="text"
+              placeholder="Search waffle, brownie, bowl..."
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              className="w-full pl-10 pr-4 py-2.5 rounded-2xl border border-cream-300 bg-white focus:border-gold-500 focus:ring-1 focus:ring-gold-500 text-xs font-medium outline-none transition"
+            />
+          </div>
+        </div>
+
+        {/* Menu Grid */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+          {displayItems.map((item) => (
+            <div
+              key={item.id}
+              className="bg-white/90 backdrop-blur-md rounded-3xl p-5 border border-cream-300/80 shadow-md hover:shadow-xl hover:border-gold-500/50 transition-all duration-300 flex flex-col justify-between group"
+            >
+              <div className="space-y-3">
+                <div className="relative h-44 w-full overflow-hidden rounded-2xl bg-cream-200">
+                  <img
+                    src={item.imageUrl || 'https://images.unsplash.com/photo-1562376552-0d160a2f238d?w=600'}
+                    alt={item.name}
+                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                  />
+                  <div className="absolute top-3 left-3 bg-cocoa-950/80 backdrop-blur-md text-gold-300 px-3 py-1 rounded-full text-[10px] font-extrabold uppercase tracking-wider">
+                    {item.category?.name || 'Desserts'}
+                  </div>
+                </div>
+
+                <div>
+                  <h3 className="font-display font-extrabold text-lg text-cocoa-900 group-hover:text-gold-600 transition-colors">
+                    {item.name}
+                  </h3>
+                  <p className="text-xs text-cocoa-600 line-clamp-2 mt-1 font-medium">
+                    {item.description || 'Made fresh to order with premium Belgian ingredients.'}
+                  </p>
+                </div>
+              </div>
+
+              <div className="flex items-center justify-between mt-4 pt-3 border-t border-cream-200">
+                <span className="text-xl font-black text-cocoa-950">₹{item.price}</span>
+                <div className="flex items-center gap-1 text-[11px] font-bold text-cocoa-600 bg-cream-100 px-2.5 py-1 rounded-xl">
+                  <Clock className="w-3 h-3 text-gold-500" />
+                  <span>{item.preparationMinutes || 5} mins</span>
+                </div>
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+    </div>
+  );
+}

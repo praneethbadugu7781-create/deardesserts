@@ -552,9 +552,19 @@ const REAL_MENU_ITEMS: MenuItem[] = [
           </FadeInView>
 
           <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
-            {displayItems.map((item, i) => (
+            {displayItems.slice(0, 6).map((item, i) => (
               <MenuProductCard key={item.id} item={item} index={i} />
             ))}
+          </div>
+
+          <div className="mt-12 text-center">
+            <Link
+              href="/menu"
+              className="inline-flex items-center gap-3 px-8 py-4 rounded-2xl bg-gradient-to-r from-cocoa-900 via-cocoa-950 to-black text-gold-300 font-extrabold text-base shadow-xl border border-gold-400/30 hover:scale-105 transition-all"
+            >
+              <span>🍰 Click Here to See Full Menu & Price List</span>
+              <ArrowRight className="w-5 h-5 text-gold-400" />
+            </Link>
           </div>
         </div>
       </section>
@@ -779,12 +789,12 @@ const REAL_MENU_ITEMS: MenuItem[] = [
           </div>
         </div>
 
-        <div className="mx-auto flex max-w-7xl flex-col items-center justify-between gap-3 px-4 py-6 text-[11px] text-cocoa-600 sm:flex-row sm:px-6 lg:px-8">
-          <div>© 2026 <strong className="text-cream-300/60">Dear Desserts Inc.</strong> · GSTIN: 19AAACD1234F1Z9</div>
-          <div className="flex gap-4">
-            <a href="#" className="hover:text-cream-300 transition">Privacy</a>
-            <a href="#" className="hover:text-cream-300 transition">Terms</a>
-            <a href="#" className="hover:text-cream-300 transition">FSSAI #10022011000543</a>
+        <div className="mx-auto flex max-w-7xl flex-col items-center justify-between gap-3 px-4 py-6 text-xs text-cream-400/80 sm:flex-row sm:px-6 lg:px-8 border-t border-cocoa-900">
+          <div>© 2026 <strong className="text-gold-400">Dear Desserts</strong> • Swathi Theatre Road, Bhavanipuram, Vijayawada</div>
+          <div className="flex gap-4 text-xs font-medium">
+            <Link href="/menu" className="hover:text-gold-300 transition">Full Menu</Link>
+            <a href="https://maps.app.goo.gl/RmuEvt2cNEy637Vk6" target="_blank" rel="noopener noreferrer" className="hover:text-gold-300 transition">Google Maps</a>
+            <Link href="/tokens" className="hover:text-gold-300 transition">Token TV</Link>
           </div>
         </div>
       </footer>
