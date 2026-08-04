@@ -1,62 +1,62 @@
 'use client';
 
 import React from 'react';
-import Image from 'next/image';
 
 export default function Logo({
   size = 'md',
   variant = 'full',
-  theme = 'light',
 }: {
   size?: 'sm' | 'md' | 'lg' | 'xl' | '2xl';
   variant?: 'full' | 'icon-only' | 'title-only';
   theme?: 'light' | 'dark';
 }) {
-  const logoSizeMap = {
-    sm: 'w-10 h-10',
-    md: 'w-14 h-14',
-    lg: 'w-20 h-20',
-    xl: 'w-28 h-28',
-    '2xl': 'w-36 h-36',
+  const iconSizeMap = {
+    sm: 'w-9 h-9',
+    md: 'w-11 h-11',
+    lg: 'w-16 h-16',
+    xl: 'w-24 h-24',
+    '2xl': 'w-32 h-32',
   };
 
-  const titleHeightMap = {
-    sm: 'h-10 w-44',
-    md: 'h-14 w-60',
-    lg: 'h-20 w-80',
-    xl: 'h-26 w-[26rem]',
-    '2xl': 'h-32 w-[32rem]',
+  const titleTextMap = {
+    sm: 'text-base',
+    md: 'text-lg',
+    lg: 'text-2xl',
+    xl: 'text-3xl',
+    '2xl': 'text-4xl',
+  };
+
+  const subtextMap = {
+    sm: 'text-[8px]',
+    md: 'text-[9px]',
+    lg: 'text-[11px]',
+    xl: 'text-xs',
+    '2xl': 'text-sm',
   };
 
   return (
-    <div className="flex items-center space-x-3 group select-none justify-center transition-transform duration-500 group-hover:scale-[1.02]">
+    <div className="flex items-center space-x-2.5 group select-none transition-transform duration-300 hover:scale-[1.01]">
       {variant !== 'title-only' && (
-        <div className={`${logoSizeMap[size]} relative flex items-center justify-center transition-all duration-500 group-hover:scale-105 flex-shrink-0`}>
-          <Image
+        <div className={`${iconSizeMap[size]} relative flex items-center justify-center flex-shrink-0`}>
+          <img
             src="/ddlogo.png"
-            alt="Dear Desserts Emblem"
-            fill
-            sizes="(max-width: 768px) 100vw, 50vw"
-            className="object-contain filter drop-shadow-md"
-            priority
+            alt="Dear Desserts"
+            className="w-full h-full object-contain filter drop-shadow-md rounded-full"
+            onError={(e) => {
+              (e.target as HTMLImageElement).src = '/ddlogo.jpeg';
+            }}
           />
         </div>
       )}
 
       {variant !== 'icon-only' && (
-        <div className={`relative flex flex-col justify-center ${titleHeightMap[size]}`}>
-          <Image
-            src="/ddtitle.png"
-            alt="Dear Desserts - Love At First Bite"
-            fill
-            sizes="(max-width: 768px) 100vw, 50vw"
-            className={`object-contain transition-opacity duration-200 filter drop-shadow-sm ${
-              theme === 'dark'
-                ? 'brightness-200 contrast-200 drop-shadow-[0_2px_8px_rgba(212,175,55,0.4)]'
-                : ''
-            }`}
-            priority
-          />
+        <div className="flex flex-col justify-center leading-none">
+          <span className={`font-display font-black tracking-tight ${titleTextMap[size]} text-cocoa-900`}>
+            Dear <span className="text-gold-500">Desserts</span>
+          </span>
+          <span className={`font-accent font-extrabold uppercase tracking-widest text-gold-600/90 mt-0.5 ${subtextMap[size]}`}>
+            Love At First Bite
+          </span>
         </div>
       )}
     </div>

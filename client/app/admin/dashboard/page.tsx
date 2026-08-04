@@ -27,6 +27,8 @@ import {
   Cell,
 } from 'recharts';
 
+import Logo from '../../../components/Logo';
+
 interface DashboardMetrics {
   revenue: {
     today: number;
@@ -96,12 +98,11 @@ export default function AdminDashboardPage() {
       {/* Executive Header */}
       <div className="bg-white/80 backdrop-blur-xl border border-cream-300/80 p-6 rounded-3xl shadow-sm flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div className="flex items-center space-x-4">
-          <div className="w-14 h-14 rounded-full p-0.5 bg-gradient-to-br from-gold-300 to-caramel-500 shadow-xl overflow-hidden">
-            <img src="/ddlogo.jpeg" alt="Logo" className="w-full h-full object-contain rounded-full bg-cream-100" />
-          </div>
+          <Logo size="lg" />
+          <div className="hidden sm:block h-10 w-[1px] bg-cream-300 mx-2" />
           <div>
-            <img src="/ddtitle.jpeg" alt="Dear Desserts" className="h-9 object-contain filter brightness-200 contrast-125 drop-shadow-[0_2px_8px_rgba(212,175,55,0.4)]" />
-            <p className="text-xs text-gold-400 font-extrabold tracking-wider uppercase mt-0.5">Executive Admin Dashboard • Real-time Outlet Intelligence</p>
+            <h1 className="text-xl md:text-2xl font-display font-extrabold text-cocoa-900">Executive Admin Dashboard</h1>
+            <p className="text-xs text-gold-600 font-bold tracking-wider uppercase">Real-Time Outlet Intelligence • Bhavanipuram</p>
           </div>
         </div>
 

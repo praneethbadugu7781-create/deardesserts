@@ -45,7 +45,6 @@ export default function Navbar() {
         { label: 'Dashboard', path: '/admin/dashboard', icon: LayoutDashboard },
         { label: 'Item Sales', path: '/admin/analytics', icon: BarChart3 },
         { label: 'Peak Rush', path: '/admin/peak-hours', icon: Flame },
-        { label: 'Inventory', path: '/admin/inventory', icon: Boxes },
         { label: 'Menu & Offers', path: '/admin/menu', icon: UtensilsCrossed },
         { label: 'Staff', path: '/admin/staff', icon: Users },
         { label: 'Reports', path: '/admin/reports', icon: FileSpreadsheet },
