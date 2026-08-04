@@ -28,8 +28,8 @@ export default function Navbar() {
   const { user, logout } = useAuth();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
-  // If on customer home page ('/') or login page ('/login'), hide global navbar
-  if (pathname === '/' || pathname === '/login') return null;
+  // If on customer public pages or login page, hide staff navbar
+  if (pathname === '/' || pathname === '/login' || pathname === '/menu' || pathname === '/our-story') return null;
 
   // Infer role ONLY if user is logged in or explicitly on path
   const activeRole = user?.role || (

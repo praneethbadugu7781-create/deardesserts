@@ -298,9 +298,9 @@ const REAL_MENU_ITEMS: MenuItem[] = [
               <Link href="/menu" className="font-accent text-xs font-bold uppercase tracking-wider text-cocoa-800 hover:text-gold-600 transition">
                 Menu
               </Link>
-              <a href="#story-section" className="font-accent text-xs font-bold uppercase tracking-wider text-cocoa-800 hover:text-gold-600 transition">
+              <Link href="/our-story" className="font-accent text-xs font-bold uppercase tracking-wider text-cocoa-800 hover:text-gold-600 transition">
                 Our Story
-              </a>
+              </Link>
             </nav>
           </div>
 
@@ -355,14 +355,14 @@ const REAL_MENU_ITEMS: MenuItem[] = [
               <span className="flex items-center gap-2">🍰 Menu & Catalog</span>
               <ArrowRight className="w-4 h-4 text-cocoa-900" />
             </Link>
-            <a
-              href="#story-section"
+            <Link
+              href="/our-story"
               onClick={() => setMobileNavOpen(false)}
               className="flex items-center justify-between font-accent text-xs font-bold uppercase tracking-wider text-cocoa-900 py-3.5 px-4 rounded-xl bg-white/80 border border-cream-300/60"
             >
               <span>📖 Our Story (Founder Sohail)</span>
               <ArrowRight className="w-4 h-4 text-cocoa-400" />
-            </a>
+            </Link>
             <Link
               href="/tokens"
               onClick={() => setMobileNavOpen(false)}
