@@ -277,39 +277,57 @@ const REAL_MENU_ITEMS: MenuItem[] = [
             : 'bg-cream-100 py-3 md:py-4'
         }`}
       >
-        <div className="mx-auto flex w-full max-w-7xl items-center justify-between px-4 sm:px-6 lg:px-8 relative">
-          {/* Left Side: Brand Logo */}
-          <Link href="/" className="flex items-center space-x-2 shrink-0">
-            <Logo size="lg" />
+        <div className="mx-auto flex w-full max-w-7xl items-center justify-between px-3 sm:px-6 lg:px-8 relative">
+          {/* Left Side: Emblem Logo + Nav links */}
+          <div className="flex items-center gap-2 sm:gap-4">
+            <Link href="/" className="flex-shrink-0">
+              <Logo size="md" variant="icon-only" />
+            </Link>
+
+            {/* Mobile Title logo inline (shown on < md screens so it NEVER overflows) */}
+            <Link href="/" className="md:hidden flex items-center">
+              <img
+                src="/ddtitle.png"
+                alt="Dear Desserts"
+                className="h-8 sm:h-10 w-auto object-contain filter drop-shadow-sm"
+              />
+            </Link>
+
+            <nav className="hidden xl:flex items-center gap-6 ml-4">
+              <a href="#menu-section" className="nav-link-premium">Menu</a>
+              <Link href="/menu" className="font-accent text-xs font-bold uppercase tracking-wider text-gold-600 hover:text-cocoa-900 transition flex items-center gap-1">
+                <span>🍰 Full Catalog</span>
+              </Link>
+              <a href="#specials-section" className="nav-link-premium">Specials</a>
+              <a href="#story-section" className="nav-link-premium">Our Story</a>
+            </nav>
+          </div>
+
+          {/* Desktop Center (Middle): Dear Desserts Title Logo */}
+          <Link href="/" className="hidden md:flex absolute left-1/2 -translate-x-1/2 items-center justify-center">
+            <div className="h-16 w-64 md:h-20 md:w-[22rem] relative flex items-center justify-center">
+              <Image
+                src="/ddtitle.png"
+                alt="Dear Desserts Title"
+                fill
+                sizes="(max-width: 768px) 100vw, 50vw"
+                className="object-contain filter drop-shadow-md scale-110 sm:scale-125 transition-transform duration-300 hover:scale-130"
+                priority
+              />
+            </div>
           </Link>
 
-          {/* Center Navigation Links */}
-          <nav className="hidden lg:flex items-center gap-8 bg-white/80 backdrop-blur-md px-6 py-2 rounded-full border border-cream-300/80 shadow-sm">
-            <a href="#menu-section" className="font-accent text-xs font-bold uppercase tracking-wider text-cocoa-800 hover:text-gold-600 transition">
-              Menu Preview
-            </a>
-            <Link href="/menu" className="font-accent text-xs font-extrabold uppercase tracking-wider text-gold-600 hover:text-cocoa-950 transition flex items-center gap-1">
-              <span>🍰 Full Menu</span>
-              <span className="text-[9px] bg-gold-100 text-gold-700 px-1.5 py-0.5 rounded-md">New</span>
-            </Link>
-            <a href="#specials-section" className="font-accent text-xs font-bold uppercase tracking-wider text-cocoa-800 hover:text-gold-600 transition">
-              Specials
-            </a>
-            <a href="#story-section" className="font-accent text-xs font-bold uppercase tracking-wider text-cocoa-800 hover:text-gold-600 transition">
-              Our Story
-            </a>
-          </nav>
-
-          {/* Right Side: Token TV + Staff Portal + Mobile Menu */}
+          {/* Right Side: Token TV + Staff Portal + Hamburger Button */}
           <div className="flex items-center gap-2 sm:gap-3">
             <Link
               href="/tokens"
-              className="hidden sm:flex items-center gap-2 px-4 py-2 rounded-2xl border border-gold-500/30 bg-gold-50/80 text-cocoa-900 hover:bg-gold-100 font-accent text-xs font-bold uppercase tracking-wider transition-all duration-300 shadow-sm hover:scale-[1.02]"
+              className="hidden lg:flex items-center gap-2 px-3.5 py-2 rounded-2xl border border-gold-500/30 bg-gold-50/60 text-cocoa-900 hover:bg-gold-100/80 font-accent text-[11px] font-bold uppercase tracking-wider transition-all duration-300 shadow-sm hover:scale-[1.02]"
             >
               <MonitorPlay className="h-4 w-4 text-gold-600 animate-pulse" />
               <span>Token TV</span>
             </Link>
 
+            {/* Desktop Staff Portal Button */}
             <Link href="/login" className="hidden sm:block">
               <LiquidMetalButton label="Staff Portal" />
             </Link>
@@ -317,7 +335,7 @@ const REAL_MENU_ITEMS: MenuItem[] = [
             {/* Hamburger Button */}
             <button
               onClick={() => setMobileNavOpen(!mobileNavOpen)}
-              className="lg:hidden p-2.5 rounded-xl bg-white text-cocoa-900 border border-cream-300 hover:bg-cream-200 transition-all active:scale-95 shadow-sm"
+              className="xl:hidden p-2.5 rounded-xl bg-cream-200 text-cocoa-900 border border-cream-300 hover:bg-cream-300 transition-all active:scale-95 shadow-sm"
               aria-label="Toggle navigation menu"
             >
               {mobileNavOpen ? <X className="h-6 w-6 text-cocoa-950" /> : <MenuIcon className="h-6 w-6 text-cocoa-950" />}
