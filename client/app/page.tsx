@@ -269,9 +269,7 @@ const REAL_MENU_ITEMS: MenuItem[] = [
             <X className="h-3.5 w-3.5" />
           </button>
         </div>
-      )}
-
-      {/* Sticky header */}
+      )}      {/* Sticky header */}
       <header
         className={`sticky top-0 z-40 transition-all duration-500 min-h-[4.5rem] md:min-h-[5.5rem] flex items-center ${
           scrolled
@@ -279,62 +277,47 @@ const REAL_MENU_ITEMS: MenuItem[] = [
             : 'bg-cream-100 py-3 md:py-4'
         }`}
       >
-        <div className="mx-auto flex w-full max-w-7xl items-center justify-between px-3 sm:px-6 lg:px-8 relative">
-          {/* Left Side: Emblem Logo + Mobile Brand Title */}
-          <div className="flex items-center gap-2 sm:gap-4">
-            <Link href="/" className="flex-shrink-0">
-              <Logo size="md" variant="icon-only" />
-            </Link>
-
-            {/* Mobile Title logo inline (shown on < md screens so it NEVER overflows) */}
-            <Link href="/" className="md:hidden flex items-center">
-              <img
-                src="/ddtitle.png"
-                alt="Dear Desserts"
-                className="h-8 sm:h-10 w-auto object-contain filter drop-shadow-sm"
-              />
-            </Link>
-
-            <nav className="hidden xl:flex items-center gap-6 ml-4">
-              <a href="#menu-section" className="nav-link-premium">Menu</a>
-              <a href="#specials-section" className="nav-link-premium">Specials</a>
-              <a href="#story-section" className="nav-link-premium">Our Story</a>
-            </nav>
-          </div>
-
-          {/* Desktop Center (Middle): Dear Desserts Title Image MASSIVE & CLEAR */}
-          <Link href="/" className="hidden md:flex absolute left-1/2 -translate-x-1/2 items-center justify-center">
-            <div className="h-20 w-72 md:h-24 md:w-[26rem] lg:h-28 lg:w-[32rem] relative flex items-center justify-center">
-              <Image
-                src="/ddtitle.png"
-                alt="Dear Desserts Title"
-                fill
-                sizes="(max-width: 768px) 100vw, 50vw"
-                className="object-contain filter drop-shadow-xl scale-125 sm:scale-135 md:scale-150 transition-transform duration-300 hover:scale-[1.6]"
-                priority
-              />
-            </div>
+        <div className="mx-auto flex w-full max-w-7xl items-center justify-between px-4 sm:px-6 lg:px-8 relative">
+          {/* Left Side: Brand Logo */}
+          <Link href="/" className="flex items-center space-x-2 shrink-0">
+            <Logo size="lg" />
           </Link>
 
-          {/* Right Side: Token TV + Staff Portal + Hamburger Button */}
+          {/* Center Navigation Links */}
+          <nav className="hidden lg:flex items-center gap-8 bg-white/80 backdrop-blur-md px-6 py-2 rounded-full border border-cream-300/80 shadow-sm">
+            <a href="#menu-section" className="font-accent text-xs font-bold uppercase tracking-wider text-cocoa-800 hover:text-gold-600 transition">
+              Menu Preview
+            </a>
+            <Link href="/menu" className="font-accent text-xs font-extrabold uppercase tracking-wider text-gold-600 hover:text-cocoa-950 transition flex items-center gap-1">
+              <span>🍰 Full Menu</span>
+              <span className="text-[9px] bg-gold-100 text-gold-700 px-1.5 py-0.5 rounded-md">New</span>
+            </Link>
+            <a href="#specials-section" className="font-accent text-xs font-bold uppercase tracking-wider text-cocoa-800 hover:text-gold-600 transition">
+              Specials
+            </a>
+            <a href="#story-section" className="font-accent text-xs font-bold uppercase tracking-wider text-cocoa-800 hover:text-gold-600 transition">
+              Our Story
+            </a>
+          </nav>
+
+          {/* Right Side: Token TV + Staff Portal + Mobile Menu */}
           <div className="flex items-center gap-2 sm:gap-3">
             <Link
               href="/tokens"
-              className="hidden lg:flex items-center gap-2 px-3.5 py-2 rounded-2xl border border-gold-500/30 bg-gold-50/60 text-cocoa-900 hover:bg-gold-100/80 font-accent text-[11px] font-bold uppercase tracking-wider transition-all duration-300 shadow-sm hover:scale-[1.02]"
+              className="hidden sm:flex items-center gap-2 px-4 py-2 rounded-2xl border border-gold-500/30 bg-gold-50/80 text-cocoa-900 hover:bg-gold-100 font-accent text-xs font-bold uppercase tracking-wider transition-all duration-300 shadow-sm hover:scale-[1.02]"
             >
               <MonitorPlay className="h-4 w-4 text-gold-600 animate-pulse" />
               <span>Token TV</span>
             </Link>
 
-            {/* Desktop Staff Portal Button */}
             <Link href="/login" className="hidden sm:block">
               <LiquidMetalButton label="Staff Portal" />
             </Link>
 
-            {/* Hamburger Button (XL and smaller) */}
+            {/* Hamburger Button */}
             <button
               onClick={() => setMobileNavOpen(!mobileNavOpen)}
-              className="xl:hidden p-2.5 rounded-xl bg-cream-200 text-cocoa-900 border border-cream-300 hover:bg-cream-300 transition-all active:scale-95 shadow-sm"
+              className="lg:hidden p-2.5 rounded-xl bg-white text-cocoa-900 border border-cream-300 hover:bg-cream-200 transition-all active:scale-95 shadow-sm"
               aria-label="Toggle navigation menu"
             >
               {mobileNavOpen ? <X className="h-6 w-6 text-cocoa-950" /> : <MenuIcon className="h-6 w-6 text-cocoa-950" />}
@@ -342,97 +325,111 @@ const REAL_MENU_ITEMS: MenuItem[] = [
           </div>
         </div>
 
-        {/* Mobile Navigation Drawer (Absolute Dropdown below Header) */}
+        {/* Mobile Navigation Drawer */}
         {mobileNavOpen && (
-          <div className="absolute top-full left-0 right-0 w-full bg-cream-100/98 backdrop-blur-2xl border-b-2 border-cream-300/80 shadow-2xl p-5 space-y-3.5 z-50 animate-in slide-in-from-top-2 duration-200">
+          <div className="absolute top-full left-0 right-0 w-full bg-cream-100/98 backdrop-blur-2xl border-b-2 border-cream-300/80 shadow-2xl p-5 space-y-3 z-50 animate-in slide-in-from-top-2 duration-200">
+            <Link
+              href="/menu"
+              onClick={() => setMobileNavOpen(false)}
+              className="flex items-center justify-between font-accent text-xs font-bold uppercase tracking-wider text-cocoa-950 py-3 px-4 rounded-xl bg-gold-100 border border-gold-300 shadow-sm"
+            >
+              <span className="flex items-center gap-2">🍰 Full Menu & Catalog</span>
+              <ArrowRight className="w-4 h-4 text-cocoa-900" />
+            </Link>
             <a
               href="#menu-section"
               onClick={() => setMobileNavOpen(false)}
-              className="flex items-center justify-between font-accent text-xs font-bold uppercase tracking-wider text-cocoa-900 py-3 px-4 rounded-xl bg-white/70 border border-cream-300/60 hover:bg-white transition"
+              className="flex items-center justify-between font-accent text-xs font-bold uppercase tracking-wider text-cocoa-900 py-3 px-4 rounded-xl bg-white/80 border border-cream-300/60"
             >
-              <span>📜 Explore Menu</span>
+              <span>📜 Menu Preview</span>
               <ArrowRight className="w-4 h-4 text-cocoa-400" />
             </a>
             <a
               href="#specials-section"
               onClick={() => setMobileNavOpen(false)}
-              className="flex items-center justify-between font-accent text-xs font-bold uppercase tracking-wider text-cocoa-900 py-3 px-4 rounded-xl bg-white/70 border border-cream-300/60 hover:bg-white transition"
+              className="flex items-center justify-between font-accent text-xs font-bold uppercase tracking-wider text-cocoa-900 py-3 px-4 rounded-xl bg-white/80 border border-cream-300/60"
             >
-              <span>🔥 Today's Specials</span>
+              <span>🔥 Signature Specials</span>
               <ArrowRight className="w-4 h-4 text-cocoa-400" />
             </a>
             <Link
               href="/tokens"
               onClick={() => setMobileNavOpen(false)}
-              className="flex items-center justify-between font-accent text-xs font-bold uppercase tracking-wider text-cocoa-900 py-3 px-4 rounded-xl bg-white/70 border border-cream-300/60 hover:bg-white transition"
+              className="flex items-center justify-between font-accent text-xs font-bold uppercase tracking-wider text-cocoa-900 py-3 px-4 rounded-xl bg-white/80 border border-cream-300/60"
             >
-              <span className="flex items-center gap-2"><MonitorPlay className="h-4 w-4 text-gold-600" /> Token TV</span>
+              <span className="flex items-center gap-2"><MonitorPlay className="h-4 w-4 text-gold-600" /> Token TV Screen</span>
               <span className="text-[10px] bg-gold-200 text-cocoa-950 font-black px-2.5 py-0.5 rounded-full border border-gold-400">Live</span>
             </Link>
 
             <Link
               href="/login"
               onClick={() => setMobileNavOpen(false)}
-              className="flex items-center justify-center gap-2 w-full py-3.5 rounded-xl bg-cocoa-900 hover:bg-cocoa-950 text-gold-300 font-accent text-xs font-extrabold uppercase tracking-widest mt-3 shadow-lg border border-gold-500/30 transition-all active:scale-95"
+              className="flex items-center justify-center gap-2 w-full py-3.5 rounded-xl bg-cocoa-900 text-gold-300 font-accent text-xs font-extrabold uppercase tracking-widest mt-2 shadow-lg border border-gold-500/30"
             >
               <Lock className="w-4 h-4 text-gold-400" />
-              <span>Staff Login</span>
+              <span>Staff Login Portal</span>
             </Link>
           </div>
         )}
       </header>
 
-      {/* Hero */}
+      {/* Hero Section */}
       <section className="hero-mesh noise-overlay relative overflow-hidden pb-20 pt-8 lg:pb-28 lg:pt-12">
-        <div className="pointer-events-none absolute -left-32 top-20 h-96 w-96 rounded-full bg-[radial-gradient(circle,rgba(201,162,39,0.1)_0%,transparent_70%)]" />
-        <div className="pointer-events-none absolute -right-24 top-40 h-80 w-80 rounded-full bg-[radial-gradient(circle,rgba(184,92,56,0.1)_0%,transparent_70%)]" />
+        <div className="pointer-events-none absolute -left-32 top-20 h-96 w-96 rounded-full bg-[radial-gradient(circle,rgba(201,162,39,0.12)_0%,transparent_70%)]" />
+        <div className="pointer-events-none absolute -right-24 top-40 h-80 w-80 rounded-full bg-[radial-gradient(circle,rgba(184,92,56,0.12)_0%,transparent_70%)]" />
 
         <div className="relative mx-auto grid max-w-7xl items-center gap-12 px-4 sm:px-6 lg:grid-cols-2 lg:gap-16 lg:px-8">
           <div className="space-y-8 text-center lg:text-left">
             <FadeInView delay={0}>
-              <div className="inline-flex items-center gap-2 rounded-full border border-gold-500/25 bg-white/50 px-4 py-2 font-accent text-[10px] font-bold uppercase tracking-[0.2em] text-caramel-600 backdrop-blur-sm">
-                <Award className="h-3.5 w-3.5 text-gold-500" />
-                Flagship Outlet · Dear Desserts #DD-01
+              <div className="inline-flex items-center gap-2 rounded-full border border-gold-500/30 bg-white/80 px-4 py-2 font-accent text-[11px] font-extrabold uppercase tracking-[0.2em] text-caramel-700 shadow-sm backdrop-blur-md">
+                <Award className="h-4 w-4 text-gold-600" />
+                <span>Flagship Outlet · Bhavanipuram, Vijayawada</span>
               </div>
             </FadeInView>
 
             <FadeInView delay={100}>
-              <h1 className="font-display text-[clamp(2.75rem,7vw,5.5rem)] font-semibold leading-[0.95] tracking-tight text-cocoa-900">
+              <h1 className="font-display text-[clamp(2.75rem,6.5vw,5.25rem)] font-extrabold leading-[0.98] tracking-tight text-cocoa-950">
                 Where Every Bite
-                <span className="block bg-gradient-to-r from-caramel-500 via-gold-500 to-caramel-600 bg-clip-text text-transparent">
-                  Tells a Story
+                <span className="block bg-gradient-to-r from-cocoa-900 via-gold-600 to-caramel-600 bg-clip-text text-transparent">
+                  Tells a Sweet Story
                 </span>
               </h1>
             </FadeInView>
 
             <FadeInView delay={200}>
-              <p className="mx-auto max-w-lg text-base leading-relaxed text-cocoa-600/85 lg:mx-0 lg:text-lg">
-                Artisanal Belgian waffles, hand-crafted cakes, and gourmet thickshakes —
-                made with premium ingredients and served with love at every order.
+              <p className="mx-auto max-w-lg text-base leading-relaxed text-cocoa-700 lg:mx-0 lg:text-lg font-medium">
+                Handcrafted Belgian waffles, warm chocolate fudge, artisanal thickshakes, and gourmet quick bites — made fresh daily with love in Vijayawada.
               </p>
             </FadeInView>
 
             <FadeInView delay={300}>
               <div className="flex flex-wrap items-center justify-center gap-4 lg:justify-start">
-                <PremiumButton href="#menu-section" size="lg" icon={<ArrowRight className="h-4 w-4" />}>
-                  Explore Menu
-                </PremiumButton>
-                <PremiumButton href="#specials-section" variant="secondary" size="lg">
-                  View Specials
-                </PremiumButton>
+                <Link
+                  href="/menu"
+                  className="inline-flex items-center gap-3 px-8 py-4 rounded-2xl bg-gradient-to-r from-cocoa-900 via-cocoa-950 to-black text-gold-300 font-extrabold text-sm uppercase tracking-wider shadow-xl border border-gold-400/30 hover:scale-105 transition-all active:scale-95"
+                >
+                  <span>🍰 View Full Menu & Prices</span>
+                  <ArrowRight className="h-4 w-4 text-gold-400" />
+                </Link>
+                <a
+                  href="#specials-section"
+                  className="inline-flex items-center gap-2 px-7 py-4 rounded-2xl bg-white border border-cream-300 text-cocoa-900 font-accent text-xs font-bold uppercase tracking-wider hover:bg-cream-200 transition-all shadow-md"
+                >
+                  <span>✨ Today's Specials</span>
+                </a>
               </div>
             </FadeInView>
 
             <FadeInView delay={400}>
               <div className="grid grid-cols-3 gap-3 pt-4">
                 {[
-                  { value: `${items.length}`, label: 'Signature Items' },
+                  { value: `${items.length > 0 ? items.length : 43}+`, label: 'Signature Items' },
                   { value: '100%', label: 'Fresh Daily' },
-                  { value: '5★', label: 'Artisanal Quality' },
+                  { value: '4.9★', label: 'Artisanal Quality' },
                 ].map((stat) => (
-                  <div key={stat.label} className="stat-pill">
-                    <div className="font-display text-2xl font-semibold text-cocoa-900">{stat.value}</div>
-                    <div className="mt-0.5 font-accent text-[9px] font-bold uppercase tracking-wider text-cocoa-600/70">
+                  <div key={stat.label} className="stat-pill bg-white/80 border border-cream-300/80 p-4 rounded-2xl shadow-sm">
+                    <div className="font-display text-2xl font-bold text-cocoa-950">{stat.value}</div>
+                    <div className="mt-0.5 font-accent text-[9px] font-extrabold uppercase tracking-wider text-gold-700">
                       {stat.label}
                     </div>
                   </div>
@@ -441,29 +438,43 @@ const REAL_MENU_ITEMS: MenuItem[] = [
             </FadeInView>
           </div>
 
+          {/* Right Side: Interactive Hero Bestseller Card Showcase */}
           <FadeInView delay={200} direction="left" className="relative mx-auto w-full max-w-md lg:max-w-none">
             <div className="animate-float relative">
-              <div className="absolute -inset-4 rounded-[2.5rem] bg-gradient-to-br from-gold-500/10 via-transparent to-caramel-500/10 shadow-[0_0_60px_rgba(201,162,39,0.2)]" />
-              <div className="relative overflow-hidden rounded-[2rem] border-4 border-white shadow-[0_32px_80px_rgba(44,24,16,0.18)]">
-                <div className="relative h-[420px] w-full lg:h-[520px]">
+              <div className="absolute -inset-4 rounded-[2.5rem] bg-gradient-to-br from-gold-500/15 via-transparent to-caramel-500/15 shadow-[0_0_60px_rgba(201,162,39,0.25)]" />
+              <div className="relative overflow-hidden rounded-[2.5rem] border-4 border-white shadow-[0_32px_80px_rgba(44,24,16,0.2)] bg-white">
+                <div className="relative h-[420px] w-full lg:h-[500px]">
                   <Image
                     src="https://images.unsplash.com/photo-1572490122747-3968b75cc699?w=900&q=85"
-                    alt="Dear Desserts signature Belgian shake and waffle"
+                    alt="Dear Desserts Signature Belgian Chocolate Thickshake"
                     fill
                     sizes="(max-width: 1024px) 100vw, 50vw"
-                    className="object-cover"
+                    className="object-cover transition-transform duration-700 hover:scale-105"
                     priority
                   />
-                </div>
-                <div className="absolute inset-0 bg-gradient-to-t from-cocoa-950/60 via-transparent to-transparent" />
-                <div className="absolute bottom-6 left-6 right-6 flex items-center justify-between rounded-2xl border border-white/20 bg-cocoa-950/70 px-5 py-3.5 backdrop-blur-md">
-                  <div>
-                    <div className="font-accent text-[10px] font-bold uppercase tracking-wider text-gold-400">Chef&apos;s Pick</div>
-                    <div className="font-display text-lg font-semibold text-white">Belgian Chocolate Thickshake</div>
+                  <div className="absolute inset-0 bg-gradient-to-t from-cocoa-950/90 via-cocoa-950/20 to-transparent" />
+                  
+                  {/* Floating Tags */}
+                  <div className="absolute top-4 left-4 flex gap-2">
+                    <span className="bg-cocoa-950/90 backdrop-blur-md text-gold-300 border border-gold-400/40 text-[10px] font-extrabold px-3 py-1 rounded-full uppercase tracking-wider shadow-md">
+                      🔥 #1 Chef's Pick
+                    </span>
+                    <span className="bg-emerald-950/90 backdrop-blur-md text-emerald-300 border border-emerald-500/40 text-[10px] font-extrabold px-3 py-1 rounded-full uppercase tracking-wider shadow-md">
+                      🟢 Outlet Open Now
+                    </span>
                   </div>
-                  <div className="flex items-center gap-1 font-accent text-xl font-extrabold text-gold-400">
-                    <Star className="h-4 w-4 fill-gold-400" />
-                    ₹170
+
+                  {/* Card Bottom Details */}
+                  <div className="absolute bottom-6 left-6 right-6 flex items-end justify-between text-white">
+                    <div className="space-y-1">
+                      <span className="font-accent text-[10px] font-extrabold uppercase tracking-[0.2em] text-gold-400">Handcrafted Daily</span>
+                      <p className="font-display text-2xl font-extrabold tracking-tight">Belgian Chocolate Thickshake</p>
+                      <p className="text-xs text-cream-300/80 font-medium">Rich Belgian cocoa, creamy ice cream & chocolate drip</p>
+                    </div>
+                    <div className="text-right shrink-0 ml-4">
+                      <span className="font-display text-3xl font-black text-gold-400">₹170</span>
+                      <p className="text-[10px] text-cream-300/70 font-bold uppercase">Net Price</p>
+                    </div>
                   </div>
                 </div>
               </div>
@@ -471,7 +482,7 @@ const REAL_MENU_ITEMS: MenuItem[] = [
           </FadeInView>
         </div>
 
-        <div className="mt-16 flex justify-center animate-bounce">
+        <div className="mt-12 flex justify-center animate-bounce">
           <ChevronDown className="h-6 w-6 text-cocoa-600/40" />
         </div>
       </section>
