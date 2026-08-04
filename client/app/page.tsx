@@ -577,8 +577,8 @@ const REAL_MENU_ITEMS: MenuItem[] = [
             <div className="relative overflow-hidden rounded-[2rem]">
               <div className="relative h-80 w-full lg:h-[420px]">
                 <Image
-                  src="https://images.unsplash.com/photo-1488477181946-6428a0291777?w=800&q=85"
-                  alt="Dear Desserts artisan kitchen"
+                  src="/philosophy.jpg"
+                  alt="Dear Desserts Our Philosophy"
                   fill
                   sizes="(max-width: 1024px) 100vw, 50vw"
                   className="object-cover"
