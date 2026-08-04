@@ -28,6 +28,7 @@ import {
   Award,
   Leaf,
   Clock,
+  Heart,
   ChevronDown,
   X,
   Menu as MenuIcon,
@@ -293,13 +294,13 @@ const REAL_MENU_ITEMS: MenuItem[] = [
               />
             </Link>
 
-            <nav className="hidden xl:flex items-center gap-6 ml-4">
-              <a href="#menu-section" className="nav-link-premium">Menu</a>
-              <Link href="/menu" className="font-accent text-xs font-bold uppercase tracking-wider text-gold-600 hover:text-cocoa-900 transition flex items-center gap-1">
-                <span>🍰 Full Catalog</span>
+            <nav className="hidden xl:flex items-center gap-8 ml-4">
+              <Link href="/menu" className="font-accent text-xs font-bold uppercase tracking-wider text-cocoa-800 hover:text-gold-600 transition">
+                Menu
               </Link>
-              <a href="#specials-section" className="nav-link-premium">Specials</a>
-              <a href="#story-section" className="nav-link-premium">Our Story</a>
+              <a href="#story-section" className="font-accent text-xs font-bold uppercase tracking-wider text-cocoa-800 hover:text-gold-600 transition">
+                Our Story
+              </a>
             </nav>
           </div>
 
@@ -349,31 +350,23 @@ const REAL_MENU_ITEMS: MenuItem[] = [
             <Link
               href="/menu"
               onClick={() => setMobileNavOpen(false)}
-              className="flex items-center justify-between font-accent text-xs font-bold uppercase tracking-wider text-cocoa-950 py-3 px-4 rounded-xl bg-gold-100 border border-gold-300 shadow-sm"
+              className="flex items-center justify-between font-accent text-xs font-bold uppercase tracking-wider text-cocoa-950 py-3.5 px-4 rounded-xl bg-gold-100 border border-gold-300 shadow-sm"
             >
-              <span className="flex items-center gap-2">🍰 Full Menu & Catalog</span>
+              <span className="flex items-center gap-2">🍰 Menu & Catalog</span>
               <ArrowRight className="w-4 h-4 text-cocoa-900" />
             </Link>
             <a
-              href="#menu-section"
+              href="#story-section"
               onClick={() => setMobileNavOpen(false)}
-              className="flex items-center justify-between font-accent text-xs font-bold uppercase tracking-wider text-cocoa-900 py-3 px-4 rounded-xl bg-white/80 border border-cream-300/60"
+              className="flex items-center justify-between font-accent text-xs font-bold uppercase tracking-wider text-cocoa-900 py-3.5 px-4 rounded-xl bg-white/80 border border-cream-300/60"
             >
-              <span>📜 Menu Preview</span>
-              <ArrowRight className="w-4 h-4 text-cocoa-400" />
-            </a>
-            <a
-              href="#specials-section"
-              onClick={() => setMobileNavOpen(false)}
-              className="flex items-center justify-between font-accent text-xs font-bold uppercase tracking-wider text-cocoa-900 py-3 px-4 rounded-xl bg-white/80 border border-cream-300/60"
-            >
-              <span>🔥 Signature Specials</span>
+              <span>📖 Our Story (Founder Sohail)</span>
               <ArrowRight className="w-4 h-4 text-cocoa-400" />
             </a>
             <Link
               href="/tokens"
               onClick={() => setMobileNavOpen(false)}
-              className="flex items-center justify-between font-accent text-xs font-bold uppercase tracking-wider text-cocoa-900 py-3 px-4 rounded-xl bg-white/80 border border-cream-300/60"
+              className="flex items-center justify-between font-accent text-xs font-bold uppercase tracking-wider text-cocoa-900 py-3.5 px-4 rounded-xl bg-white/80 border border-cream-300/60"
             >
               <span className="flex items-center gap-2"><MonitorPlay className="h-4 w-4 text-gold-600" /> Token TV Screen</span>
               <span className="text-[10px] bg-gold-200 text-cocoa-950 font-black px-2.5 py-0.5 rounded-full border border-gold-400">Live</span>
@@ -426,15 +419,9 @@ const REAL_MENU_ITEMS: MenuItem[] = [
                   href="/menu"
                   className="inline-flex items-center gap-3 px-8 py-4 rounded-2xl bg-gradient-to-r from-cocoa-900 via-cocoa-950 to-black text-gold-300 font-extrabold text-sm uppercase tracking-wider shadow-xl border border-gold-400/30 hover:scale-105 transition-all active:scale-95"
                 >
-                  <span>🍰 View Full Menu & Prices</span>
+                  <span>🍰 View Menu & Catalog</span>
                   <ArrowRight className="h-4 w-4 text-gold-400" />
                 </Link>
-                <a
-                  href="#specials-section"
-                  className="inline-flex items-center gap-2 px-7 py-4 rounded-2xl bg-white border border-cream-300 text-cocoa-900 font-accent text-xs font-bold uppercase tracking-wider hover:bg-cream-200 transition-all shadow-md"
-                >
-                  <span>✨ Today's Specials</span>
-                </a>
               </div>
             </FadeInView>
 
@@ -598,47 +585,61 @@ const REAL_MENU_ITEMS: MenuItem[] = [
         </div>
       </section>
 
-      {/* Story */}
-      <section id="story-section" className="relative overflow-hidden py-20 lg:py-28">
+      {/* Story & Founder Journey */}
+      <section id="story-section" className="relative overflow-hidden py-20 lg:py-28 bg-gradient-to-b from-cream-100 via-cream-200/50 to-cream-100 border-t border-cream-300/60">
         <div className="pointer-events-none absolute inset-0 bg-gradient-to-b from-transparent via-gold-500/5 to-transparent" />
-        <div className="relative mx-auto grid max-w-7xl items-center gap-12 px-4 sm:px-6 lg:grid-cols-2 lg:px-8">
+        <div className="relative mx-auto grid max-w-7xl items-center gap-12 px-4 sm:px-6 lg:grid-cols-2 lg:gap-16 lg:px-8">
           <FadeInView direction="right">
-            <div className="relative overflow-hidden rounded-[2rem]">
-              <div className="relative h-80 w-full lg:h-[420px]">
+            <div className="relative overflow-hidden rounded-[2.5rem] border-4 border-white shadow-2xl">
+              <div className="relative h-80 w-full lg:h-[480px]">
                 <Image
                   src="/philosophy.jpg"
-                  alt="Dear Desserts Our Philosophy"
+                  alt="Dear Desserts Founder Sohail Journey"
                   fill
                   sizes="(max-width: 1024px) 100vw, 50vw"
                   className="object-cover"
                 />
+                <div className="absolute inset-0 bg-gradient-to-t from-cocoa-950/90 via-cocoa-950/20 to-transparent" />
+                
+                {/* Founder Badge overlay */}
+                <div className="absolute bottom-6 left-6 right-6 p-5 rounded-2xl bg-white/95 backdrop-blur-md border border-cream-300 shadow-xl space-y-1">
+                  <div className="flex items-center justify-between">
+                    <span className="font-accent text-[10px] font-black uppercase tracking-[0.2em] text-gold-600">The Visionary Founder</span>
+                    <span className="text-xs font-bold text-cocoa-700">Dear Desserts</span>
+                  </div>
+                  <h4 className="font-display font-extrabold text-xl text-cocoa-950">SOHAIL</h4>
+                  <p className="text-xs text-cocoa-700 italic">"Every waffle we bake & every shake we blend carries one promise — Love at First Bite."</p>
+                </div>
               </div>
-              <div className="absolute inset-0 bg-gradient-to-tr from-cocoa-950/40 to-transparent" />
             </div>
           </FadeInView>
 
-          <FadeInView delay={150}>
-            <span className="font-accent text-[11px] font-bold uppercase tracking-[0.25em] text-caramel-500">Our Philosophy</span>
-            <h2 className="mt-3 font-display text-4xl font-semibold leading-tight text-cocoa-900 sm:text-5xl">
-              Crafted With Passion,<br />Served With Love
-            </h2>
-            <p className="mt-6 text-base leading-relaxed text-cocoa-600/85">
-              At Dear Desserts, we believe every dessert is an experience. From Belgian cocoa sourced
-              from premium suppliers to organic vanilla beans and golden-crisp waffles — every ingredient
-              is chosen to create moments worth remembering.
+          <FadeInView delay={150} className="space-y-6">
+            <div>
+              <span className="font-accent text-xs font-extrabold uppercase tracking-[0.25em] text-gold-600">Our Founder's Story</span>
+              <h2 className="mt-2 font-display text-4xl sm:text-5xl font-extrabold leading-tight text-cocoa-950">
+                A Sweet Passion Born From Heart, Vision & Dedication
+              </h2>
+            </div>
+
+            <p className="text-base leading-relaxed text-cocoa-800 font-medium">
+              Dear Desserts wasn’t built in a corporate boardroom — it was born in a kitchen out of pure love, late-night recipe experiments, and a deep obsession with genuine Belgian cocoa. Our founder, <strong className="text-cocoa-950 font-bold">Sohail</strong>, started with a simple yet heartfelt dream: to bring world-class, freshly baked bubble waffles, fudgy brownies, and thick artisanal shakes to Vijayawada.
             </p>
-            <div className="mt-8 flex flex-wrap gap-4">
+
+            <p className="text-sm leading-relaxed text-cocoa-700 font-normal">
+              From hand-selecting rich Belgian cocoa suppliers to perfecting the golden crispy texture of our signature waffles, Sohail poured his heart into every single recipe. Today, Dear Desserts stands as a beloved home for dessert lovers — where quality is never compromised, and every order is crafted fresh with genuine warmth.
+            </p>
+
+            <div className="grid grid-cols-3 gap-3 pt-2">
               {[
-                { icon: Leaf, text: 'Premium Ingredients' },
-                { icon: Clock, text: 'Made Fresh to Order' },
-                { icon: Award, text: 'Award-Winning Recipes' },
-              ].map(({ icon: Icon, text }) => (
-                <div
-                  key={text}
-                  className="flex items-center gap-2 rounded-full border border-cream-400 bg-white/60 px-4 py-2 font-accent text-[10px] font-bold uppercase tracking-wider text-cocoa-700"
-                >
-                  <Icon className="h-3.5 w-3.5 text-caramel-500" />
-                  {text}
+                { icon: Heart, label: 'Founded by Sohail', detail: 'Driven by Passion' },
+                { icon: Sparkles, label: '100% Pure Cocoa', detail: 'Belgian Import' },
+                { icon: Award, label: '#1 Rated Outlet', detail: 'Bhavanipuram' },
+              ].map(({ icon: Icon, label, detail }) => (
+                <div key={label} className="p-3.5 rounded-2xl bg-white border border-cream-300 shadow-sm space-y-1">
+                  <Icon className="h-4 w-4 text-gold-600" />
+                  <div className="font-display font-extrabold text-xs text-cocoa-950">{label}</div>
+                  <div className="text-[10px] text-cocoa-600 font-medium">{detail}</div>
                 </div>
               ))}
             </div>
