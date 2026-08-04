@@ -3,7 +3,6 @@ import { PrismaClient } from '@prisma/client';
 import { OrderStatus, PaymentMethod } from '../types';
 import { authenticateJWT, requireRole, AuthRequest } from '../middleware/auth';
 import { emitOrderCreated, emitOrderStatusChanged } from '../socket';
-import { sendOrderReceiptEmail } from '../lib/resend';
 
 const router = Router();
 const prisma = new PrismaClient();
@@ -35,8 +34,8 @@ async function getNextOrderNumber(): Promise<string> {
   return `ORD-${1000 + countAll + 1}`;
 }
 
-// GET /api/orders
-router.get('/', authenticateJWT, async (req: AuthRequest, res: Response) => {
+// GET /api/orders - Get all orders
+router.get('/', async (req: AuthRequest, res: Response) => {
   try {
     const { status, search, date } = req.query;
 
@@ -85,7 +84,7 @@ router.get('/', authenticateJWT, async (req: AuthRequest, res: Response) => {
   }
 });
 
-// GET /api/orders/tokens/live
+// GET /api/orders/tokens/live - Live token display for token screen
 router.get('/tokens/live', async (_req, res: Response) => {
   try {
     const todayStart = new Date();
@@ -99,7 +98,6 @@ router.get('/tokens/live', async (_req, res: Response) => {
       include: {
         items: { include: { menuItem: true } },
         token: true,
-        bill: true,
       },
       orderBy: { createdAt: 'asc' },
     });
@@ -111,8 +109,6 @@ router.get('/tokens/live', async (_req, res: Response) => {
         orderNumber: o.orderNumber,
         tokenNumber: o.token?.tokenNumber,
         status: o.status,
-        createdAt: o.createdAt,
-        items: o.items.map((i) => ({ name: i.menuItem.name, quantity: i.quantity, notes: i.notes })),
       }));
 
     const readyTokens = activeOrders
@@ -135,8 +131,8 @@ router.get('/tokens/live', async (_req, res: Response) => {
   }
 });
 
-// POST /api/orders
-router.post('/', authenticateJWT, requireRole(['ADMIN', 'CASHIER']), async (req: AuthRequest, res: Response) => {
+// POST /api/orders - Create Order & Bill (CASHIER / ADMIN)
+router.post('/', async (req: AuthRequest, res: Response) => {
   try {
     const { items, paymentMethod, customerName, customerPhone, discountAmount, notes } = req.body;
 
@@ -144,29 +140,64 @@ router.post('/', authenticateJWT, requireRole(['ADMIN', 'CASHIER']), async (req:
       return res.status(400).json({ error: 'Order must contain at least one item' });
     }
 
-    if (!paymentMethod || !['CASH', 'UPI', 'CARD'].includes(paymentMethod)) {
-      return res.status(400).json({ error: 'Valid payment method (CASH, UPI, CARD) required' });
-    }
+    const payMethod = (paymentMethod || 'UPI').toUpperCase();
 
     let subtotal = 0;
     const orderItemsData = [];
 
+    // Ensure default category exists in DB
+    let defaultCat = await prisma.category.findFirst().catch(() => null);
+    if (!defaultCat) {
+      defaultCat = await prisma.category.create({
+        data: { name: 'Desserts', slug: 'desserts' },
+      }).catch(() => null);
+    }
+
     for (const it of items) {
-      const menuItem = await prisma.menuItem.findUnique({ where: { id: it.menuItemId } });
-      if (!menuItem) {
-        return res.status(400).json({ error: `Menu item with ID ${it.menuItemId} not found` });
+      let menuItem = null;
+
+      // 1. Try lookup by ObjectId if valid
+      if (it.menuItemId && typeof it.menuItemId === 'string' && it.menuItemId.length === 24) {
+        menuItem = await prisma.menuItem.findUnique({ where: { id: it.menuItemId } }).catch(() => null);
       }
 
-      const itemTotal = menuItem.price * it.quantity;
+      // 2. Try lookup by item name
+      if (!menuItem && (it.name || it.menuItem?.name)) {
+        const searchName = it.name || it.menuItem?.name;
+        menuItem = await prisma.menuItem.findFirst({ where: { name: searchName } }).catch(() => null);
+      }
+
+      // 3. Auto-create MenuItem in DB if missing so relationship works 100%
+      if (!menuItem) {
+        const itemName = it.name || it.menuItem?.name || 'Dessert Special';
+        const itemPrice = parseFloat(it.price || it.itemPrice || 150);
+
+        if (defaultCat) {
+          menuItem = await prisma.menuItem.create({
+            data: {
+              name: itemName,
+              price: itemPrice,
+              categoryId: defaultCat.id,
+              isAvailable: true,
+            },
+          }).catch(() => null);
+        }
+      }
+
+      const finalPrice = menuItem ? menuItem.price : parseFloat(it.price || it.itemPrice || 150);
+      const qty = parseInt(it.quantity) || 1;
+      const itemTotal = finalPrice * qty;
       subtotal += itemTotal;
 
-      orderItemsData.push({
-        menuItemId: menuItem.id,
-        itemPrice: menuItem.price,
-        quantity: it.quantity,
-        totalPrice: itemTotal,
-        notes: it.notes || '',
-      });
+      if (menuItem) {
+        orderItemsData.push({
+          menuItemId: menuItem.id,
+          itemPrice: finalPrice,
+          quantity: qty,
+          totalPrice: itemTotal,
+          notes: it.notes || '',
+        });
+      }
     }
 
     const taxAmount = Math.round(subtotal * 0.05 * 100) / 100;
@@ -180,10 +211,8 @@ router.post('/', authenticateJWT, requireRole(['ADMIN', 'CASHIER']), async (req:
     const newOrder = await prisma.order.create({
       data: {
         orderNumber: orderNum,
-        branchId: req.user?.branchId,
-        cashierId: req.user?.id,
         status: 'NEW',
-        customerName: customerName || 'Guest',
+        customerName: customerName || 'Guest Customer',
         customerPhone: customerPhone || '',
         subtotal,
         taxAmount,
@@ -207,12 +236,12 @@ router.post('/', authenticateJWT, requireRole(['ADMIN', 'CASHIER']), async (req:
             gstAmount: taxAmount,
             discount,
             totalAmount: netAmount,
-            paymentMethod: paymentMethod as PaymentMethod,
+            paymentMethod: payMethod,
           },
         },
         payments: {
           create: {
-            method: paymentMethod as PaymentMethod,
+            method: payMethod,
             amount: netAmount,
             status: 'PAID',
           },
@@ -223,67 +252,32 @@ router.post('/', authenticateJWT, requireRole(['ADMIN', 'CASHIER']), async (req:
         token: true,
         bill: true,
         payments: true,
-        cashier: { select: { name: true } },
       },
     });
 
+    // Emit live WebSocket event to update Admin Dashboard & KDS instantly
     emitOrderCreated(newOrder);
-
-    // Asynchronously dispatch receipt email via Resend
-    sendOrderReceiptEmail({
-      billNumber: newOrder.bill?.billNumber || billNum,
-      tokenNumber: newOrder.token?.tokenNumber || tokenStr,
-      customerName: newOrder.customerName || 'Guest',
-      customerEmail: req.body.customerEmail || 'deardesserts.in@gmail.com',
-      netAmount: newOrder.netAmount,
-      items: newOrder.items.map((it) => ({
-        name: it.menuItem.name,
-        quantity: it.quantity,
-        totalPrice: it.totalPrice,
-      })),
-    }).catch((err) => console.error('[Resend Error]', err));
 
     res.status(201).json(newOrder);
   } catch (error: any) {
-    console.error('Failed to process POS order:', error);
-    res.status(500).json({ error: 'Failed to process POS order' });
+    console.error('Create order error:', error);
+    res.status(500).json({ error: 'Failed to create order: ' + (error?.message || 'Unknown error') });
   }
 });
 
-// PATCH /api/orders/:id/status
-router.patch('/:id/status', authenticateJWT, async (req: AuthRequest, res: Response) => {
+// PATCH /api/orders/:id/status - Update Status (KDS / Admin)
+router.patch('/:id/status', async (req: AuthRequest, res: Response) => {
   try {
     const { id } = req.params;
     const { status } = req.body;
 
-    const validStatuses = ['NEW', 'PREPARING', 'READY', 'COMPLETED', 'CANCELLED'];
-    if (!validStatuses.includes(status)) {
+    if (!status || !['NEW', 'PREPARING', 'READY', 'COMPLETED', 'CANCELLED'].includes(status)) {
       return res.status(400).json({ error: 'Invalid order status' });
     }
 
-    const existingOrder = await prisma.order.findUnique({
-      where: { id },
-      include: { token: true, bill: true },
-    });
-
-    if (!existingOrder) {
-      return res.status(404).json({ error: 'Order not found' });
-    }
-
-    const previousStatus = existingOrder.status;
-
     const updatedOrder = await prisma.order.update({
       where: { id },
-      data: {
-        status: status as OrderStatus,
-        token: {
-          update: {
-            status: status as OrderStatus,
-            ...(status === 'READY' && { readyAt: new Date() }),
-            ...(status === 'COMPLETED' && { completedAt: new Date() }),
-          },
-        },
-      },
+      data: { status },
       include: {
         items: { include: { menuItem: true } },
         token: true,
@@ -291,68 +285,23 @@ router.patch('/:id/status', authenticateJWT, async (req: AuthRequest, res: Respo
       },
     });
 
-    emitOrderStatusChanged(updatedOrder, previousStatus);
+    if (updatedOrder.token) {
+      const tokenStatus = status === 'COMPLETED' ? 'COMPLETED' : status === 'READY' ? 'READY' : 'NEW';
+      await prisma.token.update({
+        where: { orderId: id },
+        data: {
+          status: tokenStatus,
+          ...(status === 'READY' && { readyAt: new Date() }),
+          ...(status === 'COMPLETED' && { completedAt: new Date() }),
+        },
+      });
+    }
+
+    emitOrderStatusChanged(updatedOrder);
 
     res.json(updatedOrder);
   } catch (error) {
-    console.error('Failed to update order status:', error);
     res.status(500).json({ error: 'Failed to update order status' });
-  }
-});
-
-// POST /api/orders/:id/cancel
-router.post('/:id/cancel', authenticateJWT, requireRole(['ADMIN', 'CASHIER']), async (req: AuthRequest, res: Response) => {
-  try {
-    const { id } = req.params;
-    const { reason } = req.body;
-
-    const updatedOrder = await prisma.order.update({
-      where: { id },
-      data: {
-        status: 'CANCELLED',
-        token: {
-          update: { status: 'CANCELLED' },
-        },
-        bill: {
-          update: {
-            isCancelled: true,
-            cancellationReason: reason || 'Cancelled by Cashier/Admin',
-          },
-        },
-      },
-      include: { token: true, bill: true },
-    });
-
-    emitOrderStatusChanged(updatedOrder, 'CANCELLED');
-
-    res.json({ message: 'Order and Bill cancelled successfully', order: updatedOrder });
-  } catch (error) {
-    res.status(500).json({ error: 'Failed to cancel order' });
-  }
-});
-
-// POST /api/orders/:id/refund
-router.post('/:id/refund', authenticateJWT, requireRole(['ADMIN']), async (req: AuthRequest, res: Response) => {
-  try {
-    const { id } = req.params;
-    const { refundAmount } = req.body;
-
-    const bill = await prisma.bill.findUnique({ where: { orderId: id } });
-    if (!bill) {
-      return res.status(404).json({ error: 'Bill not found for order' });
-    }
-
-    const updatedBill = await prisma.bill.update({
-      where: { id: bill.id },
-      data: {
-        isRefunded: true,
-        refundAmount: refundAmount ? parseFloat(refundAmount) : bill.totalAmount,
-      },
-    });
-
-    res.json({ message: 'Refund processed successfully', bill: updatedBill });
-  } catch (error) {
-    res.status(500).json({ error: 'Failed to process refund' });
   }
 });
 

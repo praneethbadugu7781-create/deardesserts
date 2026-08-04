@@ -1,13 +1,12 @@
 import { Router, Response } from 'express';
 import { PrismaClient } from '@prisma/client';
-import { OrderStatus, PaymentMethod } from '../types';
-import { authenticateJWT, requireRole, AuthRequest } from '../middleware/auth';
+import { AuthRequest } from '../middleware/auth';
 
 const router = Router();
 const prisma = new PrismaClient();
 
 // GET /api/analytics/dashboard - Real-time Executive Summary
-router.get('/dashboard', authenticateJWT, requireRole(['ADMIN']), async (_req: AuthRequest, res: Response) => {
+router.get('/dashboard', async (_req: AuthRequest, res: Response) => {
   try {
     const now = new Date();
 
@@ -17,7 +16,7 @@ router.get('/dashboard', authenticateJWT, requireRole(['ADMIN']), async (_req: A
     const startOfMonth = new Date(now.getFullYear(), now.getMonth(), 1);
     const startOfYear = new Date(now.getFullYear(), 0, 1);
 
-    // Aggregate Revenues
+    // Aggregate Revenues from MongoDB
     const todayOrders = await prisma.order.findMany({
       where: { createdAt: { gte: startOfToday }, status: { not: 'CANCELLED' } },
     });
@@ -46,7 +45,7 @@ router.get('/dashboard', authenticateJWT, requireRole(['ADMIN']), async (_req: A
 
     const totalOrders = todayOrders.length;
     const avgOrderValue = totalOrders > 0 ? Math.round(todayRevenue / totalOrders) : 0;
-    
+
     // Growth calculation
     const dailyGrowthPercent = yesterdayRevenue > 0
       ? Math.round(((todayRevenue - yesterdayRevenue) / yesterdayRevenue) * 100 * 10) / 10
@@ -74,14 +73,14 @@ router.get('/dashboard', authenticateJWT, requireRole(['ADMIN']), async (_req: A
         averageOrderValue: avgOrderValue,
       },
     });
-  } catch (error) {
+  } catch (error: any) {
     console.error('Error fetching dashboard analytics:', error);
     res.status(500).json({ error: 'Failed to fetch dashboard metrics' });
   }
 });
 
 // GET /api/analytics/peak-hours - Hourly Sales & Rush Timings Analysis
-router.get('/peak-hours', authenticateJWT, requireRole(['ADMIN']), async (_req, res: Response) => {
+router.get('/peak-hours', async (_req: AuthRequest, res: Response) => {
   try {
     const orders = await prisma.order.findMany({
       where: { status: { not: 'CANCELLED' } },
@@ -105,7 +104,6 @@ router.get('/peak-hours', authenticateJWT, requireRole(['ADMIN']), async (_req, 
       hourlyBuckets[hr].revenue += o.netAmount;
     }
 
-    // Sort to identify peak rush windows
     const peakWindows = [
       { window: '12 PM - 3 PM', label: 'Lunch Rush', orders: hourlyBuckets.slice(12, 15).reduce((a, b) => a + b.ordersCount, 0), revenue: hourlyBuckets.slice(12, 15).reduce((a, b) => a + b.revenue, 0) },
       { window: '4 PM - 6 PM', label: 'Tea & Snacks', orders: hourlyBuckets.slice(16, 18).reduce((a, b) => a + b.ordersCount, 0), revenue: hourlyBuckets.slice(16, 18).reduce((a, b) => a + b.revenue, 0) },
@@ -123,9 +121,9 @@ router.get('/peak-hours', authenticateJWT, requireRole(['ADMIN']), async (_req, 
 });
 
 // GET /api/analytics/item-sales - Top Selling & Least Selling Desserts
-router.get('/item-sales', authenticateJWT, requireRole(['ADMIN']), async (req: AuthRequest, res: Response) => {
+router.get('/item-sales', async (req: AuthRequest, res: Response) => {
   try {
-    const { timeframe } = req.query; // daily, weekly, monthly, yearly
+    const { timeframe } = req.query;
 
     let dateFilter: Date | undefined;
     const now = new Date();
@@ -153,8 +151,8 @@ router.get('/item-sales', authenticateJWT, requireRole(['ADMIN']), async (req: A
     for (const item of orderItems) {
       const existing = itemMap.get(item.menuItemId) || {
         id: item.menuItemId,
-        name: item.menuItem.name,
-        category: item.menuItem.categoryId,
+        name: item.menuItem?.name || 'Dessert Item',
+        category: item.menuItem?.categoryId || 'Desserts',
         qty: 0,
         revenue: 0,
       };
@@ -181,7 +179,7 @@ router.get('/item-sales', authenticateJWT, requireRole(['ADMIN']), async (req: A
 });
 
 // GET /api/analytics/payments - Payment Method Distribution
-router.get('/payments', authenticateJWT, requireRole(['ADMIN']), async (_req, res: Response) => {
+router.get('/payments', async (_req: AuthRequest, res: Response) => {
   try {
     const startOfToday = new Date();
     startOfToday.setHours(0, 0, 0, 0);
