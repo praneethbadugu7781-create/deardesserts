@@ -297,7 +297,7 @@ router.patch('/:id/status', async (req: AuthRequest, res: Response) => {
       });
     }
 
-    emitOrderStatusChanged(updatedOrder);
+    emitOrderStatusChanged(updatedOrder, status);
 
     res.json(updatedOrder);
   } catch (error) {

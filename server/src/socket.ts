@@ -35,7 +35,7 @@ export const emitOrderCreated = (orderData: any) => {
   }
 };
 
-export const emitOrderStatusChanged = (orderData: any, previousStatus: string) => {
+export const emitOrderStatusChanged = (orderData: any, previousStatus?: string) => {
   if (ioInstance) {
     ioInstance.emit('order_status_updated', orderData);
     ioInstance.emit('token_updated', { type: 'STATUS_CHANGE', order: orderData, previousStatus });
