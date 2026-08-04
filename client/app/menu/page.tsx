@@ -149,14 +149,18 @@ export default function FullMenuPage() {
         </div>
       </header>
 
-      {/* Hero Banner */}
-      <div className="bg-gradient-to-r from-cocoa-900 via-cocoa-950 to-black text-white py-12 px-4 sm:px-8 text-center space-y-3 relative overflow-hidden">
-        <div className="absolute inset-0 opacity-10 bg-[radial-gradient(#D4AF37_1px,transparent_1px)] [background-size:16px_16px]" />
-        <span className="font-accent text-xs font-bold uppercase tracking-[0.25em] text-gold-400">Complete Dessert Catalog</span>
-        <h1 className="text-3xl sm:text-5xl font-display font-extrabold text-cream-100 tracking-tight">
-          Explore Our <span className="text-gold-400">Full Menu</span>
+      {/* Seamless Hero Banner */}
+      <div className="relative overflow-hidden py-14 px-4 sm:px-8 text-center space-y-3.5 border-b border-cream-300/60 bg-gradient-to-b from-cream-100 via-cream-200/60 to-cream-100">
+        <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-white border border-gold-300/60 text-gold-700 text-xs font-accent font-extrabold uppercase tracking-widest shadow-sm">
+          <Sparkles className="w-4 h-4 text-gold-600" />
+          <span>Complete Dessert Catalog</span>
+        </div>
+
+        <h1 className="text-3xl sm:text-5xl lg:text-6xl font-display font-extrabold text-cocoa-950 tracking-tight leading-tight">
+          Explore Our <span className="bg-gradient-to-r from-cocoa-900 via-gold-600 to-caramel-600 bg-clip-text text-transparent">Full Menu</span>
         </h1>
-        <p className="text-sm text-cream-300/80 max-w-xl mx-auto font-medium">
+
+        <p className="text-sm sm:text-base text-cocoa-700 max-w-2xl mx-auto font-medium leading-relaxed">
           Freshly baked Belgian waffles, fudgy brownies, artisanal thickshakes, poppin bowls & crunchy quick bites!
         </p>
       </div>

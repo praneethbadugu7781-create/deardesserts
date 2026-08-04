@@ -4,15 +4,15 @@ import React from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import Logo from '../../components/Logo';
-import { ArrowLeft, Heart, Sparkles, Award, MapPin, Clock, Phone } from 'lucide-react';
+import { ArrowLeft, Heart, Sparkles, Award, MapPin, Clock, Phone, UtensilsCrossed } from 'lucide-react';
 
 export default function OurStoryPage() {
   return (
-    <div className="min-h-screen bg-cream-100 font-sans text-cocoa-900 pb-20">
-      {/* Header */}
-      <header className="sticky top-0 z-40 bg-white/80 backdrop-blur-xl border-b border-cream-300/80 py-4 px-4 sm:px-8 shadow-sm flex items-center justify-between">
-        <Link href="/" className="flex items-center gap-2 text-cocoa-800 hover:text-cocoa-950 font-bold text-xs sm:text-sm transition">
-          <ArrowLeft className="w-4 h-4 text-gold-500" />
+    <div className="min-h-screen bg-cream-100 font-sans text-cocoa-950 pb-20">
+      {/* Seamless Sticky Header */}
+      <header className="sticky top-0 z-40 bg-white/90 backdrop-blur-xl border-b border-cream-300/80 py-3.5 px-4 sm:px-8 shadow-sm flex items-center justify-between">
+        <Link href="/" className="flex items-center gap-2 text-cocoa-800 hover:text-cocoa-950 font-extrabold text-xs sm:text-sm transition">
+          <ArrowLeft className="w-4 h-4 text-gold-600" />
           <span>Back to Home</span>
         </Link>
 
@@ -20,21 +20,26 @@ export default function OurStoryPage() {
 
         <Link
           href="/menu"
-          className="flex items-center gap-2 bg-cocoa-900 text-gold-300 hover:bg-cocoa-950 px-4 py-2 rounded-full text-xs font-bold shadow-sm transition"
+          className="flex items-center gap-2 bg-gradient-to-r from-cocoa-900 to-cocoa-950 text-gold-300 hover:scale-105 px-4 py-2 rounded-2xl text-xs font-bold shadow-md transition"
         >
-          <span>🍰 Explore Full Menu</span>
+          <UtensilsCrossed className="w-3.5 h-3.5 text-gold-400" />
+          <span>Explore Full Menu</span>
         </Link>
       </header>
 
-      {/* Hero Banner */}
-      <div className="bg-gradient-to-r from-cocoa-900 via-cocoa-950 to-black text-white py-16 px-4 sm:px-8 text-center space-y-3 relative overflow-hidden">
-        <div className="absolute inset-0 opacity-10 bg-[radial-gradient(#D4AF37_1px,transparent_1px)] [background-size:16px_16px]" />
-        <span className="font-accent text-xs font-bold uppercase tracking-[0.25em] text-gold-400">The Story of Dear Desserts</span>
-        <h1 className="text-3xl sm:text-5xl font-display font-extrabold text-cream-100 tracking-tight">
-          Crafted With Heart, <span className="text-gold-400">Served With Love</span>
+      {/* Warm Luxury Hero Banner (Seamless Light Cream Design) */}
+      <div className="relative overflow-hidden py-14 px-4 sm:px-8 text-center space-y-3.5 border-b border-cream-300/60 bg-gradient-to-b from-cream-100 via-cream-200/60 to-cream-100">
+        <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-white border border-gold-300/60 text-gold-700 text-xs font-accent font-extrabold uppercase tracking-widest shadow-sm">
+          <Sparkles className="w-4 h-4 text-gold-600" />
+          <span>The Story of Dear Desserts</span>
+        </div>
+
+        <h1 className="text-3xl sm:text-5xl lg:text-6xl font-display font-extrabold text-cocoa-950 tracking-tight leading-tight">
+          Crafted With Heart, <span className="bg-gradient-to-r from-cocoa-900 via-gold-600 to-caramel-600 bg-clip-text text-transparent">Served With Love</span>
         </h1>
-        <p className="text-sm sm:text-base text-cream-300/80 max-w-2xl mx-auto font-medium leading-relaxed">
-          Discover how founder Sohail turned a personal passion for authentic Belgian cocoa into Vijayawada’s favorite dessert destination.
+
+        <p className="text-sm sm:text-base text-cocoa-700 max-w-2xl mx-auto font-medium leading-relaxed">
+          Discover how founder <strong className="text-cocoa-950 font-bold">Sohail</strong> turned a personal passion for authentic Belgian cocoa into Vijayawada’s favorite dessert destination.
         </p>
       </div>
 
