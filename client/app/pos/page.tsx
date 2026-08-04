@@ -227,10 +227,10 @@ const REAL_CATEGORIES: Category[] = [
     setCustomerPhone('');
   };
 
-  // Math totals
+  // Math totals (No GST tax as requested)
   const subtotal = cart.reduce((acc, ci) => acc + ci.menuItem.price * ci.quantity, 0);
-  const taxAmount = Math.round(subtotal * 0.05 * 100) / 100; // 5% GST
-  const netTotal = Math.max(0, subtotal + taxAmount - discountInput);
+  const taxAmount = 0;
+  const netTotal = Math.max(0, subtotal - discountInput);
 
   // Generate & Print Bill
   const handleGenerateBill = async () => {
@@ -685,10 +685,6 @@ const REAL_CATEGORIES: Category[] = [
                 <span>Subtotal</span>
                 <span>₹{subtotal}</span>
               </div>
-              <div className="flex justify-between text-cocoa-700">
-                <span>GST Tax (5%)</span>
-                <span>₹{taxAmount}</span>
-              </div>
               <div className="flex justify-between items-center text-cocoa-700 pt-2 border-t border-cream-300/50">
                 <span>Discount (₹)</span>
                 <input
@@ -711,14 +707,14 @@ const REAL_CATEGORIES: Category[] = [
             <button
               disabled={cart.length === 0 || isSubmitting}
               onClick={handleGenerateBill}
-              className="w-full py-4 rounded-2xl bg-gradient-to-r from-cocoa-800 to-cocoa-950 hover:from-cocoa-900 hover:to-black text-gold-300 font-extrabold text-base md:text-lg tracking-wide shadow-xl transition-all flex items-center justify-center gap-3 disabled:opacity-60 disabled:cursor-not-allowed disabled:hover:scale-100 hover:scale-[1.02]"
+              className="w-full py-3.5 rounded-2xl bg-gradient-to-r from-cocoa-800 to-cocoa-950 hover:from-cocoa-900 hover:to-black text-gold-300 font-bold text-base shadow-lg transition-all flex items-center justify-center gap-2.5 disabled:opacity-60 disabled:cursor-not-allowed hover:scale-[1.01] active:scale-95"
             >
               {isSubmitting ? (
-                <RefreshCw className="w-6 h-6 animate-spin" />
+                <RefreshCw className="w-5 h-5 animate-spin" />
               ) : (
                 <>
-                  <CheckCircle2 className="w-6 h-6" /> 
-                  <span className="font-accent tracking-widest uppercase text-sm">Checkout & Print</span>
+                  <CheckCircle2 className="w-5 h-5 text-gold-400" />
+                  <span className="font-extrabold tracking-wide text-sm sm:text-base">Checkout & Print Bill</span>
                 </>
               )}
             </button>
@@ -751,15 +747,12 @@ const REAL_CATEGORIES: Category[] = [
                 <div className="absolute top-0 left-0 right-0 h-2 bg-[url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIxMCIgaGVpZ2h0PSIxMCI+PHBvbHlnb24gcG9pbnRzPSIwLDEwIDUsMCAxMCwxMCIgZmlsbD0iI2ZmZmZmZiIvPjwvc3ZnPg==')] transform rotate-180 -mt-2"></div>
                 
                 <div className="text-center flex flex-col items-center pt-2 space-y-1">
-                  {/* ONLY Original Emblem Logo */}
-                  <img src="/ddlogo.png" alt="Dear Desserts Logo" className="w-18 h-18 sm:w-20 sm:h-20 object-contain mx-auto mb-1 drop-shadow-sm" />
-                  
-                  <h2 className="font-display font-black text-xl tracking-wider text-cocoa-950 uppercase">DEAR DESSERTS</h2>
-                  <p className="text-[10px] font-accent font-extrabold uppercase tracking-[0.2em] text-caramel-600">Love At First Bite</p>
-                  <p className="text-[11px] text-cocoa-700 font-semibold mt-1 max-w-[18rem] leading-tight">
+                  <h2 className="font-display font-black text-2xl tracking-wider text-cocoa-950 uppercase">DEAR DESSERTS</h2>
+                  <p className="text-[11px] font-accent font-extrabold uppercase tracking-[0.2em] text-gold-600 mt-0.5">Love At First Bite</p>
+                  <p className="text-xs text-cocoa-700 font-semibold mt-1 max-w-[18rem] leading-tight">
                     Swathi Theatre Road, Opp. Sri Balaji Sweets, Bhavanipuram, Vijayawada - 520012
                   </p>
-                  <p className="text-[10px] text-cocoa-600 font-medium">Ph: +91 98765 43210 • GSTIN: 37AAACD1234F1Z9</p>
+                  <p className="text-[11px] text-cocoa-600 font-medium">Ph: +91 98765 43210</p>
                   
                   <div className="w-full my-3 border-b-2 border-dashed border-cream-300" />
                   
