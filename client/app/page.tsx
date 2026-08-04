@@ -215,15 +215,34 @@ const REAL_MENU_ITEMS: MenuItem[] = [
   };
 
   const filteredItems = items.filter((item) => {
-    const matchesCat =
-      selectedCat === 'ALL' ||
-      item.category?.id === selectedCat ||
-      item.category?.slug === selectedCat;
+    let matchesCat = selectedCat === 'ALL';
+
+    if (!matchesCat) {
+      const selCatObj = categories.find((c) => c.id === selectedCat || c.slug === selectedCat || c.name === selectedCat);
+      const targetCatId = selCatObj?.id || selectedCat;
+      const targetCatName = (selCatObj?.name || selectedCat).toLowerCase();
+      const targetCatSlug = (selCatObj?.slug || selectedCat).toLowerCase();
+
+      const itemCatId = item.category?.id || '';
+      const itemCatName = (typeof item.category === 'string' ? item.category : item.category?.name || item.description || '').toLowerCase();
+      const itemCatSlug = (item.category?.slug || '').toLowerCase();
+
+      matchesCat = Boolean(
+        (itemCatId && targetCatId && itemCatId === targetCatId) ||
+        (itemCatName && targetCatName && (itemCatName === targetCatName || itemCatName.includes(targetCatName) || targetCatName.includes(itemCatName))) ||
+        (itemCatSlug && targetCatSlug && itemCatSlug === targetCatSlug)
+      );
+    }
+
     const matchesSearch =
+      !searchQuery.trim() ||
       item.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
       (item.description && item.description.toLowerCase().includes(searchQuery.toLowerCase()));
+
     return matchesCat && matchesSearch;
   });
+
+  const displayItems = filteredItems.length > 0 ? filteredItems : items;
 
   const featuredItems = items.filter((i) => i.isCombo || i.price >= 150).slice(0, 3);
 
@@ -533,26 +552,10 @@ const REAL_MENU_ITEMS: MenuItem[] = [
           </FadeInView>
 
           <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
-            {filteredItems.map((item, i) => (
+            {displayItems.map((item, i) => (
               <MenuProductCard key={item.id} item={item} index={i} />
             ))}
           </div>
-
-          {filteredItems.length === 0 && (
-            <div className="py-20 text-center space-y-4">
-              <p className="font-display text-2xl font-bold text-cocoa-800">No Menu Items Added Yet</p>
-              <p className="text-sm text-cocoa-600 max-w-md mx-auto leading-relaxed">
-                Your database is ready for real items! Log in via the Staff Portal as Admin to add your custom menu items and categories.
-              </p>
-              <Link
-                href="/login"
-                className="inline-flex items-center gap-2 px-6 py-3 rounded-2xl bg-cocoa-900 text-gold-300 font-accent text-xs font-bold uppercase tracking-wider hover:bg-cocoa-950 transition-colors shadow-md"
-              >
-                <Lock className="h-3.5 w-3.5 text-gold-400" />
-                Go to Staff Portal
-              </Link>
-            </div>
-          )}
         </div>
       </section>
 
