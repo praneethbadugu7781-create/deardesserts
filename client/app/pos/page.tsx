@@ -321,7 +321,11 @@ const REAL_CATEGORIES: Category[] = [
 
   // Thermal printing handler (Standard Browser Print)
   const handlePrintThermal = () => {
+    document.body.classList.add('printing-receipt');
     window.print();
+    setTimeout(() => {
+      document.body.classList.remove('printing-receipt');
+    }, 500);
   };
 
   // Direct Web Bluetooth ESC/POS Print (Chrome on Android/PWA)

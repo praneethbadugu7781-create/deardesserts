@@ -66,6 +66,26 @@ export default function ReportsPage() {
 
   return (
     <div className="min-h-screen bg-cream-100 p-4 md:p-6 space-y-6">
+      {/* Print PDF Clean Header (Visible only when saving/printing PDF) */}
+      <div className="hidden print:block mb-6 pb-4 border-b-2 border-cocoa-900 text-cocoa-950">
+        <div className="flex items-center justify-between">
+          <div className="flex items-center space-x-4">
+            <img src="/ddlogo.png" alt="Dear Desserts Logo" className="w-16 h-16 object-contain rounded-full border border-cream-300" />
+            <div>
+              <h1 className="text-2xl font-display font-black tracking-tight text-cocoa-950">DEAR DESSERTS</h1>
+              <p className="text-xs font-accent font-extrabold uppercase tracking-widest text-gold-600">Love At First Bite</p>
+              <p className="text-xs text-cocoa-700 font-semibold mt-0.5">Swathi Theatre Road, Opp. Sri Balaji Sweets, Bhavanipuram, Vijayawada - 520012</p>
+              <p className="text-xs text-cocoa-600 font-medium">Ph: +91 98765 43210</p>
+            </div>
+          </div>
+          <div className="text-right space-y-1">
+            <h2 className="text-xl font-display font-extrabold text-cocoa-900">SALES & REVENUE REPORT</h2>
+            <p className="text-xs text-cocoa-800 font-bold">Period: {startDate} to {endDate}</p>
+            <p className="text-[10px] text-cocoa-600 font-medium">Report Generated: {new Date().toLocaleString()}</p>
+          </div>
+        </div>
+      </div>
+
       {/* Header */}
       <div className="bg-white/80 backdrop-blur-xl border border-cream-300/80 p-6 rounded-3xl shadow-sm flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div>

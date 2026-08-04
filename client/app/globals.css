@@ -281,24 +281,46 @@
   @apply bg-white/70 text-cocoa-600 hover:bg-white hover:text-caramel-600 hover:shadow-md;
 }
 
-/* ── Thermal print ── */
+/* ── Print styles ── */
 @media print {
-  body * {
+  /* POS thermal receipt print mode */
+  body.printing-receipt * {
     visibility: hidden;
   }
-  #thermal-receipt, #thermal-receipt *,
-  #kot-receipt, #kot-receipt * {
+  body.printing-receipt #thermal-receipt, 
+  body.printing-receipt #thermal-receipt *,
+  body.printing-receipt #kot-receipt, 
+  body.printing-receipt #kot-receipt * {
     visibility: visible;
   }
-  #thermal-receipt, #kot-receipt {
-    position: relative;
+  body.printing-receipt #thermal-receipt, 
+  body.printing-receipt #kot-receipt {
+    position: absolute;
+    left: 0;
+    top: 0;
     width: 80mm;
-    margin: 0 0 20px 0;
+    margin: 0;
     padding: 12px;
     background: white !important;
     color: black !important;
     font-family: 'Courier New', Courier, monospace;
     font-size: 12px;
-    page-break-after: always;
+  }
+
+  /* Page Print Mode (e.g. Reports PDF Export) */
+  body:not(.printing-receipt) header,
+  body:not(.printing-receipt) nav,
+  body:not(.printing-receipt) button,
+  body:not(.printing-receipt) .no-print {
+    display: none !important;
+  }
+  body:not(.printing-receipt) {
+    background: white !important;
+    color: black !important;
+  }
+  body:not(.printing-receipt) .min-h-screen {
+    min-height: auto !important;
+    padding: 0 !important;
+    background: white !important;
   }
 }
