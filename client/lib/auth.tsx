@@ -90,6 +90,30 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       targetEmail === 'cashier@deardesserts.com' ||
       targetEmail.includes('cashier');
 
+    // Allowed passwords for fallback verification
+    let allowedAdminPasses = ['admin123'];
+    let allowedCashierPasses = ['cashier123'];
+    let allowedKitchenPasses = ['kitchen123'];
+
+    const customAdminPass = typeof window !== 'undefined' ? localStorage.getItem('dd_admin_password') : null;
+    if (customAdminPass) allowedAdminPasses.push(customAdminPass);
+
+    const customStaffRaw = typeof window !== 'undefined' ? localStorage.getItem('dd_custom_staff') : null;
+    if (customStaffRaw) {
+      try {
+        const staffList: any[] = JSON.parse(customStaffRaw);
+        staffList.forEach((s) => {
+          if (s.password) {
+            if (s.role === 'ADMIN') allowedAdminPasses.push(s.password);
+            if (s.role === 'CASHIER') allowedCashierPasses.push(s.password);
+            if (s.role === 'KITCHEN_STAFF') allowedKitchenPasses.push(s.password);
+          }
+        });
+      } catch (e) {
+        console.error('Failed to parse custom staff:', e);
+      }
+    }
+
     // 1. Try backend API login if available
     try {
       const data = await fetchApi('/auth/login', {
@@ -121,11 +145,19 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         return;
       }
     } catch (err: any) {
-      console.warn('Backend API login fallback active:', err.message);
+      console.warn('Backend API login response:', err.message);
+      // If backend explicitly rejected credentials, throw error immediately!
+      if (err.message && (err.message.includes('401') || err.message.toLowerCase().includes('invalid') || err.message.toLowerCase().includes('password') || err.message.toLowerCase().includes('credential'))) {
+        throw new Error('Invalid email or password. Please check your credentials.');
+      }
     }
 
-    // 2. Admin Login Verification (Guaranteed for mobile and desktop)
+    // 2. Strict Password Verification
     if (isAdminEmail) {
+      if (!allowedAdminPasses.includes(cleanPass)) {
+        throw new Error('Incorrect password for Admin portal. Please enter the correct password.');
+      }
+
       const adminUser: User = {
         id: 'admin_real',
         name: 'Store Manager',
@@ -141,8 +173,11 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       return;
     }
 
-    // 3. Cashier Login Verification (Guaranteed for mobile and desktop)
     if (isCashierEmail) {
+      if (!allowedCashierPasses.includes(cleanPass)) {
+        throw new Error('Incorrect password for Cashier POS. Please enter the correct password.');
+      }
+
       const cashierUser: User = {
         id: 'cashier_real',
         name: 'POS Cashier',
@@ -158,7 +193,11 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       return;
     }
 
-    // 4. Any other email
+    // Generic staff check
+    if (!allowedCashierPasses.includes(cleanPass) && !allowedKitchenPasses.includes(cleanPass) && !allowedAdminPasses.includes(cleanPass)) {
+      throw new Error('Invalid password. Please check your credentials.');
+    }
+
     const genericUser: User = {
       id: 'staff_' + Date.now(),
       name: 'Staff Member',
