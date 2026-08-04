@@ -412,50 +412,55 @@ const REAL_CATEGORIES: Category[] = [
   return (
     <div className="min-h-screen bg-cream-100 font-sans text-cocoa-900 p-4 md:p-6 space-y-6">
       {/* POS Top Bar */}
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 bg-white/80 backdrop-blur-xl p-4 md:p-6 rounded-3xl shadow-lg border border-cream-300/80">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 bg-white/80 backdrop-blur-xl p-4 sm:p-5 rounded-3xl shadow-sm border border-cream-300/80">
         <div>
-          <h1 className="text-2xl md:text-3xl font-display font-extrabold tracking-tight flex items-center gap-3 text-cocoa-900">
-            <ShoppingCart className="w-8 h-8 text-gold-400" /> POS Billing Terminal
+          <h1 className="text-xl sm:text-2xl font-display font-extrabold tracking-tight flex items-center gap-2 text-cocoa-900">
+            <ShoppingCart className="w-6 h-6 text-gold-500" /> POS Billing Terminal
           </h1>
-          <p className="text-sm text-cocoa-600 mt-1 font-medium">Fast QSR Checkout • GST Bill & Auto Token Generation</p>
+          <p className="text-xs text-cocoa-600 font-medium hidden sm:block">Fast QSR Checkout • GST Bill & Auto Token Generation</p>
         </div>
 
-        <div className="flex items-center space-x-3">
-          <span className="flex items-center space-x-2 bg-cream-200 text-cocoa-900 px-4 py-2.5 rounded-full text-xs font-black border border-cream-300 shadow-sm">
-            <span>Total Items: <span className="text-cocoa-900 font-extrabold ml-1">{menuItems.length}</span></span>
+        <div className="flex items-center justify-between sm:justify-end gap-2">
+          <span className="bg-cream-200 text-cocoa-900 px-3 py-1.5 rounded-xl text-xs font-extrabold border border-cream-300">
+            Total: <span className="text-gold-600">{menuItems.length}</span>
           </span>
           <button
             onClick={() => setShowHistoryDrawer(true)}
-            className="flex items-center space-x-2 bg-gradient-to-r from-cocoa-800 to-cocoa-950 hover:from-cocoa-900 hover:to-black text-gold-300 px-5 py-2.5 rounded-full text-sm font-bold shadow-md transition-all hover:scale-105"
+            className="flex items-center gap-1.5 bg-gradient-to-r from-cocoa-800 to-cocoa-950 text-gold-300 px-3.5 py-1.5 rounded-xl text-xs font-bold shadow-sm transition hover:scale-105"
           >
-            <History className="w-4 h-4" />
-            <span>Today&apos;s Bills: <span className="text-gold-400 ml-1">{todayOrders.length}</span></span>
+            <History className="w-3.5 h-3.5" />
+            <span>Today&apos;s Bills: <span className="text-gold-400 font-black">{todayOrders.length}</span></span>
           </button>
         </div>
       </div>
+
       {/* Mobile Tab Switcher */}
-      <div className="lg:hidden grid grid-cols-2 gap-2 bg-cream-200/80 p-1.5 rounded-2xl border border-cream-300">
+      <div className="lg:hidden grid grid-cols-2 gap-2 bg-cream-200/90 p-1 rounded-2xl border border-cream-300 shadow-sm sticky top-16 z-40">
         <button
           onClick={() => setMobileTab('MENU')}
-          className={`flex items-center justify-center gap-2 py-3 rounded-xl font-accent text-xs font-bold uppercase tracking-wider transition-all ${
+          className={`flex items-center justify-center gap-2 py-2.5 px-3 rounded-xl text-xs font-bold transition-all ${
             mobileTab === 'MENU'
               ? 'bg-cocoa-900 text-gold-300 shadow-md font-extrabold'
-              : 'text-cocoa-700 hover:bg-cream-300'
+              : 'text-cocoa-800 hover:bg-cream-300'
           }`}
         >
-          <UtensilsCrossed className="w-4 h-4" /> 🍰 Menu Items
+          <UtensilsCrossed className="w-4 h-4 text-gold-400" />
+          <span>Menu</span>
+          <span className="text-[10px] opacity-80">({menuItems.length})</span>
         </button>
+
         <button
           onClick={() => setMobileTab('CART')}
-          className={`flex items-center justify-center gap-2 py-3 rounded-xl font-accent text-xs font-bold uppercase tracking-wider transition-all relative ${
+          className={`flex items-center justify-center gap-2 py-2.5 px-3 rounded-xl text-xs font-bold transition-all relative ${
             mobileTab === 'CART'
               ? 'bg-cocoa-900 text-gold-300 shadow-md font-extrabold'
-              : 'text-cocoa-700 hover:bg-cream-300'
+              : 'text-cocoa-800 hover:bg-cream-300'
           }`}
         >
-          <Receipt className="w-4 h-4" /> 🧾 Bill & Checkout
+          <ShoppingCart className="w-4 h-4 text-gold-400" />
+          <span>Cart & Checkout</span>
           {cart.length > 0 && (
-            <span className="bg-gold-400 text-cocoa-950 text-[10px] font-black px-2 py-0.5 rounded-full ml-1">
+            <span className="bg-gold-500 text-cocoa-950 text-[10px] font-black px-2 py-0.5 rounded-full shadow-sm">
               {cart.reduce((sum, ci) => sum + ci.quantity, 0)}
             </span>
           )}
