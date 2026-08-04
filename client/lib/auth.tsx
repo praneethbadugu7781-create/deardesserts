@@ -75,11 +75,12 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   const login = async (email: string, pass: string) => {
     if (!email || !pass || !pass.trim()) {
-      throw new Error('Please enter your email and password.');
+      throw new Error('Please enter both email and password.');
     }
 
     const targetEmail = email.trim().toLowerCase();
     const cleanPass = pass.trim();
+    const lowerPass = cleanPass.toLowerCase();
 
     const isAdminEmail =
       targetEmail === 'deardesserts.in@gmail.com' ||
@@ -90,8 +91,42 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       targetEmail === 'cashier@deardesserts.com' ||
       targetEmail.includes('cashier');
 
-    // 1. Admin Login (Guaranteed instant login for any entered password)
+    const isKitchenEmail =
+      targetEmail === 'kitchen@deardesserts.com' ||
+      targetEmail.includes('kitchen');
+
+    // Authorized password lists
+    const validAdminPasses = ['admin123', 'admin', 'admin@123', 'admin1234', 'admin2024', 'deardesserts'];
+    const validCashierPasses = ['cashier123', 'cashier', 'cashier@123', 'cashier2024'];
+    const validKitchenPasses = ['kitchen123', 'kitchen', 'kitchen@123', 'kitchen2024'];
+
+    // Check custom staff passwords configured in localStorage (Staff Management)
+    const customAdminPass = typeof window !== 'undefined' ? localStorage.getItem('dd_admin_password') : null;
+    if (customAdminPass) validAdminPasses.push(customAdminPass.toLowerCase());
+
+    const customStaffRaw = typeof window !== 'undefined' ? localStorage.getItem('dd_custom_staff') : null;
+    if (customStaffRaw) {
+      try {
+        const staffList: any[] = JSON.parse(customStaffRaw);
+        staffList.forEach((s) => {
+          if (s.password) {
+            const p = s.password.toLowerCase();
+            if (s.role === 'ADMIN') validAdminPasses.push(p);
+            if (s.role === 'CASHIER') validCashierPasses.push(p);
+            if (s.role === 'KITCHEN_STAFF') validKitchenPasses.push(p);
+          }
+        });
+      } catch (e) {
+        console.error('Failed to parse custom staff:', e);
+      }
+    }
+
+    // 1. Strict Admin Authentication
     if (isAdminEmail) {
+      if (!validAdminPasses.includes(lowerPass)) {
+        throw new Error('🔒 Access Denied: Invalid Admin password. Default password is: admin123');
+      }
+
       const adminUser: User = {
         id: 'admin_real',
         name: 'Store Manager',
@@ -107,8 +142,12 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       return;
     }
 
-    // 2. Cashier POS Login (Guaranteed instant login for any entered password)
+    // 2. Strict Cashier POS Authentication
     if (isCashierEmail) {
+      if (!validCashierPasses.includes(lowerPass)) {
+        throw new Error('🔒 Access Denied: Invalid Cashier password. Default password is: cashier123');
+      }
+
       const cashierUser: User = {
         id: 'cashier_real',
         name: 'POS Cashier',
@@ -124,19 +163,29 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       return;
     }
 
-    // 3. Any other staff member account
-    const genericUser: User = {
-      id: 'staff_' + Date.now(),
-      name: 'Staff Member',
-      email: targetEmail,
-      role: 'CASHIER',
-      branch: { id: 'b1', name: 'Dear Desserts - Bhavanipuram', code: 'DD-01' },
-    };
-    const token = 'staff_token_' + Date.now();
-    setToken(token);
-    setUser(genericUser);
-    localStorage.setItem('dd_token', token);
-    localStorage.setItem('dd_user', JSON.stringify(genericUser));
+    // 3. Strict Kitchen KDS Authentication
+    if (isKitchenEmail) {
+      if (!validKitchenPasses.includes(lowerPass)) {
+        throw new Error('🔒 Access Denied: Invalid Kitchen password. Default password is: kitchen123');
+      }
+
+      const kitchenUser: User = {
+        id: 'kitchen_real',
+        name: 'Head Chef',
+        email: 'kitchen@deardesserts.com',
+        role: 'KITCHEN_STAFF',
+        branch: { id: 'b1', name: 'Dear Desserts - Bhavanipuram', code: 'DD-01' },
+      };
+      const token = 'real_kitchen_token_' + Date.now();
+      setToken(token);
+      setUser(kitchenUser);
+      localStorage.setItem('dd_token', token);
+      localStorage.setItem('dd_user', JSON.stringify(kitchenUser));
+      return;
+    }
+
+    // Reject all unauthorized access attempts
+    throw new Error('🔒 Access Denied: Unauthorized staff credentials.');
   };
 
   const logout = () => {
