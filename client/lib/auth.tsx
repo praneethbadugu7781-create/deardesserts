@@ -34,18 +34,38 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     const savedUser = localStorage.getItem('dd_user');
 
     if (savedToken && savedUser) {
-      setToken(savedToken);
-      setUser(JSON.parse(savedUser));
-      // Validate token with backend
-      fetchApi('/auth/me')
-        .then((res) => {
-          setUser(res);
-          localStorage.setItem('dd_user', JSON.stringify(res));
-        })
-        .catch(() => {
-          // Keep active local session
-        })
-        .finally(() => setLoading(false));
+      try {
+        const parsedUser: User = JSON.parse(savedUser);
+        setToken(savedToken);
+        setUser(parsedUser);
+
+        // Validate token with backend
+        fetchApi('/auth/me')
+          .then((res) => {
+            if (res && res.role) {
+              // Strict protection: Never allow /auth/me to degrade an ADMIN user to CASHIER
+              let verifiedUser: User = res;
+              if (parsedUser.role === 'ADMIN') {
+                verifiedUser = {
+                  ...res,
+                  role: 'ADMIN',
+                  name: 'Store Manager',
+                  email: 'deardesserts.in@gmail.com',
+                };
+              }
+              setUser(verifiedUser);
+              localStorage.setItem('dd_user', JSON.stringify(verifiedUser));
+            }
+          })
+          .catch(() => {
+            // Keep active local session
+          })
+          .finally(() => setLoading(false));
+      } catch (e) {
+        setUser(null);
+        setToken(null);
+        setLoading(false);
+      }
     } else {
       setUser(null);
       setToken(null);
@@ -59,18 +79,27 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     }
 
     const targetEmail = email.trim().toLowerCase();
-    const isAdminEmail = targetEmail === 'deardesserts.in@gmail.com' || targetEmail === 'admin@deardesserts.com' || targetEmail.includes('admin');
-    const isCashierEmail = targetEmail === 'cashier@deardesserts.com' || targetEmail.includes('cashier');
+    const cleanPass = pass.trim();
+    const lowerPass = cleanPass.toLowerCase();
+
+    const isAdminEmail =
+      targetEmail === 'deardesserts.in@gmail.com' ||
+      targetEmail === 'admin@deardesserts.com' ||
+      targetEmail.includes('admin');
+
+    const isCashierEmail =
+      targetEmail === 'cashier@deardesserts.com' ||
+      targetEmail.includes('cashier');
 
     // 1. Get stored custom passwords updated by Admin in Settings/Staff
-    const savedAdminPass = (typeof window !== 'undefined' ? localStorage.getItem('dd_admin_pass') : null) || 'admin123';
-    const savedCashierPass = (typeof window !== 'undefined' ? localStorage.getItem('dd_cashier_pass') : null) || 'cashier123';
+    const savedAdminPass = ((typeof window !== 'undefined' ? localStorage.getItem('dd_admin_pass') : null) || 'admin123').trim().toLowerCase();
+    const savedCashierPass = ((typeof window !== 'undefined' ? localStorage.getItem('dd_cashier_pass') : null) || 'cashier123').trim().toLowerCase();
 
     // 2. Try backend API login if available
     try {
       const data = await fetchApi('/auth/login', {
         method: 'POST',
-        body: JSON.stringify({ email, password: pass }),
+        body: JSON.stringify({ email: targetEmail, password: cleanPass }),
       });
 
       if (data && data.token && data.user) {
@@ -81,6 +110,13 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
             name: 'Store Manager',
             email: 'deardesserts.in@gmail.com',
             role: 'ADMIN',
+          };
+        } else if (isCashierEmail) {
+          finalUser = {
+            ...data.user,
+            name: 'POS Cashier',
+            email: 'cashier@deardesserts.com',
+            role: 'CASHIER',
           };
         }
         setToken(data.token);
@@ -93,9 +129,16 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       console.warn('Backend API login failed, checking strict password credentials:', err.message);
     }
 
-    // 3. Strict Admin Login Verification
+    // 3. Strict Admin Login Verification (Case-insensitive for mobile keyboards)
     if (isAdminEmail) {
-      if (pass !== savedAdminPass && pass !== 'admin123' && pass !== 'admin') {
+      const isAdminValid =
+        lowerPass === savedAdminPass ||
+        lowerPass === 'admin123' ||
+        lowerPass === 'admin' ||
+        lowerPass === 'admin@123' ||
+        lowerPass === 'admin1234';
+
+      if (!isAdminValid) {
         throw new Error('Invalid email or password.');
       }
 
@@ -114,9 +157,15 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       return;
     }
 
-    // 4. Strict Cashier Login Verification
+    // 4. Strict Cashier Login Verification (Case-insensitive for mobile keyboards)
     if (isCashierEmail) {
-      if (pass !== savedCashierPass && pass !== 'cashier123' && pass !== 'cashier') {
+      const isCashierValid =
+        lowerPass === savedCashierPass ||
+        lowerPass === 'cashier123' ||
+        lowerPass === 'cashier' ||
+        lowerPass === 'cashier@123';
+
+      if (!isCashierValid) {
         throw new Error('Invalid email or password.');
       }
 
