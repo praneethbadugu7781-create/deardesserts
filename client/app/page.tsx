@@ -5,6 +5,7 @@ import Link from 'next/link';
 import Image from 'next/image';
 import Logo from '../components/Logo';
 import Footer from '../components/Footer';
+import HeroBestsellerShowcase from '../components/HeroBestsellerShowcase';
 import { useAuth, Role } from '../lib/auth';
 import { fetchApi } from '../lib/api';
 import PremiumButton from '../components/PremiumButton';
@@ -393,14 +394,14 @@ const REAL_MENU_ITEMS: MenuItem[] = [
         <div className="relative mx-auto grid max-w-7xl items-center gap-12 px-4 sm:px-6 lg:grid-cols-2 lg:gap-16 lg:px-8">
           <div className="space-y-8 text-center lg:text-left">
             <FadeInView delay={0}>
-              <div className="inline-flex items-center gap-2 rounded-full border border-gold-500/30 bg-white/80 px-4 py-2 font-accent text-[11px] font-extrabold uppercase tracking-[0.2em] text-caramel-700 shadow-sm backdrop-blur-md">
+              <div className="inline-flex items-center gap-2 rounded-full border border-gold-500/30 bg-white/90 px-4 py-2 text-xs font-bold uppercase tracking-wider text-cocoa-900 shadow-sm backdrop-blur-md">
                 <Award className="h-4 w-4 text-gold-600" />
-                <span>Flagship Outlet · Bhavanipuram, Vijayawada</span>
+                <span>Flagship Outlet • Bhavanipuram, Vijayawada</span>
               </div>
             </FadeInView>
 
             <FadeInView delay={100}>
-              <h1 className="font-display text-[clamp(2.75rem,6.5vw,5.25rem)] font-extrabold leading-[0.98] tracking-tight text-cocoa-950">
+              <h1 className="font-display text-[clamp(2.75rem,6vw,5.5rem)] font-extrabold leading-[1.02] tracking-tight text-cocoa-950">
                 Where Every Bite
                 <span className="block bg-gradient-to-r from-cocoa-900 via-gold-600 to-caramel-600 bg-clip-text text-transparent">
                   Tells a Sweet Story
@@ -409,7 +410,7 @@ const REAL_MENU_ITEMS: MenuItem[] = [
             </FadeInView>
 
             <FadeInView delay={200}>
-              <p className="mx-auto max-w-lg text-base leading-relaxed text-cocoa-700 lg:mx-0 lg:text-lg font-medium">
+              <p className="mx-auto max-w-lg text-base sm:text-lg leading-relaxed text-cocoa-800 lg:mx-0 font-medium">
                 Handcrafted Belgian waffles, warm chocolate fudge, artisanal thickshakes, and gourmet quick bites — made fresh daily with love in Vijayawada.
               </p>
             </FadeInView>
@@ -431,11 +432,11 @@ const REAL_MENU_ITEMS: MenuItem[] = [
                 {[
                   { value: `${items.length > 0 ? items.length : 43}+`, label: 'Signature Items' },
                   { value: '100%', label: 'Fresh Daily' },
-                  { value: '4.9★', label: 'Artisanal Quality' },
+                  { value: '4.9 ★', label: 'Artisanal Quality' },
                 ].map((stat) => (
-                  <div key={stat.label} className="stat-pill bg-white/80 border border-cream-300/80 p-4 rounded-2xl shadow-sm">
-                    <div className="font-display text-2xl font-bold text-cocoa-950">{stat.value}</div>
-                    <div className="mt-0.5 font-accent text-[9px] font-extrabold uppercase tracking-wider text-gold-700">
+                  <div key={stat.label} className="bg-white/90 border border-cream-300/90 p-4 rounded-2xl shadow-sm text-center">
+                    <div className="font-display text-2xl font-black text-cocoa-950">{stat.value}</div>
+                    <div className="mt-1 text-[10px] font-extrabold uppercase tracking-wider text-gold-700">
                       {stat.label}
                     </div>
                   </div>
@@ -444,47 +445,9 @@ const REAL_MENU_ITEMS: MenuItem[] = [
             </FadeInView>
           </div>
 
-          {/* Right Side: Interactive Hero Bestseller Card Showcase */}
+          {/* Right Side: Jaw-Dropping Interactive Hero Bestseller Showcase */}
           <FadeInView delay={200} direction="left" className="relative mx-auto w-full max-w-md lg:max-w-none">
-            <div className="animate-float relative">
-              <div className="absolute -inset-4 rounded-[2.5rem] bg-gradient-to-br from-gold-500/15 via-transparent to-caramel-500/15 shadow-[0_0_60px_rgba(201,162,39,0.25)]" />
-              <div className="relative overflow-hidden rounded-[2.5rem] border-4 border-white shadow-[0_32px_80px_rgba(44,24,16,0.2)] bg-white">
-                <div className="relative h-[420px] w-full lg:h-[500px]">
-                  <Image
-                    src="https://images.unsplash.com/photo-1572490122747-3968b75cc699?w=900&q=85"
-                    alt="Dear Desserts Signature Belgian Chocolate Thickshake"
-                    fill
-                    sizes="(max-width: 1024px) 100vw, 50vw"
-                    className="object-cover transition-transform duration-700 hover:scale-105"
-                    priority
-                  />
-                  <div className="absolute inset-0 bg-gradient-to-t from-cocoa-950/90 via-cocoa-950/20 to-transparent" />
-                  
-                  {/* Floating Tags */}
-                  <div className="absolute top-4 left-4 flex gap-2">
-                    <span className="bg-cocoa-950/90 backdrop-blur-md text-gold-300 border border-gold-400/40 text-[10px] font-extrabold px-3 py-1 rounded-full uppercase tracking-wider shadow-md">
-                      🔥 #1 Chef's Pick
-                    </span>
-                    <span className="bg-emerald-950/90 backdrop-blur-md text-emerald-300 border border-emerald-500/40 text-[10px] font-extrabold px-3 py-1 rounded-full uppercase tracking-wider shadow-md">
-                      🟢 Outlet Open Now
-                    </span>
-                  </div>
-
-                  {/* Card Bottom Details */}
-                  <div className="absolute bottom-6 left-6 right-6 flex items-end justify-between text-white">
-                    <div className="space-y-1">
-                      <span className="font-accent text-[10px] font-extrabold uppercase tracking-[0.2em] text-gold-400">Handcrafted Daily</span>
-                      <p className="font-display text-2xl font-extrabold tracking-tight">Belgian Chocolate Thickshake</p>
-                      <p className="text-xs text-cream-300/80 font-medium">Rich Belgian cocoa, creamy ice cream & chocolate drip</p>
-                    </div>
-                    <div className="text-right shrink-0 ml-4">
-                      <span className="font-display text-3xl font-black text-gold-400">₹170</span>
-                      <p className="text-[10px] text-cream-300/70 font-bold uppercase">Net Price</p>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
+            <HeroBestsellerShowcase />
           </FadeInView>
         </div>
 
