@@ -135,17 +135,14 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       console.warn('Backend login attempt:', err.message);
     }
 
-    // ============================================================
-    // STEP 2: Fallback — Default passwords (when backend is down)
-    // Only used when backend is unreachable (not when it rejected)
-    // ============================================================
+    // STEP 2: Fallback — default + localStorage passwords (always available)
+    // Works even if backend rejected or is down
 
-    // Default password lists
     const defaultAdminPasses = ['admin123', 'admin', 'admin@123', 'admin1234', 'admin2024', 'deardesserts'];
     const defaultCashierPasses = ['cashier123', 'cashier', 'cashier@123', 'cashier2024'];
     const defaultKitchenPasses = ['kitchen123', 'kitchen', 'kitchen@123', 'kitchen2024'];
 
-    // Also check localStorage custom passwords (for same-device login when backend is down)
+    // Also check localStorage custom passwords (works on same device)
     if (typeof window !== 'undefined') {
       const cp1 = localStorage.getItem('dd_admin_pass');
       const cp2 = localStorage.getItem('dd_admin_password');
@@ -153,13 +150,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       if (cp2) { defaultAdminPasses.push(cp2); defaultAdminPasses.push(cp2.toLowerCase()); }
     }
 
-    // If backend explicitly rejected the password, don't allow fallback defaults
-    // (This means user changed password on backend but entered wrong one)
-    if (backendRejected) {
-      throw new Error('Invalid email or password. Please contact the store manager.');
-    }
-
-    // Backend was unreachable — allow fallback to defaults
+    // Fallback to defaults
     if (isAdminEmail) {
       if (!defaultAdminPasses.includes(cleanPass) && !defaultAdminPasses.includes(lowerPass)) {
         throw new Error('Invalid email or password. Please contact the store manager.');
