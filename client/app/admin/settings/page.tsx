@@ -39,47 +39,45 @@ export default function AdminSettingsPage() {
       return;
     }
 
-    if (newPassword.length < 4) {
-      alert('Password must be at least 4 characters long!');
+    if (newPassword.length < 6) {
+      alert('Password must be at least 6 characters long for production security!');
       return;
     }
 
     setIsSubmitting(true);
 
     try {
-      // Trigger OTP dispatch via Resend
+      // 1. Dispatch 6-Digit OTP to Store Manager email
       await fetchApi('/auth/forgot-password', {
         method: 'POST',
-        body: JSON.stringify({ email: 'deardesserts.in@gmail.com' }),
-      }).catch((e) => console.warn('Resend OTP trigger:', e));
+        body: JSON.stringify({ email: adminEmail }),
+      });
 
-      const otp = prompt('🔐 SECURITY AUTHORIZATION REQUIRED\n\nA 6-Digit Security OTP code has been dispatched via Resend to deardesserts.in@gmail.com!\n\nPlease check your Gmail Inbox and enter the 6-Digit OTP code to confirm your new Admin Password:');
+      const otp = prompt(`🔐 SECURITY AUTHORIZATION REQUIRED\n\nA 6-Digit Security OTP verification code has been sent to ${adminEmail}!\n\nPlease enter the 6-Digit OTP code from your email to confirm updating your Admin Password:`);
 
-      if (!otp) {
-        alert('Admin password update cancelled. Security OTP is required.');
+      if (!otp || !otp.trim()) {
+        alert('Admin password update cancelled. Security OTP verification is required.');
         setIsSubmitting(false);
         return;
       }
 
-      // Save new Admin password in localStorage & sync API
-      if (typeof window !== 'undefined') {
-        localStorage.setItem('dd_admin_pass', newPassword.trim());
-      }
-
-      await fetchApi('/auth/reset-password', {
+      // 2. Send request to MongoDB Atlas backend API (must complete successfully)
+      const resData = await fetchApi('/auth/reset-password', {
         method: 'POST',
         body: JSON.stringify({
-          email: 'deardesserts.in@gmail.com',
-          otp,
+          email: adminEmail,
+          otpCode: otp.trim(),
           newPassword: newPassword.trim(),
         }),
-      }).catch((e) => console.warn('API reset sync:', e));
+      });
 
-      setStatusMessage('✅ Admin Password updated successfully! Use your new password to log in.');
+      setStatusMessage(`✅ ${resData.message || 'Admin Password updated successfully in MongoDB Atlas! Use your new password on any device to log in.'}`);
       setNewPassword('');
       setConfirmPassword('');
+      alert('🎉 Password updated successfully in MongoDB database! You can now log in using your new password on any device.');
     } catch (err: any) {
-      alert(err.message || 'Failed to update Admin password.');
+      console.error('Password change error:', err);
+      alert(`❌ Password Update Failed: ${err.message || 'Invalid OTP code or server error'}`);
     } finally {
       setIsSubmitting(false);
     }

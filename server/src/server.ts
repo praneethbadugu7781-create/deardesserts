@@ -6,6 +6,7 @@ import helmet from 'helmet';
 import dotenv from 'dotenv';
 
 import { initSocket } from './socket';
+import { ensureDefaultAccountsExist } from './lib/initDb';
 import authRoutes from './routes/auth';
 import menuRoutes from './routes/menu';
 import orderRoutes from './routes/orders';
@@ -63,7 +64,8 @@ app.use((err: any, _req: express.Request, res: express.Response, _next: express.
   res.status(500).json({ error: 'Internal Server Error', details: err.message });
 });
 
-server.listen(PORT, () => {
+server.listen(PORT, async () => {
   console.log(`🚀 Dear Desserts Express Server listening on http://localhost:${PORT}`);
   console.log(`📡 WebSocket server running on ws://localhost:${PORT}`);
+  await ensureDefaultAccountsExist();
 });
