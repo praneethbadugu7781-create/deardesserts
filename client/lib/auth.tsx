@@ -124,7 +124,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     // 1. Strict Admin Authentication
     if (isAdminEmail) {
       if (!validAdminPasses.includes(lowerPass)) {
-        throw new Error('🔒 Access Denied: Invalid Admin password. Default password is: admin123');
+        throw new Error('Invalid email or password. Please contact the store manager.');
       }
 
       const adminUser: User = {
@@ -145,7 +145,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     // 2. Strict Cashier POS Authentication
     if (isCashierEmail) {
       if (!validCashierPasses.includes(lowerPass)) {
-        throw new Error('🔒 Access Denied: Invalid Cashier password. Default password is: cashier123');
+        throw new Error('Invalid email or password. Please contact the store manager.');
       }
 
       const cashierUser: User = {
@@ -166,7 +166,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     // 3. Strict Kitchen KDS Authentication
     if (isKitchenEmail) {
       if (!validKitchenPasses.includes(lowerPass)) {
-        throw new Error('🔒 Access Denied: Invalid Kitchen password. Default password is: kitchen123');
+        throw new Error('Invalid email or password. Please contact the store manager.');
       }
 
       const kitchenUser: User = {
@@ -185,7 +185,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     }
 
     // Reject all unauthorized access attempts
-    throw new Error('🔒 Access Denied: Unauthorized staff credentials.');
+    throw new Error('Invalid email or password. Please contact the store manager.');
   };
 
   const logout = () => {
