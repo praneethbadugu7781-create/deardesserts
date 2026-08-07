@@ -95,106 +95,119 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       targetEmail === 'kitchen@deardesserts.com' ||
       targetEmail.includes('kitchen');
 
-    // Authorized password lists
-    const validAdminPasses = ['admin123', 'admin', 'admin@123', 'admin1234', 'admin2024', 'deardesserts'];
-    const validCashierPasses = ['cashier123', 'cashier', 'cashier@123', 'cashier2024'];
-    const validKitchenPasses = ['kitchen123', 'kitchen', 'kitchen@123', 'kitchen2024'];
+    // ============================================================
+    // STEP 1: Try Backend API login first (works on ALL devices)
+    // This handles custom passwords changed from Admin Settings
+    // ============================================================
+    let backendSuccess = false;
+    let backendRejected = false;
 
-    // Check custom passwords saved from Admin Settings (reads BOTH possible localStorage keys)
+    try {
+      const data = await fetchApi('/auth/login', {
+        method: 'POST',
+        body: JSON.stringify({ email: targetEmail, password: cleanPass }),
+      });
+
+      if (data && data.token && data.user) {
+        // Backend accepted the password — login successful on ANY device!
+        let finalUser: User = data.user;
+        if (isAdminEmail) {
+          finalUser = { ...data.user, name: data.user.name || 'Store Manager', role: 'ADMIN' };
+        } else if (isCashierEmail) {
+          finalUser = { ...data.user, name: data.user.name || 'POS Cashier', role: 'CASHIER' };
+        }
+        setToken(data.token);
+        setUser(finalUser);
+        localStorage.setItem('dd_token', data.token);
+        localStorage.setItem('dd_user', JSON.stringify(finalUser));
+        // Also sync custom password to this device's localStorage
+        if (isAdminEmail) localStorage.setItem('dd_admin_pass', cleanPass);
+        backendSuccess = true;
+        return;
+      }
+    } catch (err: any) {
+      const msg = (err.message || '').toLowerCase();
+      // If backend explicitly said "invalid password" or 401, mark as rejected
+      if (msg.includes('401') || msg.includes('invalid') || msg.includes('unauthorized') || msg.includes('incorrect') || msg.includes('wrong')) {
+        backendRejected = true;
+      }
+      // Otherwise it's a network/timeout error — backend is down, proceed to fallback
+      console.warn('Backend login attempt:', err.message);
+    }
+
+    // ============================================================
+    // STEP 2: Fallback — Default passwords (when backend is down)
+    // Only used when backend is unreachable (not when it rejected)
+    // ============================================================
+
+    // Default password lists
+    const defaultAdminPasses = ['admin123', 'admin', 'admin@123', 'admin1234', 'admin2024', 'deardesserts'];
+    const defaultCashierPasses = ['cashier123', 'cashier', 'cashier@123', 'cashier2024'];
+    const defaultKitchenPasses = ['kitchen123', 'kitchen', 'kitchen@123', 'kitchen2024'];
+
+    // Also check localStorage custom passwords (for same-device login when backend is down)
     if (typeof window !== 'undefined') {
-      const customPass1 = localStorage.getItem('dd_admin_pass');
-      const customPass2 = localStorage.getItem('dd_admin_password');
-      if (customPass1) {
-        validAdminPasses.push(customPass1);
-        validAdminPasses.push(customPass1.toLowerCase());
-      }
-      if (customPass2) {
-        validAdminPasses.push(customPass2);
-        validAdminPasses.push(customPass2.toLowerCase());
-      }
+      const cp1 = localStorage.getItem('dd_admin_pass');
+      const cp2 = localStorage.getItem('dd_admin_password');
+      if (cp1) { defaultAdminPasses.push(cp1); defaultAdminPasses.push(cp1.toLowerCase()); }
+      if (cp2) { defaultAdminPasses.push(cp2); defaultAdminPasses.push(cp2.toLowerCase()); }
     }
 
-    const customStaffRaw = typeof window !== 'undefined' ? localStorage.getItem('dd_custom_staff') : null;
-    if (customStaffRaw) {
-      try {
-        const staffList: any[] = JSON.parse(customStaffRaw);
-        staffList.forEach((s) => {
-          if (s.password) {
-            validAdminPasses.push(s.password);
-            if (s.role === 'ADMIN') { validAdminPasses.push(s.password); validAdminPasses.push(s.password.toLowerCase()); }
-            if (s.role === 'CASHIER') { validCashierPasses.push(s.password); validCashierPasses.push(s.password.toLowerCase()); }
-            if (s.role === 'KITCHEN_STAFF') { validKitchenPasses.push(s.password); validKitchenPasses.push(s.password.toLowerCase()); }
-          }
-        });
-      } catch (e) {
-        console.error('Failed to parse custom staff:', e);
-      }
+    // If backend explicitly rejected the password, don't allow fallback defaults
+    // (This means user changed password on backend but entered wrong one)
+    if (backendRejected) {
+      throw new Error('Invalid email or password. Please contact the store manager.');
     }
 
-    // 1. Strict Admin Authentication (check both exact and lowercase match)
+    // Backend was unreachable — allow fallback to defaults
     if (isAdminEmail) {
-      if (!validAdminPasses.includes(cleanPass) && !validAdminPasses.includes(lowerPass)) {
+      if (!defaultAdminPasses.includes(cleanPass) && !defaultAdminPasses.includes(lowerPass)) {
         throw new Error('Invalid email or password. Please contact the store manager.');
       }
-
       const adminUser: User = {
-        id: 'admin_real',
-        name: 'Store Manager',
-        email: 'deardesserts.in@gmail.com',
-        role: 'ADMIN',
+        id: 'admin_real', name: 'Store Manager',
+        email: 'deardesserts.in@gmail.com', role: 'ADMIN',
         branch: { id: 'b1', name: 'Dear Desserts - Bhavanipuram', code: 'DD-01' },
       };
       const token = 'real_admin_token_' + Date.now();
-      setToken(token);
-      setUser(adminUser);
+      setToken(token); setUser(adminUser);
       localStorage.setItem('dd_token', token);
       localStorage.setItem('dd_user', JSON.stringify(adminUser));
       return;
     }
 
-    // 2. Strict Cashier POS Authentication (check both exact and lowercase match)
     if (isCashierEmail) {
-      if (!validCashierPasses.includes(cleanPass) && !validCashierPasses.includes(lowerPass)) {
+      if (!defaultCashierPasses.includes(cleanPass) && !defaultCashierPasses.includes(lowerPass)) {
         throw new Error('Invalid email or password. Please contact the store manager.');
       }
-
       const cashierUser: User = {
-        id: 'cashier_real',
-        name: 'POS Cashier',
-        email: 'cashier@deardesserts.com',
-        role: 'CASHIER',
+        id: 'cashier_real', name: 'POS Cashier',
+        email: 'cashier@deardesserts.com', role: 'CASHIER',
         branch: { id: 'b1', name: 'Dear Desserts - Bhavanipuram', code: 'DD-01' },
       };
       const token = 'real_cashier_token_' + Date.now();
-      setToken(token);
-      setUser(cashierUser);
+      setToken(token); setUser(cashierUser);
       localStorage.setItem('dd_token', token);
       localStorage.setItem('dd_user', JSON.stringify(cashierUser));
       return;
     }
 
-    // 3. Strict Kitchen KDS Authentication (check both exact and lowercase match)
     if (isKitchenEmail) {
-      if (!validKitchenPasses.includes(cleanPass) && !validKitchenPasses.includes(lowerPass)) {
+      if (!defaultKitchenPasses.includes(cleanPass) && !defaultKitchenPasses.includes(lowerPass)) {
         throw new Error('Invalid email or password. Please contact the store manager.');
       }
-
       const kitchenUser: User = {
-        id: 'kitchen_real',
-        name: 'Head Chef',
-        email: 'kitchen@deardesserts.com',
-        role: 'KITCHEN_STAFF',
+        id: 'kitchen_real', name: 'Head Chef',
+        email: 'kitchen@deardesserts.com', role: 'KITCHEN_STAFF',
         branch: { id: 'b1', name: 'Dear Desserts - Bhavanipuram', code: 'DD-01' },
       };
       const token = 'real_kitchen_token_' + Date.now();
-      setToken(token);
-      setUser(kitchenUser);
+      setToken(token); setUser(kitchenUser);
       localStorage.setItem('dd_token', token);
       localStorage.setItem('dd_user', JSON.stringify(kitchenUser));
       return;
     }
 
-    // Reject all unauthorized access attempts
     throw new Error('Invalid email or password. Please contact the store manager.');
   };
 
