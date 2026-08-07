@@ -100,9 +100,19 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     const validCashierPasses = ['cashier123', 'cashier', 'cashier@123', 'cashier2024'];
     const validKitchenPasses = ['kitchen123', 'kitchen', 'kitchen@123', 'kitchen2024'];
 
-    // Check custom staff passwords configured in localStorage (Staff Management)
-    const customAdminPass = typeof window !== 'undefined' ? localStorage.getItem('dd_admin_password') : null;
-    if (customAdminPass) validAdminPasses.push(customAdminPass.toLowerCase());
+    // Check custom passwords saved from Admin Settings (reads BOTH possible localStorage keys)
+    if (typeof window !== 'undefined') {
+      const customPass1 = localStorage.getItem('dd_admin_pass');
+      const customPass2 = localStorage.getItem('dd_admin_password');
+      if (customPass1) {
+        validAdminPasses.push(customPass1);
+        validAdminPasses.push(customPass1.toLowerCase());
+      }
+      if (customPass2) {
+        validAdminPasses.push(customPass2);
+        validAdminPasses.push(customPass2.toLowerCase());
+      }
+    }
 
     const customStaffRaw = typeof window !== 'undefined' ? localStorage.getItem('dd_custom_staff') : null;
     if (customStaffRaw) {
@@ -110,10 +120,10 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         const staffList: any[] = JSON.parse(customStaffRaw);
         staffList.forEach((s) => {
           if (s.password) {
-            const p = s.password.toLowerCase();
-            if (s.role === 'ADMIN') validAdminPasses.push(p);
-            if (s.role === 'CASHIER') validCashierPasses.push(p);
-            if (s.role === 'KITCHEN_STAFF') validKitchenPasses.push(p);
+            validAdminPasses.push(s.password);
+            if (s.role === 'ADMIN') { validAdminPasses.push(s.password); validAdminPasses.push(s.password.toLowerCase()); }
+            if (s.role === 'CASHIER') { validCashierPasses.push(s.password); validCashierPasses.push(s.password.toLowerCase()); }
+            if (s.role === 'KITCHEN_STAFF') { validKitchenPasses.push(s.password); validKitchenPasses.push(s.password.toLowerCase()); }
           }
         });
       } catch (e) {
@@ -121,9 +131,9 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       }
     }
 
-    // 1. Strict Admin Authentication
+    // 1. Strict Admin Authentication (check both exact and lowercase match)
     if (isAdminEmail) {
-      if (!validAdminPasses.includes(lowerPass)) {
+      if (!validAdminPasses.includes(cleanPass) && !validAdminPasses.includes(lowerPass)) {
         throw new Error('Invalid email or password. Please contact the store manager.');
       }
 
@@ -142,9 +152,9 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       return;
     }
 
-    // 2. Strict Cashier POS Authentication
+    // 2. Strict Cashier POS Authentication (check both exact and lowercase match)
     if (isCashierEmail) {
-      if (!validCashierPasses.includes(lowerPass)) {
+      if (!validCashierPasses.includes(cleanPass) && !validCashierPasses.includes(lowerPass)) {
         throw new Error('Invalid email or password. Please contact the store manager.');
       }
 
@@ -163,9 +173,9 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       return;
     }
 
-    // 3. Strict Kitchen KDS Authentication
+    // 3. Strict Kitchen KDS Authentication (check both exact and lowercase match)
     if (isKitchenEmail) {
-      if (!validKitchenPasses.includes(lowerPass)) {
+      if (!validKitchenPasses.includes(cleanPass) && !validKitchenPasses.includes(lowerPass)) {
         throw new Error('Invalid email or password. Please contact the store manager.');
       }
 
