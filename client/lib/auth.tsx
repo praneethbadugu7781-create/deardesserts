@@ -80,126 +80,56 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
     const targetEmail = email.trim().toLowerCase();
     const cleanPass = pass.trim();
-    const lowerPass = cleanPass.toLowerCase();
-
-    const isAdminEmail =
-      targetEmail === 'deardesserts.in@gmail.com' ||
-      targetEmail === 'admin@deardesserts.com' ||
-      targetEmail.includes('admin');
-
-    const isCashierEmail =
-      targetEmail === 'cashier@deardesserts.com' ||
-      targetEmail.includes('cashier');
-
-    const isKitchenEmail =
-      targetEmail === 'kitchen@deardesserts.com' ||
-      targetEmail.includes('kitchen');
 
     // ============================================================
-    // STEP 1: Try Backend API login first (works on ALL devices)
-    // This handles custom passwords changed from Admin Settings
+    // Authenticate ONLY through MongoDB backend API
+    // Retry up to 3 times to handle Render cold starts
     // ============================================================
-    let backendSuccess = false;
-    let backendRejected = false;
+    const MAX_RETRIES = 3;
+    let lastError = '';
 
-    try {
-      const data = await fetchApi('/auth/login', {
-        method: 'POST',
-        body: JSON.stringify({ email: targetEmail, password: cleanPass }),
-      });
+    for (let attempt = 1; attempt <= MAX_RETRIES; attempt++) {
+      try {
+        const data = await fetchApi('/auth/login', {
+          method: 'POST',
+          body: JSON.stringify({ email: targetEmail, password: cleanPass }),
+        });
 
-      if (data && data.token && data.user) {
-        // Backend accepted the password — login successful on ANY device!
-        let finalUser: User = data.user;
-        if (isAdminEmail) {
-          finalUser = { ...data.user, name: data.user.name || 'Store Manager', role: 'ADMIN' };
-        } else if (isCashierEmail) {
-          finalUser = { ...data.user, name: data.user.name || 'POS Cashier', role: 'CASHIER' };
+        if (data && data.token && data.user) {
+          // MongoDB authenticated successfully!
+          const finalUser: User = {
+            id: data.user.id,
+            name: data.user.name || 'Staff Member',
+            email: data.user.email || targetEmail,
+            role: data.user.role || 'CASHIER',
+            branch: data.user.branch || { id: 'b1', name: 'Dear Desserts - Bhavanipuram', code: 'DD-01' },
+          };
+          setToken(data.token);
+          setUser(finalUser);
+          localStorage.setItem('dd_token', data.token);
+          localStorage.setItem('dd_user', JSON.stringify(finalUser));
+          return;
         }
-        setToken(data.token);
-        setUser(finalUser);
-        localStorage.setItem('dd_token', data.token);
-        localStorage.setItem('dd_user', JSON.stringify(finalUser));
-        // Also sync custom password to this device's localStorage
-        if (isAdminEmail) localStorage.setItem('dd_admin_pass', cleanPass);
-        backendSuccess = true;
-        return;
+      } catch (err: any) {
+        lastError = err.message || 'Login failed';
+        const msg = lastError.toLowerCase();
+
+        // If backend explicitly rejected credentials (401/invalid), don't retry
+        if (msg.includes('invalid') || msg.includes('unauthorized') || msg.includes('incorrect') || msg.includes('wrong') || msg.includes('401')) {
+          throw new Error('Invalid email or password. Please contact the store manager.');
+        }
+
+        // Network/timeout error — server might be waking up (Render cold start)
+        if (attempt < MAX_RETRIES) {
+          // Wait before retrying (1s, then 2s)
+          await new Promise((r) => setTimeout(r, attempt * 1000));
+          continue;
+        }
       }
-    } catch (err: any) {
-      const msg = (err.message || '').toLowerCase();
-      // If backend explicitly said "invalid password" or 401, mark as rejected
-      if (msg.includes('401') || msg.includes('invalid') || msg.includes('unauthorized') || msg.includes('incorrect') || msg.includes('wrong')) {
-        backendRejected = true;
-      }
-      // Otherwise it's a network/timeout error — backend is down, proceed to fallback
-      console.warn('Backend login attempt:', err.message);
     }
 
-    // STEP 2: Fallback — default + localStorage passwords (always available)
-    // Works even if backend rejected or is down
-
-    const defaultAdminPasses = ['admin123', 'admin', 'admin@123', 'admin1234', 'admin2024', 'deardesserts'];
-    const defaultCashierPasses = ['cashier123', 'cashier', 'cashier@123', 'cashier2024'];
-    const defaultKitchenPasses = ['kitchen123', 'kitchen', 'kitchen@123', 'kitchen2024'];
-
-    // Also check localStorage custom passwords (works on same device)
-    if (typeof window !== 'undefined') {
-      const cp1 = localStorage.getItem('dd_admin_pass');
-      const cp2 = localStorage.getItem('dd_admin_password');
-      if (cp1) { defaultAdminPasses.push(cp1); defaultAdminPasses.push(cp1.toLowerCase()); }
-      if (cp2) { defaultAdminPasses.push(cp2); defaultAdminPasses.push(cp2.toLowerCase()); }
-    }
-
-    // Fallback to defaults
-    if (isAdminEmail) {
-      if (!defaultAdminPasses.includes(cleanPass) && !defaultAdminPasses.includes(lowerPass)) {
-        throw new Error('Invalid email or password. Please contact the store manager.');
-      }
-      const adminUser: User = {
-        id: 'admin_real', name: 'Store Manager',
-        email: 'deardesserts.in@gmail.com', role: 'ADMIN',
-        branch: { id: 'b1', name: 'Dear Desserts - Bhavanipuram', code: 'DD-01' },
-      };
-      const token = 'real_admin_token_' + Date.now();
-      setToken(token); setUser(adminUser);
-      localStorage.setItem('dd_token', token);
-      localStorage.setItem('dd_user', JSON.stringify(adminUser));
-      return;
-    }
-
-    if (isCashierEmail) {
-      if (!defaultCashierPasses.includes(cleanPass) && !defaultCashierPasses.includes(lowerPass)) {
-        throw new Error('Invalid email or password. Please contact the store manager.');
-      }
-      const cashierUser: User = {
-        id: 'cashier_real', name: 'POS Cashier',
-        email: 'cashier@deardesserts.com', role: 'CASHIER',
-        branch: { id: 'b1', name: 'Dear Desserts - Bhavanipuram', code: 'DD-01' },
-      };
-      const token = 'real_cashier_token_' + Date.now();
-      setToken(token); setUser(cashierUser);
-      localStorage.setItem('dd_token', token);
-      localStorage.setItem('dd_user', JSON.stringify(cashierUser));
-      return;
-    }
-
-    if (isKitchenEmail) {
-      if (!defaultKitchenPasses.includes(cleanPass) && !defaultKitchenPasses.includes(lowerPass)) {
-        throw new Error('Invalid email or password. Please contact the store manager.');
-      }
-      const kitchenUser: User = {
-        id: 'kitchen_real', name: 'Head Chef',
-        email: 'kitchen@deardesserts.com', role: 'KITCHEN_STAFF',
-        branch: { id: 'b1', name: 'Dear Desserts - Bhavanipuram', code: 'DD-01' },
-      };
-      const token = 'real_kitchen_token_' + Date.now();
-      setToken(token); setUser(kitchenUser);
-      localStorage.setItem('dd_token', token);
-      localStorage.setItem('dd_user', JSON.stringify(kitchenUser));
-      return;
-    }
-
-    throw new Error('Invalid email or password. Please contact the store manager.');
+    // All retries exhausted — server is unreachable
+    throw new Error('Server is currently unavailable. Please try again in a few seconds.');
   };
 
   const logout = () => {
@@ -207,6 +137,10 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     setToken(null);
     localStorage.removeItem('dd_token');
     localStorage.removeItem('dd_user');
+    // Clean up old localStorage password keys (no longer used)
+    localStorage.removeItem('dd_admin_pass');
+    localStorage.removeItem('dd_admin_password');
+    localStorage.removeItem('dd_custom_staff');
     if (typeof window !== 'undefined') {
       window.location.href = '/';
     }
